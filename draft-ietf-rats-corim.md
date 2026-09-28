@@ -166,7 +166,7 @@ This document specifies the information elements for representing Endorsements a
 
 The RATS Architecture {{Section 4 of -rats-arch}} specifies several roles, including Endorsers and Reference Value Providers.
 These two roles are typically fulfilled by supply chain actors, such as manufacturers, distributors, or device owners.
-Endorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., digest ) relating to an Attester.
+Endorsers and Reference Value Providers supply Endorsements (e.g., test results or certification data) and Reference Values (e.g., digests) relating to an Attester.
 This information is used by a Verifier to appraise Evidence received from an Attester which describes Attester operational state.
 
 In a complex supply chain, multiple actors will likely produce these values over several points in time.
@@ -174,7 +174,7 @@ As such, one supply chain actor might only supply a portion of the Reference Val
 Ideally, only the supply chain actor who is the most knowledgeable entity regarding a particular component will supply Reference Values or Endorsements for that component.
 
 Attesters vary across vendors and even across products from a single vendor.
-Not only Attesters can evolve and therefore new measurement types need to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
+Not only can Attesters evolve, requiring new measurement types to be expressed, but an Endorser may also want to provide new security relevant attributes about an Attester at a future point in time.
 
 In order to promote interoperability, consistency and accuracy in the representation of Endorsements and Reference Values this document specifies a data model for Endorsements and Reference Values known as Concise Reference Integrity Manifests (CoRIM).
 The CoRIM data model is expressed in CDDL which is used to realize a CBOR {{-cbor}} encoding suitable for cryptographic operations (e.g., hashing, signing, encryption) and transmission over computer networks.
@@ -251,12 +251,19 @@ Class ID:
 : An identifier for an Environment that is shared among similar Environment instances, such as those with the same hardware assembly.
 See also {{Section 4.2.4 of -eat}}.
 
+Collision-Resistant Name:
+: As defined in {{Section 2 of -jwt}}:
+_"A name in a namespace that enables names to be allocated in a manner such that they are highly unlikely to collide with other names.
+Examples of collision-resistant namespaces include: Domain Names, Object Identifiers (OIDs) as defined in the ITU-T X.660 and X.670 Recommendation series, and Universally Unique IDentifiers (UUIDs) [RFC4122].
+When using an administratively delegated namespace, the definer of a name needs to take reasonable precautions to ensure they are in control of the portion of the namespace they use to define the name."_
+CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.
+
 Composite Attester:
 : A Composite Attester is either a Composite Device ({{Section 3.3 of -rats-arch}}) or a Layered Attester ({{Section 3.2 of -rats-arch}}) or any composition involving a combination of one or more Composite Devices or Layered Attesters.
 
 Domain:
 : A Domain is the hierarchical container used to describe a Composite Attester in terms of its constituent Environments and the compositional relationships among them.
-Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the attester, not to introduce additional semantic entities.
+Every Environment implicitly defines a Domain; therefore, any triple that creates an Environment also creates a corresponding Domain. Domains exist to organize the structural composition of the Attester, not to introduce additional semantic entities.
 
 Endorsed values:
 : A set of characteristics of an Attester that do not appear in Evidence.
@@ -337,7 +344,7 @@ Once the ACS is built and the conversation is consistent, the ACS is available f
 
 # Typographical Conventions for CDDL {#sec-type-conv}
 
-The CDDL definitions in this document follows the naming conventions illustrated in {{tbl-typography}}.
+The CDDL definitions in this document follow the naming conventions illustrated in {{tbl-typography}}.
 
 | Type trait | Example | Typographical convention |
 |---
@@ -489,7 +496,7 @@ Exercised extension points SHOULD preserve the intent of the original semantics.
 
 CoRIM profiles SHOULD be specified in a publicly available document.
 
-A CoRIM profile can use one of the base CoRIM media type defined in {{sec-mt-rim-cbor}} with the `profile` parameter set to the appropriate value.
+A CoRIM profile can use one of the base CoRIM media types defined in {{sec-mt-rim-cbor}} and {{sec-mt-rim-cose}} with the `profile` parameter set to the appropriate value.
 Alternatively, it MAY define and register its own media type.
 
 A profile identifier is either an OID {{-cbor-oids}} or a URL {{-uri}}.
@@ -652,7 +659,7 @@ Signer map.
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
-An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document, {{-pkix-cert}} or it may be conveyed unsigned within the protection scope of a secure channel.
+An unsigned (#6.501-tagged) CoRIM may be a payload in an enveloping signed document (e.g., {{-pkix-cert}}), or it may be conveyed unsigned within the protection scope of a secure channel.
 The CoRIM signer authority is taken from the authenticated credential (e.g., OAUTH token) of the entity that originates the CoRIM.
 For example, this entity could be the sending peer in a secure channel.
 A CoRIM role entry expressing the origin of the unsigned CoRIM (i.e., the enveloping signed document or the origin endpoint of the secure channel) via the `manifest-signer` role MUST be added to `corim-entity-map`.
@@ -686,7 +693,7 @@ It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI 
 It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
 It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
 
-The following example demonstrates these recommendations for bundling CoRIMs with a common signer but have different profiles.
+The following example demonstrates these recommendations for bundling CoRIMs with a common signer but with different profiles.
 
 ~~~cbor-diag
 {::include-fold cddl/examples/cmw-corim-collection.diag}
@@ -745,7 +752,7 @@ tag:
 
 The following describes each member of the `concise-mid-tag` map.
 
-* `lang` (index 0): A textual language tag that conforms with IANA "Language
+* `language` (index 0): A textual language tag that conforms with IANA "Language
   Subtag Registry" {{-language-subtag}}. The context of the specified language
   applies to all sibling and descendant textual values, unless a descendant
   object has defined a different language tag. Thus, a new context is
@@ -763,7 +770,7 @@ The following describes each member of the `concise-mid-tag` map.
 
 * `linked-tags` (index 3): A list of one or more `linked-tag-map` providing typed relationships between this and
   other CoMIDs.
-  Described in {{sec-comid-linked-tag}}).
+  Described in {{sec-comid-linked-tag}}.
 
 * `triples` (index 4): One or more triples providing information specific to
   the described module, e.g.: reference or endorsed values, cryptographic
@@ -792,13 +799,14 @@ The following describes each member of the `tag-identity-map`.
 ~~~
 
 A Tag ID is either a 16-byte binary string, or a textual identifier
-referencing the CoMID. The tag identifier MUST be globally unique. Failure to
-ensure global uniqueness can create ambiguity in tag use since the tag-id
+referencing the CoMID. The tag identifier MUST be a Collision-Resistant Name (see {{sec-glossary}}). Failure to
+ensure collision resistance can create ambiguity in tag use since the tag-id
 serves as the global key for matching, lookups and linking. If represented as a
 16-byte binary string, the identifier MUST be a valid universally unique
-identifier as defined by {{-uuid}}. There are no strict guidelines on how the
+identifier as defined by {{-uuid}}, and SHOULD follow the local uniqueness
+guidance of {{Section 6.8 of -uuid}}. There are no strict guidelines on how the
 identifier is structured, but examples include a 16-byte GUID (e.g., class 4
-UUID) {{-uuid}}, or a URI {{-uri}}.
+UUID) {{-uuid}}, or a URI {{-uri}}, for example `urn:example:widget:firmware:1.0.0`.
 
 #### Tag Version {#sec-tag-version}
 
@@ -848,7 +856,7 @@ tag (the source) and another CoMID tag (the target).
 {::include cddl/linked-tag-map.cddl}
 ~~~
 
-The following describes each member of the `tag-identity-map`.
+The following describes each member of the `linked-tag-map`.
 
 * `linked-tag-id` (index 0): Identifier for the target tag.
   See {{sec-tag-id}}.
@@ -872,7 +880,7 @@ The relations defined in this specification are:
 ### Triples {#sec-comid-triples}
 
 The `triples-map` contains all the CoMID triples broken down per category.  Not
-all category need to be present but at least one category MUST be present and
+all categories need to be present but at least one category MUST be present and
 contain at least one entry.
 
 In most cases, the supply chain entity that is responsible for providing a triple (i.e., Reference Values or Endorsed Values) is by default the CoRIM signer.
@@ -924,8 +932,8 @@ context (triple) in which the environment is used.
 An environment is named after a class, instance or group identifier (or a
 combination thereof).
 
-An environment MUST be globally unique.
-The combination of values within `class-map` MUST combine to form a globally unique identifier.
+An environment MUST be identified by a Collision-Resistant Name (see {{sec-glossary}}).
+The combination of values within `class-map` MUST combine to form a Collision-Resistant Name.
 
 ~~~ cddl
 {::include cddl/environment-map.cddl}
@@ -998,7 +1006,7 @@ UEID, UUID, variable-length opaque byte string ({{sec-common-tagged-bytes}}), cr
 #### Environment Group {#sec-comid-group}
 
 A group carries an identifier that is reliably bound to a group of
-Attesters, for example when a number of Attester are hidden in the same
+Attesters, for example when a number of Attesters are hidden in the same
 anonymity set.
 
 The types defined for a group identifier are UUID and variable-length opaque byte string ({{sec-common-tagged-bytes}}).
@@ -1099,7 +1107,7 @@ The following describes each member of the `measurement-values-map`.
 * `raw-value` (index 4): Contains the actual (not hashed) value of the element.
   The vendor determines the encoding of `raw-value`.
   When used for comparison, the `tagged-masked-raw-value` variant includes a mask indicating which bits in the value to compare.
-  Described in {{sec-comid-raw-value-types}}
+  Described in {{sec-comid-raw-value-types}}.
 
 * `raw-value-mask-DEPRECATED` (index 5): Is an obsolete method of indicating which bits in a raw value to compare. New CoMID files should use the `tagged-masked-raw-value` on index 4 instead of using index 5.
 
@@ -1581,7 +1589,7 @@ Additional details about how a key was provisioned or is protected may be assert
 
 Depending on key formatting, as defined by `$crypto-key-type-choice`, the Verifier may take different steps to locate and verify the key.
 If a key has usage restrictions that limits its use to Evidence signing, the Verifier SHOULD enforce key use restrictions.
-For example, see Section 5.1.5.3 in {{DICE.cert}}).
+For example, see Section 5.1.5.3 in {{DICE.cert}}.
 
 Each successful verification of a key in `key-list` SHALL produce Endorsement Claims that are added to the Attester's Claim set.
 Claims are asserted with the joint authority of the Endorser (CoRIM signer) and the Verifier.
@@ -1596,7 +1604,7 @@ See {{sec-comid-triple-identity}} for additional details.
 
 ### Triples for domain definition {#sec-comid-domains}
 
-Domain triples assert graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.
+Domain triples assert a graphical description of Attester composition in terms of its constituent Environments and their compositional relationships.
 
 The following CDDL describes domain type.
 
@@ -1650,7 +1658,7 @@ The bus controller is therefore a trustee domain of the peripheral device.
 
 TDTs cannot instantiate domains.
 Instead, TDT processing first verifies that a domain-id has already been accepted into the ACS before adding any trust-dependency triples.
-Environments that have been accepted into the ACE are automatically considered Domains.
+Environments that have been accepted into the ACS are automatically considered Domains.
 Consequently, TDTs may describe trust-dependency semantics for any Environment that has been accepted into the ACS.
 
 The trust dependency triple subject (`domain-id`) identifies the member domain (see {{sec-comid-triple-domain-membership}}) that has trustees.
@@ -1725,9 +1733,9 @@ The number of CoTLs required in a given supply chain ecosystem is dependent on
 Verifier Owner's Appraisal Policy for Evidence. Corresponding policies are often driven by the complexity and nature of the use case.
 
 If a Verifier Owner has a policy that does not require CoTL, tags within a CoRIM received by a Verifier
-are activated immediately and treated valid for appraisal.
+are activated immediately and treated as valid for appraisal.
 
-There may be cases when Verifier receives CoRIMs from multiple
+There may be cases when the Verifier receives CoRIMs from multiple
 Reference Value providers and Endorsers. In such cases, a supplier (or other authorities, such as integrators)
 may be designated to issue a single CoTL to activate all the tags submitted to the Verifier
 in these CoRIMs.
@@ -1737,7 +1745,7 @@ An Appraisal Policy for Evidence may dictate how multiple CoTLs are to be proces
 
 ## Structure
 
-The CDDL specification for the `concise-tl-tag` map and additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag are given below:
+The CDDL specification for the `concise-tl-tag` map is as follows, and this rule and the additional grammatical requirements specified in the text of this Section MUST be followed when creating or validating a CoTL tag:
 
 ~~~ cddl
 {::include cddl/concise-tl-tag.cddl}
@@ -1872,7 +1880,7 @@ Each entry in the `digests-type` MUST have a unique `alg` value.
 An opaque, variable-length byte string.
 It can be used in different contexts: as an instance, class or group identifier in an `environment-map`; as a raw value measurement in a `measurement-values-map`.
 Its semantics are defined by the context in which it is found, and by the overarching CoRIM profile.
-When used as an identifier the responsible allocator entity SHOULD ensure uniqueness within the context that it is used.
+When used as an identifier, the value MUST be a Collision-Resistant Name (see {{sec-glossary}}); the responsible allocator entity is responsible for ensuring this property holds within the context in which the identifier is used.
 
 ~~~ cddl
 {::include cddl/tagged-bytes.cddl}
@@ -1880,7 +1888,7 @@ When used as an identifier the responsible allocator entity SHOULD ensure unique
 
 # Reference Verifier {#sec-reference-verifier}
 
-This section outlines the behaviour of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
+This section outlines the behavior of a "CoRIM processor" within the Evidence appraisal procedure carried out by the RATS Verifier ({{Section 7.4 of -rats-arch}}).
 
 In the remainder of this section, the terms
 Environment,
@@ -1954,7 +1962,7 @@ item.addition.cmtype = reference-values
 
 ### Functions
 
-A function is introduced by the FUNC keyword, followed by its name, a parenthesised parameter list with CDDL type annotations, and a return type:
+A function is introduced by the FUNC keyword, followed by its name, a parenthesized parameter list with CDDL type annotations, and a return type:
 
 ~~~ pseudocode
 FUNC name(param: type, ...) -> return-type {
@@ -1966,6 +1974,12 @@ A RETURN statement exits the enclosing function and yields the specified value t
 
 ~~~ pseudocode
 RETURN value
+~~~
+
+A FAIL statement immediately aborts the enclosing top-level FUNC without yielding a value, signaling to the caller that the operation did not complete successfully:
+
+~~~ pseudocode
+FAIL
 ~~~
 
 ### Expressions
@@ -2023,8 +2037,7 @@ All operation names are uppercase.
 | `T::NEW()` | Construct a new zero-value instance of CDDL type T |
 | `collection::APPEND(item)` | Append item to a collection; when item is itself a list, all its elements are appended |
 | `acs::MATCH(condition)` | Test whether condition matches any entry in the ACS; the matching rules are relation-specific and defined in {{sec-comparison-rules}} |
-| `acs::CHECK(addition)` | Run consistency checks on addition before appending it to the ACS |
-| `acs::APPEND(addition)` | Atomically append addition to the ACS |
+| `acs::APPEND(addition)` | Attempt to atomically append addition to the ACS; returns TRUE on success, or FALSE (leaving the ACS unchanged) if the relation-specific pre-condition on addition or post-condition on the resulting ACS, both defined in {{sec-match-and-augment}}, is not satisfied |
 | `x::MEMBEROF(collection)` | Test whether x is a member of collection |
 | `INDEXOF(x)` | Return the position of x within its enclosing sequence |
 {: #tbl-pseudocode-ops title="Primitive Operations"}
@@ -2079,7 +2092,7 @@ The CoRIM processor described in {{sec-corim-processor}} describes the handoff i
 ## The CoRIM Processor {#sec-corim-processor}
 
 This document assumes that Verifier implementations will differ.
-In order to describe normative Verifier behaviour, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in {{sec-appraisal-phases}}.
+In order to describe normative Verifier behavior, this section presents a reference Verifier and illustrates how the data is utilized within the appraisal phases detailed in {{sec-appraisal-phases}}.
 If the Verifier operates on CoRIM documents, it is RECOMMENDED that it follows this algorithm.
 
 ### High-Level View
@@ -2095,7 +2108,7 @@ The RATS Verifier takes Evidence, Reference Values, Endorsements and an Appraisa
 The CoRIM processor accepts Reference Values and Endorsements in the form of CoRIM documents, as well as Evidence that has been converted into a CoRIM-compatible format using transforms such as those described in {{-rats-evidence-trans}}.
 Before the appraisal can begin, all Conceptual Messages must be broken down and reshaped into a common internal representation.
 The internal representations of Reference Values and Endorsements are stored in a staging area prior to appraisal initiation.
-Instead, the internal representation of Evidence is used to initialize the ACS.
+In contrast, the internal representation of Evidence is used to initialize the ACS.
 A Verifier can have multiple simultaneous sessions with different Attesters.
 Each Attester has a different ACS.
 The Verifier ensures that Evidence inputs are associated with the correct ACS.
@@ -2218,7 +2231,7 @@ These are effectively two different acceptable states that need to be processed 
 ##### Domain Membership ECT {#sec-domain-ect}
 
 A Domain Membership ECT (`M-ECT`) is used to represent domain membership Claims between environments.
-It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `member` nodes that comprises the domain.
+It describes the direct relationship between a specific node in the membership (i.e., the parent `environment`) and the `members` nodes that comprise the domain.
 
 ~~~ cddl
 {::include cddl/intrep-m-ect.cddl}
@@ -2231,7 +2244,7 @@ The following describes the specialized members of the `M-ECT`.
 
 A Domain Claim specifies the type of relationship that the parent domain is expected to have with its child environments.
 In a Domain ECT, the `environment` attribute encodes the name of the Claim.
-The value of the Claim is encoded in the `members` attributes.
+The value of the Claim is encoded in the `members` attribute.
 
 **Merge Rules.**
 
@@ -2242,7 +2255,7 @@ Any duplicates MUST be pruned.
 ##### Trust Dependency ECT {#sec-trust-ect}
 
 A Trust Dependency ECT (`T-ECT`) is used to represent trust dependency Claims between environments.
-It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprises the trust chain.
+It describes the direct relationship between a specific node in the trust domain (i.e., the parent `environment`) and the `trustees` nodes that comprise the trust chain.
 
 ~~~ cddl
 {::include cddl/intrep-t-ect.cddl}
@@ -2255,7 +2268,7 @@ The following describes the specialized members of the `T-ECT`.
 
 A Trust Claim specifies the type of relationship that the parent domain is expected to have with its trustee environments.
 In a Trust ECT, the `environment` attribute encodes the name of the Claim.
-The value of the Claim is encoded in the `trustees` attributes.
+The value of the Claim is encoded in the `trustees` attribute.
 
 **Merge Rules.**
 
@@ -2282,7 +2295,7 @@ The following describes the specialized members of the `K-ECT`.
 
 A Key Claim specifies one or more keys associated with the `environment`, as well as the semantics of these keys.
 
-In a Key ECT, the `environment`, `key-type` and optional `key-id` attributes encodes the name of the Claim.
+In a Key ECT, the `environment`, `key-type` and optional `key-id` attributes encode the name of the Claim.
 The value of the Claim is encoded in the `key-list` attribute.
 
 **Merge Rules.**
@@ -2293,7 +2306,7 @@ No merge rules are specified for a Key ECT.
 
 This section describes how the relevant RATS Conceptual Messages are represented within the CoRIM processor.
 This internal representation is based on the concept of "relations", which in turn are based on ECTs.
-Typically, a relation is structured as a "condition" ECT that specifies the matching criteria used to compare entries in the ACS, along with an "addition" ECT that is appended to the ACS if the specified condition are met.
+Typically, a relation is structured as a "condition" ECT that specifies the matching criteria used to compare entries in the ACS, along with an "addition" ECT that is appended to the ACS if the specified conditions are met.
 While this is the common structure, some relations may differ slightly from the condition/addition pattern.
 This is because they either do not require a condition (e.g., Evidence) or they require more sophisticated matching criteria that cannot be expressed solely via a condition (e.g., Conditional Endorsement Series).
 
@@ -2407,7 +2420,7 @@ The internal representation of Attest Key and Device Identity triples uses the `
 
 <cref>
 [TODO]
-Specialise condition/addition ECTs.
+Specialize condition/addition ECTs.
 Define constraints.
 </cref>
 
@@ -2522,7 +2535,7 @@ Once initialization is complete, no further inputs are accepted until the apprai
 
 #### CoRIM Selection
 
-All available CoRIMs tags are collected.
+All available CoRIM tags are collected.
 
 CoRIM tags MUST be discarded if they have expired, or if they are not associated with an authenticated and authorized source, or if they have been revoked by an authorized source.
 Any CoRIM secured by a cryptographic mechanism that fails validation MUST be discarded.
@@ -2577,7 +2590,7 @@ The exact protocol used to collect Evidence is out of scope of this specificatio
 
 If Evidence is cryptographically signed, it is validated before being transformed into an internal representation.
 
-If Evidence is not cryptographically signed, the conveyance protocol used to collected it MUST provide the required security.
+If Evidence is not cryptographically signed, the conveyance protocol used to collect it MUST provide the required security.
 In such cases, the cryptographic validation of Evidence depends on the security offered by the conveyance protocol.
 
 How cryptographic signature validation works depends on the specific Evidence collection method used.
@@ -2586,7 +2599,7 @@ If this is successful, a suitable certification path is looked up in the Verifie
 See Section 9.2.1 of {{DICE.Layer}}.
 If a trusted root certificate is found, X.509 certificate validation is performed.
 
-As a second example, the verification public key use to verify {{-psa-token}} Evidence is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
+As a second example, the verification public key used to verify {{-psa-token}} Evidence is looked up in the appraisal context using the `ueid` claim found in the PSA claims-set.
 If found, COSE Sign1 verification is performed.
 
 Regardless of the specific integrity protection method used, the Verifier MUST NOT process Evidence that is not successfully validated.
@@ -2789,7 +2802,7 @@ FUNC transform(
 ~~~
 {: #algo-key-transform title="Key Triple Transformation"}
 
-Note that keys are added under the authority of the verifier.
+Note that keys are added under the authority of the Verifier.
 
 ##### Domain Membership Transformation {#sec-trans-domain-mem}
 
@@ -2818,7 +2831,7 @@ FUNC transform(
 ~~~
 {: #algo-domain-member-transform title="Domain Membership Transformation"}
 
-Subsequent to transformation the domain membership relations are processed using the domain membershp processing algorithm {{sec-proc-dm}}.
+Subsequent to transformation the domain membership relations are processed using the domain membership processing algorithm {{sec-proc-dm}}.
 
 ##### Trust Dependency Transformation {#sec-trans-trust-dep}
 
@@ -2904,8 +2917,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF acs::MATCH(item.condition):
-                IF acs::CHECK(item.addition):
-                        acs::APPEND(item.addition)
+                IF !acs::APPEND(item.addition):
+                    FAIL
 
     RETURN acs
 }
@@ -2914,18 +2927,23 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
 
 The `acs::MATCH` operation depends on the type of relation.
 The matching logic for each type of relation is described in the following sections.
-The `acs::CHECK` operation does consistency checks.
-The checking logic for each type of relation is described in the following sections.
-The `acs::APPEND` operation also depends on the type of relation.
-This could involve simply appending the addition ECT.
 
-The addition could result in inconsistent ACS.  Additional ACS consistency checking might be needed.
+The `acs::APPEND` operation is defined by a pre-condition and a post-condition:
+
+* Pre-condition: `addition` is eligible to be appended.
+* Post-condition: the ACS resulting from the append satisfies the required consistency invariants (e.g., that a graph encoded across ACS entries remains acyclic).
+
+Both conditions are relation-specific; the concrete criteria for each relation are described in the following sections.
+If a relation's processing rules do not state a pre-condition or a post-condition, that condition is assumed to be a null operation (i.e., always satisfied) for that relation.
+
+`acs::APPEND` fails, leaving the ACS unchanged, if either the pre-condition or the post-condition does not hold.
+A failure of `acs::APPEND` MUST cause `match_and_augment` to terminate immediately, without processing any further relations or items: the appraisal that invoked it is thereby considered to have failed.
 
 #### Ordering of Relations
 
 The order in which items within relations are processed is important.
-Processing a relation may result in ACS modifications that affect the matching behaviour of other relations.
-The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
+Processing a relation may result in ACS modifications that affect the matching behavior of other relations.
+The Verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.
 This can be achieved by sorting the relations before processing, repeating the processing of some relations after ACS modifications, or using other algorithms.
 The "match and augment" algorithm described in {{algo-match-and-augment}} assumes that relations have been topologically sorted prior to loading into the staging area ({{algo-init-sa}}).
 
@@ -2970,7 +2988,8 @@ FUNC match_and_augment(acs: ACS, sa: StagingArea) -> ACS {
     FOREACH rel IN sa:
         FOREACH item IN rel:
             IF ser-add = SERIES-MATCH(acs, item.series):
-                acs::APPEND(ser-add)
+                IF !acs::APPEND(ser-add):
+                    FAIL
 
     RETURN acs
 }
@@ -3006,19 +3025,19 @@ Domain Membership relations describe the expected topological arrangement of the
 
 Domains are matched with ACS entries by iterating through the `dm` list, in the staging area.
 
-The acs::CHECK() does acyclic graph consistency checks of the condition ECTs in the `dm` relation.
-
 For each dm entry (M-ECT), the condition ECT is compared with either an ACS Element ECT with cmtype 2 (i.e., evidence) or a Domain ECT (M-ECT). All other ECTs are ignored.
 
-If all the `member` environments in the condition ECT have a matching ECT in the ACS, the `addition ECT` is added to the ACS.
+If all the `members` environments in the condition ECT have a matching ECT in the ACS, the `addition` ECT is added to the ACS.
 The matching dm entry is pruned from the dm list.
 
-If there is no match, processing moves to the next dm entry, till the list is exhausted and is known as one complete iteration.
+The post-condition of `acs::APPEND` for `dm` relations is that the domain-membership graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
+
+If there is no match, processing moves to the next dm entry, till the list is exhausted; a single pass over the entire dm list constitutes one complete iteration.
 
 If there are additions to ACS, then the above algorithm is repeated until there are no more additions.
 The algorithm is terminated when there are no more additions to ACS.
 
-This algorithm can be optimised to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
+This algorithm can be optimized to complete in a single iteration, if the `dm` entries in the staging area and the ACS entries are topologically sorted (bottom up, from leaves to root).
 This specification does not mandate any specific topological sorting algorithm.
 
 ##### Processing `td` Relations {#sec-proc-td}
@@ -3043,16 +3062,15 @@ FUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {
 ~~~
 {: #algo-process-trust-dep title="Process Trust Dependency Algorithm"}
 
-The ACS::CHECK() function does acyclic graph consistency checks of the condition ECTs in the `td` relation.
+The pre-condition of `acs::APPEND` for `td` relations is that `item.addition` corresponds to a domain already present in the ACS.
 
-The ACS:: APPEND() function adds the dm-item.addition to the ACS.
-
-Subsequent to the append, the ACS acyclic consistency check needs to be performed.
+The post-condition of `acs::APPEND` for `td` relations is that the trust-dependency graph encoded by the ACS remains acyclic; the append does not take effect if this does not hold.
+Since TDGs need not be isomorphs of DMGs, this post-condition is independent of the one defined for `dm` relations in {{sec-proc-dm}}.
 
 Subsequent processing phases SHOULD evaluate the Trust Domain Graph against ACS corroborated Evidence to ensure trustee graphs are also trusted.
-For example, a target environment (TE-1) with corroborated Evidence that has another trustee target environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
+For example, a Target Environment (TE-1) with corroborated Evidence that has another trustee Target Environment (TE-2), should ensure TE-2 also has corroborated Evidence before TE-1 is considered trustworthy.
 Additionally, a trust dependency might specify a strength of function requirement for TE-1.
-The trust dependency implies TE-2 should have a minimum strength of function as TE-1.
+The trust dependency implies TE-2 should have at least the same strength of function as TE-1.
 
 #### Rules of Comparison {#sec-comparison-rules}
 
@@ -3090,7 +3108,7 @@ If any attributes do not match, the C-ECT does not match the ACS-ECT.
 The processor MUST compare each attribute which is present in the C-ECT's `environment` with the corresponding attribute in the ACS-ECT's `environment` using binary comparison.
 Before performing the binary comparison, the processor SHOULD convert the attributes in both `environment`s into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
 
-If all the attributes which are present in the C-ECT `environment` (e.g., `instance-id` or `group-id`) are also present in the ACS-ECT and are binary identical, the two environments match.
+If all the attributes which are present in the C-ECT `environment` (e.g., `instance` or `group`) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.
 
 In other words, a match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
@@ -3107,7 +3125,7 @@ When comparing two `$crypto-key-type-choice` items for equality, the processor M
 
 ##### Element List Comparison {#sec-compare-element-list}
 
-A C-ECT's `element-list` matches an ACS-ETC's `element-list` if all the `element-map`s in the C-ECT's `element-list` match the `element-map`s in the ACS-ECT's `element-list`.
+A C-ECT's `element-list` matches an ACS-ECT's `element-list` if all the `element-map`s in the C-ECT's `element-list` match the `element-map`s in the ACS-ECT's `element-list`.
 
 Any `element-map` that is present in the ACS-ECT's `element-list` but not in the C-ECT's is ignored in the comparison.
 
@@ -3351,7 +3369,7 @@ Note that the processor may compare Reference Values in any order, so the compar
 
 ### Handoff
 
-Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the verifier for further processing in subsequent phases.
+Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the Verifier for further processing in subsequent phases.
 Typically, the ACS is passed to a policy engine that applies a policy to deduce high-level characteristics of the Attester from the low-level information contained in the ACS.
 This information can then be encoded in an Attestation Result that can be understood by a Relying Party, which does not need to know all the details in order to make a trust decision.
 
@@ -3430,7 +3448,7 @@ Evidence from the PSA Attester is transformed into the corresponding `ae-item` u
 ~~~
 {: #ex-ae-item title="ae-item"}
 
-Note the authority in the ECT, which is set to `MFkw..Lg=="`, and corresponds to the Attester's PEM-encoded SPKI.
+Note the authority in the ECT, which is set to `MFkw..Lg==`, and corresponds to the Attester's PEM-encoded SPKI.
 
 #### Appraisal
 
@@ -3632,7 +3650,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 3 | profile | {{&SELF}}
 | 4 | rim-validity | {{&SELF}}
 | 5 | entities | {{&SELF}}
-| 3-255 | Unassigned
+| 6-255 | Unassigned
 {: #tbl-iana-corim-map-items title="CoRIM Map Items Initial Registrations"}
 
 ## CoRIM Entity Map Registry {#sec-iana-corim-entity-map}
@@ -3653,11 +3671,11 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoRIM Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name | Value Type | Specification
+| Index | Item Name | Value Type | Description | Specification |
 |---
-| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |
-| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. |
-| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. |
+| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. | {{&SELF}} |
+| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. | {{&SELF}} |
+| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. | {{&SELF}} |
 | 3-255 | Unassigned
 {: #tbl-iana-corim-entity-map-items title="CoRIM Entity Map Items Initial Registrations"}
 
@@ -3709,7 +3727,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 |---
 | 0 | language | {{&SELF}}
 | 1 | tag-identity | {{&SELF}}
-| 2 | entity | {{&SELF}}
+| 2 | entities | {{&SELF}}
 | 3 | linked-tags | {{&SELF}}
 | 4 | triples | {{&SELF}}
 | 5-255 | Unassigned
@@ -3717,8 +3735,8 @@ Assignments consist of an integer index value, the item name, and a reference to
 
 ## CoMID Entity Map Registry {#sec-iana-comid-entity-map}
 
-This document defines a new registry titled "CoRIM Entity Map".
-The registry uses integer values as index values for items in `corim-entity-map` CBOR maps.
+This document defines a new registry titled "CoMID Entity Map".
+The registry uses integer values as index values for items in `comid-entity-map` CBOR maps.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
@@ -3733,11 +3751,11 @@ All negative values are reserved for Private Use.
 Initial registrations for the "CoMID Entity Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
-| Index | Item Name | Value Type | Specification
+| Index | Item Name | Value Type | Description | Specification |
 |---
-| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |
-| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. |
-| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. |
+| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. | {{&SELF}} |
+| 1     | reg-id      | `uri`  | A URI associated with the organization that owns the entity name. | {{&SELF}} |
+| 2     | role        | `[ + role-type-choice ]` | A type choice defining the roles that the entity is claiming. | {{&SELF}} |
 | 3-255 | Unassigned
 {: #tbl-iana-comid-entity-map-items title="CoMID Entity Map Items Initial Registrations"}
 
@@ -3749,6 +3767,7 @@ The registry uses integer values as index values for items in the `triples-map` 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3778,11 +3797,12 @@ Assignments consist of an integer index value, the item name, and a reference to
 ## CoMID Measurement Values Map Registry {#sec-iana-comid-measurement-values-map}
 
 This document defines a new registry titled "CoMID Measurement Values Map".
-The registry uses integer values as index values for items in multiple triples' representations.
+The registry uses integer values as index values for items in `measurement-values-map`.
 
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3826,6 +3846,7 @@ The registry uses integer values as index values for items in `measurement-value
 Future registrations for this registry are to be made based on {{?RFC8126}} as follows:
 
 | Range                      | Registration Procedures
+|---
 | 0-1023                     | Standards Action
 | 1024-65535                 | Specification Required
 | 65536-18446744073709551616 | First come first served
@@ -3833,7 +3854,7 @@ Future registrations for this registry are to be made based on {{?RFC8126}} as f
 
 All negative values are reserved for Private Use.
 
-Initial registrations for the "CoMID Measurement Values Map" registry are provided below.
+Initial registrations for the "CoMID Flags Map" registry are provided below.
 Assignments consist of an integer index value, the item name, and a reference to the defining specification.
 
 | Index | Item Name                    | Specification |
@@ -3946,7 +3967,7 @@ Author/Change controller:
 : IETF
 
 Provisional registration?
-: Maybe
+: no
 
 ### rim+cose {#sec-mt-rim-cose}
 
@@ -4006,7 +4027,7 @@ Author/Change controller:
 : IETF
 
 Provisional registration?
-: Maybe
+: no
 
 ## CoAP Content-Formats Registration
 
