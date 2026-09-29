@@ -540,10 +540,22 @@ The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` 
 ~~~
 
 Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption {{-cose}}. A CoRIM tag MUST be wrapped in a COSE_Sign1 structure.
+Encryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
+COSE_Sign structure.
+
+The COSE_Sign structure may be used when:
+
+1. Multiple authorities need to sign the same unsigned CoRIM payload; or
+2. A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
+
+See {{sec-mult-sign}} for details on multi-signature CoRIM.
+
 The CoRIM MUST be signed by the CoRIM creator.
 
-The following CDDL specification defines a restrictive subset of COSE header
+### Signing with single signature
+
+COSE_Sign1 is used when a single signer needs to produce a signature over an unsigned corim (`tagged-unsigned-corim-map`).
+When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
 information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
@@ -563,7 +575,15 @@ The following describes each child element of this type.
 
 * `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
 
-### Protected Header Map
+### Header Parameters  {#sec-header}
+
+This section describes the header parameters, when
+
+a. A single signer needs to produce a signature using (COSE_Sign1) object.
+OR
+b. When multiple signers, each with different authority, needs to sign the same unsigned CoRIM, using COSE_Sign object. In this case each array entry of `signature-structure` has the header parameters that carry the details of the signature algorithm and signer information as detailed below.
+
+#### Protected Header Map
 
 ~~~ cddl
 {::include cddl/protected-corim-header-map.cddl}
@@ -601,7 +621,7 @@ Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the sign
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
-### CWT Claims {#cwt-claims}
+#### CWT Claims {#cwt-claims}
 
 The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
@@ -619,7 +639,7 @@ Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 
 * `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
-### Meta Map {#sec-corim-meta}
+#### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
@@ -651,11 +671,104 @@ Described in {{sec-common-validity}}.
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
 Signer map.
 
-### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
+#### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
 ~~~ cddl
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
+
+### Signing with Multiple Signatures {#sec-mult-sign}
+
+An Endorser or a Reference Value Provider may need to generate multiple signatures over the same unsigned CoRIM.
+This is required for the following two use cases.
+
+a. To support multiple signature algorithms (such as a traditional algorithm and a post-quantum algorithm) without having to produce multiple identical CoRIMs.
+
+b. Alternatively, an unsigned CoRIM containing Reference Values or Endorsements needs to be signed by multiple different signers, such as
+a component manufacturer and a device manufacturer.
+
+In both the above cases, COSE_Sign object is used.
+
+When using COSE_Sign the following CDDL specification defines the overall structure.
+
+~~~ cddl
+{::include cddl/cose-sign-corim.cddl}
+~~~
+
+The following describes each child element of this type.
+
+* `protected`: The top level protected header MUST not be used.
+               Instead the protected header that is in each signature structure is used. See {{{sec-multi-sign}}}
+
+* `unprotected`: The top level unprotected header MUST not be used.
+                 Instead the unprotected header that is in each signature structure is used. See {{{sec-multi-sign}}}
+
+* `payload`: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
+  When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
+
+* `signature`: This field contains an array of signature structure, as defined in {{sec-multi-sign}}.
+
+
+#### Signature Parameters of Multi Sign CoRIM {#sec-multi-sign}
+
+The signature parameter of a COSE_Sign object contains an array of signature structure that has
+Header parameters alongwith signature bytes. The Header parameters contain information relating to the
+content and the details about the signer performing the signature.
+
+~~~ cddl
+{::include cddl/signature-structure.cddl}
+~~~
+
+The following describes each element of signature_structure.
+
+* `protected`: A CBOR Encoded protected header which is protected by the COSE
+               signature.
+
+* `unprotected`: A COSE header that is not protected by COSE signatur.
+
+* `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
+
+Refer section {{sec-multi-sign-headers}} when setting the above parameters
+
+#### Header Parameters {#sec-multi-sign-headers}
+
+* Single Signer, multiple algorithms
+When a single signer (i.e. a single authority) produces multiple signatures each corresponding to different signature algorithm (such as a traditional algorithm and a post-quantum algorithm), the Header parameters are set using the following rules.
+
+1. The first entry of the signature_structure array is populated with details set in {{sec-header}}.
+
+2. The subsequent entries ONLY populate the minimum required elements, to describe the details about the signature algorithm as under:
+
+The CoRIM protected header map uses some common COSE header parameters.
+
+The following describes each child item of this map.
+
+* `alg` (index 1): An integer that identifies a signature algorithm.
+
+Either, when the payload is signed directly:
+
+* `content-type` (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.
+
+Or, when the payload is signed indirectly using a Hash Envelope ({{-cose-hash-envelope}}):
+
+* `payload_hash_alg` (index 258): The hash algorithm used to produce the payload.
+
+* `payload_preimage_content_type` (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload.
+
+Note: A CoRIM Signer MAY choose to omit the following CWT Claims when the details of the Signer and CoRIM Validity
+are identical across multiple entries and conveyed via first entry of signature_structure array.
+
+* `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
+  Described in {{-CWT_CLAIMS_COSE}}.
+
+* `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
+  Described in {{sec-corim-meta}}.
+
+
+* Multiple Signers
+When an unsigned CoRIM is signed by multiple authorities, the Header Parameters of each entry in the 'signature_structure', is populated with details
+of each signer, algorithm used to sign the CORIM as well as other signer & CoRIM Validity metadata as detailed in section {{sec-header}}.
+
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
@@ -2541,11 +2654,17 @@ Further selection criteria may be applied to the CoRIM contents at later stages.
 
 #### CoRIM Trust Anchors
 
-If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors available to the Verifier.
+If CoRIM tags are signed, the signatures MUST be verified using the appropriate trust anchors available to the Verifier.
 The Verifier is expected to have a trust anchor store.
 The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the `x5chain` in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
+
+If the CoRIM is signed by multiple authorities, at least one signature MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
+A Verifier Appraisal Policy for Evidence may require more signatures to be verified before accepting the CoRIM.
+It is expected that for each of these signers, the corresponding trust anchors are provisioned in the Verifier.
+
+The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 
 #### Tags Extraction and Validation
 
