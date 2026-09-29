@@ -88,9 +88,9 @@ Table of Contents
        4.1.4.  Profile Types
        4.1.5.  Entities
      4.2.  Signed CoRIM
-       4.2.1.  Signing with One Signer
+       4.2.1.  Signing with single signature
        4.2.2.  Header Parameters
-       4.2.3.  Signing with Multiple Signers
+       4.2.3.  Signing with Multiple Signatures
      4.3.  Signer authority of securely conveyed unsigned CoRIM
        4.3.1.  CoRIM collections
    5.  Concise Module Identifier (CoMID)
@@ -747,13 +747,15 @@ Table of Contents
 
    The CoRIM MUST be signed by the CoRIM creator.
 
-4.2.1.  Signing with One Signer
+4.2.1.  Signing with single signature
 
-   When using COSE_Sign1 the following CDDL specification defines a
-   restrictive subset of COSE header parameters that MUST be used in the
-   protected header alongside additional information about the CoRIM
-   encoded in a corim-meta-map (Section 4.2.2.3) or alternatively in a
-   CWT-Claims ([RFC9597]).
+   COSE_Sign1 is used when a single signer needs to produce a signature
+   over an unsigned corim (tagged-unsigned-corim-map).  When using
+   COSE_Sign1 the following CDDL specification defines a restrictive
+   subset of COSE header parameters that MUST be used in the protected
+   header alongside additional information about the CoRIM encoded in a
+   corim-meta-map (Section 4.2.2.3) or alternatively in a CWT-Claims
+   ([RFC9597]).
 
    COSE-Sign1-corim = [
      protected: bstr .cbor protected-corim-header-map
@@ -784,8 +786,14 @@ Table of Contents
 
 4.2.2.  Header Parameters
 
-   This section describes the header parameters of a signed CoRIM using
-   a single signer (COSE-Sign1) or multiple signers (COSE_Sign).
+   This section describes the header parameters, when
+
+   a.  A single signer needs to produce a signature using (COSE_Sign1)
+   object.  OR b.  When multiple signers, each with different authority,
+   needs to sign the same unsigned CoRIM, using COSE_Sign object.  In
+   this case each array entry of signature-structure has the header
+   parameters that carry the details of the signature algorithm and
+   signer information as detailed below.
 
 4.2.2.1.  Protected Header Map
 
@@ -932,20 +940,26 @@ Table of Contents
      * cose-label => cose-value
    }
 
-4.2.3.  Signing with Multiple Signers
+4.2.3.  Signing with Multiple Signatures
 
    An Endorser or a Reference Value Provider may need to generate
-   multiple signatures over the same unsigned CoRIM, e.g., to support
-   multiple signature algorithms (such as a traditional algorithm and a
-   post-quantum algorithm) without having to produce multiple identical
-   CoRIMs.
+   multiple signatures over the same unsigned CoRIM.  This is required
+   for the following two use cases.
 
-   Alternatively, the same unsigned CoRIM containing a Reference Values
-   or Endorsements needs to be signed by multiple different signers,
-   such as a component manufacturer and a device manufacturer.
+   a.  To support multiple signature algorithms (such as a traditional
+   algorithm and a post-quantum algorithm) without having to produce
+   multiple identical CoRIMs.
+
+   b.  Alternatively, an unsigned CoRIM containing Reference Values or
+   Endorsements needs to be signed by multiple different signers, such
+   as a component manufacturer and a device manufacturer.
+
+   In both the above cases, COSE_Sign object is used.
 
    When using COSE_Sign the following CDDL specification defines the
-   overall structure.
+   overall structure.  Header parameters relating to the content and
+   header parameters relating to the signature are carried along with
+   the signature itself.
 
    COSE-Sign-corim = [
      protected: bstr .size 0
@@ -956,12 +970,22 @@ Table of Contents
      signature: [2* signature-structure]
    ]
 
-   When multiple authorities sign an unsigned CoRIM or multiple
-   different signatures are used by an authority, the details about each
-   signature are added to each entry in the signature-structure array,
-   as shown below.
+   The following describes each child element of this type.
 
-   The top level Header parameters of the CoRIM structure MUST be empty.
+   *  protected: The top level protected header MUST not be used and
+      hence it is initialised to zero.  Instead the protected header
+      that is in each signature structure is used.  Please see below.
+
+   *  unprotected: The top level unprotected header MUST not be used.
+      Instead the unprotected header that is in each signature structure
+      is used.  Please see below.
+
+   *  payload: When the payload is signed directly, either a CBOR-
+      encoded tagged CoRIM, or nil if it is detached.  When the payload
+      is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
+
+   *  signature: This field contains an array of signatures, as defined
+      in Section 4.2.3.1.
 
    signature-structure = [
      protected: bstr .cbor protected-corim-header-map
@@ -969,8 +993,7 @@ Table of Contents
      signature: bstr
    ]
 
-   Refer to Section 4.2.2 when setting the header parameters associated
-   to each authority signing the CoRIM.
+4.2.3.1.  Signature Parameters of Multi Sign CoRIM
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
