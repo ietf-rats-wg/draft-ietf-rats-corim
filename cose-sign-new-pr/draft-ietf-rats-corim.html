@@ -2413,11 +2413,54 @@ signature-structure = [
 <ul class="normal">
 <li class="normal" id="section-4.2.3.2-1.1">
                 <p id="section-4.2.3.2-1.1.1">Single Signer, multiple algorithms
-When a single signer (i.e. a single authority) produces multiple signatures each corresponding to different signature algorithm (such as a traditional algorithm and a post-quantum algorithm), the Header parameters are set as given below.<a href="#section-4.2.3.2-1.1.1" class="pilcrow">¶</a></p>
+When a single signer (i.e. a single authority) produces multiple signatures each corresponding to different signature algorithm (such as a traditional algorithm and a post-quantum algorithm), the Header parameters are set using the following rules.<a href="#section-4.2.3.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="normal" id="section-4.2.3.2-1.2">
-                <p id="section-4.2.3.2-1.2.1">Multiple Signers
-When an unsigned CoRIM is signed by multiple authorities, the Header Parameters of each entry in the 'signature-structure', is populated with details<a href="#section-4.2.3.2-1.2.1" class="pilcrow">¶</a></p>
+            </ul>
+<ol start="1" type="1" class="normal type-1" id="section-4.2.3.2-2">
+<li id="section-4.2.3.2-2.1">
+                <p id="section-4.2.3.2-2.1.1">The first entry of the signature_structure array is populated with details set in <a href="#sec-header" class="auto internal xref">Section 4.2.2</a>.<a href="#section-4.2.3.2-2.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li id="section-4.2.3.2-2.2">
+                <p id="section-4.2.3.2-2.2.1">The subsequent entries ONLY populate the minimum required elements, to describe the details about the signature algorithm as under:<a href="#section-4.2.3.2-2.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ol>
+<p id="section-4.2.3.2-3">The CoRIM protected header map uses some common COSE header parameters.<a href="#section-4.2.3.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2.3.2-4">The following describes each child item of this map.<a href="#section-4.2.3.2-4" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.3.2-5.1">
+                <p id="section-4.2.3.2-5.1.1"><code>alg</code> (index 1): An integer that identifies a signature algorithm.<a href="#section-4.2.3.2-5.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-4.2.3.2-6">Either, when the payload is signed directly:<a href="#section-4.2.3.2-6" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.3.2-7.1">
+                <p id="section-4.2.3.2-7.1.1"><code>content-type</code> (index 3): A string that represents the "MIME Content type" carried in the CoRIM payload.<a href="#section-4.2.3.2-7.1.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-4.2.3.2-8">Or, when the payload is signed indirectly using a Hash Envelope (<span>[<a href="#RFC9995" class="cite xref">RFC9995</a>]</span>):<a href="#section-4.2.3.2-8" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.3.2-9.1">
+                <p id="section-4.2.3.2-9.1.1"><code>payload_hash_alg</code> (index 258): The hash algorithm used to produce the payload.<a href="#section-4.2.3.2-9.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-4.2.3.2-9.2">
+                <p id="section-4.2.3.2-9.2.1"><code>payload_preimage_content_type</code> (index 259): A string that represents the "MIME Content type" of the CoRIM document used as the pre-image of the payload.<a href="#section-4.2.3.2-9.2.1" class="pilcrow">¶</a></p>
+</li>
+            </ul>
+<p id="section-4.2.3.2-10">Note: A CoRIM Signer MAY choose to omit the following CWT Claims when the details of the Signer and CoRIM Validity
+are identical across multiple entries and conveyed via first entry of signature_structure array.<a href="#section-4.2.3.2-10" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-4.2.3.2-11.1">
+                <p id="section-4.2.3.2-11.1.1"><code>CWT-Claims</code> (index 15): A map that contains metadata associated with a signed CoRIM.
+Described in <span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>.<a href="#section-4.2.3.2-11.1.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-4.2.3.2-11.2">
+                <p id="section-4.2.3.2-11.2.1"><code>corim-meta</code> (index 8): A map that contains metadata associated with a signed CoRIM.
+Described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.2.3</a>.<a href="#section-4.2.3.2-11.2.1" class="pilcrow">¶</a></p>
+</li>
+              <li class="normal" id="section-4.2.3.2-11.3">
+                <p id="section-4.2.3.2-11.3.1">Multiple Signers
+When an unsigned CoRIM is signed by multiple authorities, the Header Parameters of each entry in the 'signature_structure', is populated with details
+of each signer, algorithm used to sign the CORIM as well as other signer &amp; CoRIM Validity metadata as detailed in section <a href="#sec-header" class="auto internal xref">Section 4.2.2</a>.<a href="#section-4.2.3.2-11.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </section>

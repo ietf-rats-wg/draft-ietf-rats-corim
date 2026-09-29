@@ -1015,12 +1015,54 @@ Table of Contents
    *  Single Signer, multiple algorithms When a single signer (i.e. a
       single authority) produces multiple signatures each corresponding
       to different signature algorithm (such as a traditional algorithm
-      and a post-quantum algorithm), the Header parameters are set as
-      given below.
+      and a post-quantum algorithm), the Header parameters are set using
+      the following rules.
+
+   1.  The first entry of the signature_structure array is populated
+       with details set in Section 4.2.2.
+
+   2.  The subsequent entries ONLY populate the minimum required
+       elements, to describe the details about the signature algorithm
+       as under:
+
+   The CoRIM protected header map uses some common COSE header
+   parameters.
+
+   The following describes each child item of this map.
+
+   *  alg (index 1): An integer that identifies a signature algorithm.
+
+   Either, when the payload is signed directly:
+
+   *  content-type (index 3): A string that represents the "MIME Content
+      type" carried in the CoRIM payload.
+
+   Or, when the payload is signed indirectly using a Hash Envelope
+   ([RFC9995]):
+
+   *  payload_hash_alg (index 258): The hash algorithm used to produce
+      the payload.
+
+   *  payload_preimage_content_type (index 259): A string that
+      represents the "MIME Content type" of the CoRIM document used as
+      the pre-image of the payload.
+
+   Note: A CoRIM Signer MAY choose to omit the following CWT Claims when
+   the details of the Signer and CoRIM Validity are identical across
+   multiple entries and conveyed via first entry of signature_structure
+   array.
+
+   *  CWT-Claims (index 15): A map that contains metadata associated
+      with a signed CoRIM.  Described in [RFC9597].
+
+   *  corim-meta (index 8): A map that contains metadata associated with
+      a signed CoRIM.  Described in Section 4.2.2.3.
 
    *  Multiple Signers When an unsigned CoRIM is signed by multiple
       authorities, the Header Parameters of each entry in the
-      'signature-structure', is populated with details
+      'signature_structure', is populated with details of each signer,
+      algorithm used to sign the CORIM as well as other signer & CoRIM
+      Validity metadata as detailed in section Section 4.2.2.
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
