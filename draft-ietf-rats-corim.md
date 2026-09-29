@@ -580,8 +580,12 @@ The following describes each child element of this type.
 This section describes the header parameters, when
 
 a. A single signer needs to produce a signature using (COSE_Sign1) object.
+
 OR
-b. When multiple signers, each with different authority, needs to sign the same unsigned CoRIM, using COSE_Sign object. In this case each array entry of `signature-structure` has the header parameters that carry the details of the signature algorithm and signer information as detailed below.
+
+b. When multiple signers, each with different authority, needs to sign the same unsigned CoRIM, using COSE_Sign object.
+In this case each array entry of `signature_structure` has the header parameters that carry the details of the signature algorithm
+and signer information as detailed in {{sec-mult-sign}}
 
 #### Protected Header Map
 
@@ -698,10 +702,10 @@ When using COSE_Sign the following CDDL specification defines the overall struct
 The following describes each child element of this type.
 
 * `protected`: The top level protected header MUST not be used.
-               Instead the protected header that is in each signature structure is used. See {{{sec-multi-sign}}}
+               Instead the protected header that is in each signature structure is used. See {{sec-multi-sign}}
 
 * `unprotected`: The top level unprotected header MUST not be used.
-                 Instead the unprotected header that is in each signature structure is used. See {{{sec-multi-sign}}}
+                 Instead the unprotected header that is in each signature structure is used. See {{sec-multi-sign}}
 
 * `payload`: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
   When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
@@ -732,7 +736,7 @@ Refer section {{sec-multi-sign-headers}} when setting the above parameters
 
 #### Header Parameters {#sec-multi-sign-headers}
 
-* Single Signer, multiple algorithms
+* Single Signer, multiple signing algorithms
 When a single signer (i.e. a single authority) produces multiple signatures each corresponding to different signature algorithm (such as a traditional algorithm and a post-quantum algorithm), the Header parameters are set using the following rules.
 
 1. The first entry of the signature_structure array is populated with details set in {{sec-header}}.
