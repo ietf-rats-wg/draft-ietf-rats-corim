@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-24T04:21:24.339277+00:00",
+  "timestamp": "2026-09-29T05:22:58.736883+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -16862,7 +16862,7 @@
       "id": "I_kwDOH6-tI88AAAABRu6xNA",
       "title": "`tagged-bool-set` in `bool-matcher` is useless",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/714",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -16871,7 +16871,23 @@
       "labels": [],
       "body": "`tagged-bool-set` requires two or more elements, but bool has only two possible values :-) So, the only non-degenerate instance of a boolean set is `[true, false]` which, as a matching condition, is a tautology and can already be expressed by omitting the entry.\n\nWe can safely remove `tagged-bool-set` from the union, and drop the corresponding paragraph in the \"how to match\" section.\n\n(Originally noted and reported by @sgilson)",
       "createdAt": "2026-09-17T08:39:25Z",
-      "updatedAt": "2026-09-17T08:42:16Z",
+      "updatedAt": "2026-09-28T21:58:36Z",
+      "closedAt": "2026-09-28T21:58:36Z",
+      "comments": []
+    },
+    {
+      "number": 717,
+      "id": "I_kwDOH6-tI88AAAABTqmgng",
+      "title": "[examples] `profile` encoded as an untagged `tstr` instead of an `uri`, contradicting `$profile-type-choice`",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/717",
+      "state": "OPEN",
+      "author": "mbronk-intc",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "## Issue\n\nThe examples in [`cddl/examples/cmw-corim-collection.diag`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/cmw-corim-collection.diag#L21) - rendered in [\u00a74.3.1](https://datatracker.ietf.org/doc/html/draft-ietf-rats-corim-11#name-corim-collections) (\"CoRIM collections\") - encode the CoRIM `profile` field (key 3) as an **untagged** `tstr`, whereas the `$profile-type-choice` admits only `uri`[^1] and `tagged-oid-type`:\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/profile-type-choice.cddl#L1-L2\n\n [^1]: `uri` is CBOR-tagged (`uri = #6.32(tstr)`, ref. [RFC 8610 App. D](https://www.rfc-editor.org/info/rfc8610/#appendix-D)).\n\nSeparate from the tagging issue, `tag:example.com,2025/example-profile` is not a well-formed `tag:` URI. [RFC 4151 \u00a72.1](https://www.rfc-editor.org/info/rfc4151/#section-2.1):\n```abnf\ntagURI        = \"tag:\" taggingEntity \":\" specific [ \"#\" fragment ]\ntaggingEntity = authorityName \",\" date\n```\n\nThe taggingEntity (`example.com,2025`) must be followed by `:`; while the examples use `/`.\n\n## Where\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/cmw-corim-collection.diag#L21\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/cmw-corim-collection.diag#L41\n\n> [!NOTE]\n> An untagged `tstr` matches neither arm, so a decoder implementing \u00a74.1.4 does not recognise key 3 as `profile` at all; it falls through to the `$$corim-map-extension` socket. The CoRIM is still *accepted*, but the profile is never *recognised* \u2014 which is the failure mode most likely to go unnoticed.\n>\n> This appears to be an example defect, not an intentional grammar change. Other examples, e.g.  [`cddl/examples/intrep-acs-psa-1.diag`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/intrep-acs-psa-1.diag#L37) carry correct values.\n\n\n## Suggested fix\n\n```diff\n--- a/cddl/examples/cmw-corim-collection.diag\n+++ b/cddl/examples/cmw-corim-collection.diag\n@@\n-      / profile / 3: \"tag:example.com,2025/example-profile\",\n+      / profile / 3: 32(\"tag:example.com,2025:example-profile\"),\n@@\n-      / id: / 0: h'51a5f63371c045f5855e43e8254c1806',\n+      / id / 0: h'51a5f63371c045f5855e43e8254c1806',\n@@\n-      / profile / 3: \"tag:example.com,2025/software-profile\"})>>]\n+      / profile / 3: 32(\"tag:example.com,2025:software-profile\")})>>]\n```\n",
+      "createdAt": "2026-09-28T12:41:46Z",
+      "updatedAt": "2026-09-28T12:41:46Z",
       "closedAt": null,
       "comments": []
     }
@@ -97483,24 +97499,26 @@
       "id": "PR_kwDOH6-tI88AAAABD5tGgw",
       "title": "Drop `tagged-bool-set`",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/715",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "A set of two or more booleans is [true, false] which can be already expressed by omitting the entry.\r\n\r\nFix #714 ",
       "createdAt": "2026-09-17T09:22:45Z",
-      "updatedAt": "2026-09-23T14:15:39Z",
+      "updatedAt": "2026-09-28T21:58:50Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d5e590c90c878d308027f3458b43ea735b81f056",
+      "baseRefOid": "7e5c1579ec200c92a47af185f2f7e86613d64f15",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "bool-matcher-fix",
-      "headRefOid": "b9b46ec42f1c1adf84adbe5294fa5920475b1302",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "3a4e9f0983776e701ee5db90355a3ff630b88c52",
+      "closedAt": "2026-09-28T21:58:35Z",
+      "mergedAt": "2026-09-28T21:58:35Z",
+      "mergedBy": "steven-bellock",
+      "mergeCommit": {
+        "oid": "d6fae56c4634152c8ae22d6bee57d74944c0be69"
+      },
       "comments": [
         {
           "author": "steven-bellock",
@@ -97581,40 +97599,40 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABOOjv1Q",
           "commit": {
-            "abbreviatedOid": "b9b46ec"
+            "abbreviatedOid": "3a4e9f0"
           },
           "author": "steven-bellock",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-09-18T15:47:20Z",
-          "updatedAt": "2026-09-18T15:47:20Z",
+          "updatedAt": "2026-09-28T21:53:08Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABO3ADfA",
           "commit": {
-            "abbreviatedOid": "b9b46ec"
+            "abbreviatedOid": "3a4e9f0"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM!",
           "createdAt": "2026-09-23T14:14:54Z",
-          "updatedAt": "2026-09-23T14:14:54Z",
+          "updatedAt": "2026-09-28T21:53:08Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABO3Almw",
           "commit": {
-            "abbreviatedOid": "b9b46ec"
+            "abbreviatedOid": "3a4e9f0"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-09-23T14:15:39Z",
-          "updatedAt": "2026-09-23T14:15:39Z",
+          "updatedAt": "2026-09-28T21:53:08Z",
           "comments": []
         }
       ]
@@ -97631,18 +97649,26 @@
       "labels": [],
       "body": "Clarify that the tagged (i.e., range/set) forms for codepoints 16-19 are only meaningful in conditions -- i.e., the corresponding entries in ACS-ECT MUST use the \"bare\" form.\r\n\r\nFix #649\r\n\r\n**NOTE**: this sits on top of PR #715 \r\n",
       "createdAt": "2026-09-17T10:06:57Z",
-      "updatedAt": "2026-09-18T07:52:12Z",
+      "updatedAt": "2026-09-28T23:54:20Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d5e590c90c878d308027f3458b43ea735b81f056",
+      "baseRefOid": "d6fae56c4634152c8ae22d6bee57d74944c0be69",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "clarify-matchers",
-      "headRefOid": "6fc2537c3e73f14aa4a8d6ebed4f98340f1e48a0",
+      "headRefOid": "fe88555672923a7096d2fb97633873fa495d0417",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">NOTE: this sits on top of PR https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/715\r\n\r\n#715 has been merged as d6fae56c4634152c8ae22d6bee57d74944c0be69.",
+          "createdAt": "2026-09-28T22:00:12Z",
+          "updatedAt": "2026-09-28T22:00:12Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI88AAAABOCSjeg",
