@@ -2145,9 +2145,11 @@ When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM
 <a href="#section-4.2.2" class="section-number selfRef">4.2.2. </a><a href="#name-header-parameters" class="section-name selfRef">Header Parameters</a>
           </h4>
 <p id="section-4.2.2-1">This section describes the header parameters, when<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
-<p id="section-4.2.2-2">a. A single signer needs to produce a signature using (COSE_Sign1) object.
-OR
-b. When multiple signers, each with different authority, needs to sign the same unsigned CoRIM, using COSE_Sign object. In this case each array entry of <code>signature-structure</code> has the header parameters that carry the details of the signature algorithm and signer information as detailed below.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2.2-2">a. A single signer needs to produce a signature using (COSE_Sign1) object.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
+<p id="section-4.2.2-3">OR<a href="#section-4.2.2-3" class="pilcrow">¶</a></p>
+<p id="section-4.2.2-4">b. When multiple signers, each with different authority, needs to sign the same unsigned CoRIM, using COSE_Sign object.
+In this case each array entry of <code>signature_structure</code> has the header parameters that carry the details of the signature algorithm
+and signer information as detailed in <a href="#sec-mult-sign" class="auto internal xref">Section 4.2.3</a><a href="#section-4.2.2-4" class="pilcrow">¶</a></p>
 <div id="protected-header-map">
 <section id="section-4.2.2.1">
             <h5 id="name-protected-header-map">
@@ -2358,11 +2360,11 @@ COSE-Sign-corim = [
 <ul class="normal">
 <li class="normal" id="section-4.2.3-8.1">
               <p id="section-4.2.3-8.1.1"><code>protected</code>: The top level protected header MUST not be used.
-             Instead the protected header that is in each signature structure is used. See <span class="contact-name">sec-multi-sign</span><a href="#section-4.2.3-8.1.1" class="pilcrow">¶</a></p>
+             Instead the protected header that is in each signature structure is used. See <a href="#sec-multi-sign" class="auto internal xref">Section 4.2.3.1</a><a href="#section-4.2.3-8.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.2.3-8.2">
               <p id="section-4.2.3-8.2.1"><code>unprotected</code>: The top level unprotected header MUST not be used.
-               Instead the unprotected header that is in each signature structure is used. See <span class="contact-name">sec-multi-sign</span><a href="#section-4.2.3-8.2.1" class="pilcrow">¶</a></p>
+               Instead the unprotected header that is in each signature structure is used. See <a href="#sec-multi-sign" class="auto internal xref">Section 4.2.3.1</a><a href="#section-4.2.3-8.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.2.3-8.3">
               <p id="section-4.2.3-8.3.1"><code>payload</code>: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
@@ -2412,7 +2414,7 @@ signature-structure = [
             </h5>
 <ul class="normal">
 <li class="normal" id="section-4.2.3.2-1.1">
-                <p id="section-4.2.3.2-1.1.1">Single Signer, multiple algorithms
+                <p id="section-4.2.3.2-1.1.1">Single Signer, multiple signing algorithms
 When a single signer (i.e. a single authority) produces multiple signatures each corresponding to different signature algorithm (such as a traditional algorithm and a post-quantum algorithm), the Header parameters are set using the following rules.<a href="#section-4.2.3.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
