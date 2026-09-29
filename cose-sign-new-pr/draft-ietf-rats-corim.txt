@@ -970,13 +970,13 @@ Table of Contents
 
    The following describes each child element of this type.
 
-   *  protected: The top level protected header MUST not be used and
-      hence it is initialised to zero.  Instead the protected header
-      that is in each signature structure is used.  Please see below.
+   *  protected: The top level protected header MUST not be used.
+      Instead the protected header that is in each signature structure
+      is used.  See sec-multi-sign
 
    *  unprotected: The top level unprotected header MUST not be used.
       Instead the unprotected header that is in each signature structure
-      is used.  Please see below.
+      is used.  See sec-multi-sign
 
    *  payload: When the payload is signed directly, either a CBOR-
       encoded tagged CoRIM, or nil if it is detached.  When the payload
@@ -988,10 +988,9 @@ Table of Contents
 4.2.3.1.  Signature Parameters of Multi Sign CoRIM
 
    The signature parameter of a COSE_Sign object contains an array of
-   signature structure that carries information about the Header
-   parameters relating to the content and header parameters relating to
-   the signer information that is carried along with the signature
-   itself.
+   signature structure that has Header parameters alongwith signature
+   bytes.  The Header parameters contain information relating to the
+   content and the details about the signer performing the signature.
 
    signature-structure = [
      protected: bstr .cbor protected-corim-header-map
@@ -1013,7 +1012,7 @@ Table of Contents
 
 4.2.3.2.  Header Parameters
 
-   *  Signle Signer, multiple algorithms When a single signer (i.e. a
+   *  Single Signer, multiple algorithms When a single signer (i.e. a
       single authority) produces multiple signatures each corresponding
       to different signature algorithm (such as a traditional algorithm
       and a post-quantum algorithm), the Header parameters are set as

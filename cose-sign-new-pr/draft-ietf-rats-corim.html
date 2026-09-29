@@ -2357,12 +2357,12 @@ COSE-Sign-corim = [
 <p id="section-4.2.3-7">The following describes each child element of this type.<a href="#section-4.2.3-7" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.2.3-8.1">
-              <p id="section-4.2.3-8.1.1"><code>protected</code>: The top level protected header MUST not be used and hence it is initialised to zero.
-             Instead the protected header that is in each signature structure is used. Please see below.<a href="#section-4.2.3-8.1.1" class="pilcrow">¶</a></p>
+              <p id="section-4.2.3-8.1.1"><code>protected</code>: The top level protected header MUST not be used.
+             Instead the protected header that is in each signature structure is used. See <span class="contact-name">sec-multi-sign</span><a href="#section-4.2.3-8.1.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.2.3-8.2">
               <p id="section-4.2.3-8.2.1"><code>unprotected</code>: The top level unprotected header MUST not be used.
-               Instead the unprotected header that is in each signature structure is used. Please see below.<a href="#section-4.2.3-8.2.1" class="pilcrow">¶</a></p>
+               Instead the unprotected header that is in each signature structure is used. See <span class="contact-name">sec-multi-sign</span><a href="#section-4.2.3-8.2.1" class="pilcrow">¶</a></p>
 </li>
             <li class="normal" id="section-4.2.3-8.3">
               <p id="section-4.2.3-8.3.1"><code>payload</code>: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
@@ -2377,9 +2377,9 @@ When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM
             <h5 id="name-signature-parameters-of-mul">
 <a href="#section-4.2.3.1" class="section-number selfRef">4.2.3.1. </a><a href="#name-signature-parameters-of-mul" class="section-name selfRef">Signature Parameters of Multi Sign CoRIM</a>
             </h5>
-<p id="section-4.2.3.1-1">The signature parameter of a COSE_Sign object contains an array of signature structure that carries
-information about the Header parameters relating to the content and header parameters relating to the
-signer information that is carried along with the signature itself.<a href="#section-4.2.3.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.3.1-1">The signature parameter of a COSE_Sign object contains an array of signature structure that has
+Header parameters alongwith signature bytes. The Header parameters contain information relating to the
+content and the details about the signer performing the signature.<a href="#section-4.2.3.1-1" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.2.3.1-2">
 <pre>
 signature-structure = [
@@ -2412,7 +2412,7 @@ signature-structure = [
             </h5>
 <ul class="normal">
 <li class="normal" id="section-4.2.3.2-1.1">
-                <p id="section-4.2.3.2-1.1.1">Signle Signer, multiple algorithms
+                <p id="section-4.2.3.2-1.1.1">Single Signer, multiple algorithms
 When a single signer (i.e. a single authority) produces multiple signatures each corresponding to different signature algorithm (such as a traditional algorithm and a post-quantum algorithm), the Header parameters are set as given below.<a href="#section-4.2.3.2-1.1.1" class="pilcrow">¶</a></p>
 </li>
               <li class="normal" id="section-4.2.3.2-1.2">
