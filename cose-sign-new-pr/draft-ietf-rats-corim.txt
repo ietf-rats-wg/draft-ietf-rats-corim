@@ -957,9 +957,7 @@ Table of Contents
    In both the above cases, COSE_Sign object is used.
 
    When using COSE_Sign the following CDDL specification defines the
-   overall structure.  Header parameters relating to the content and
-   header parameters relating to the signature are carried along with
-   the signature itself.
+   overall structure.
 
    COSE-Sign-corim = [
      protected: bstr .size 0
@@ -984,8 +982,16 @@ Table of Contents
       encoded tagged CoRIM, or nil if it is detached.  When the payload
       is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
-   *  signature: This field contains an array of signatures, as defined
-      in Section 4.2.3.1.
+   *  signature: This field contains an array of signature structure, as
+      defined in Section 4.2.3.1.
+
+4.2.3.1.  Signature Parameters of Multi Sign CoRIM
+
+   The signature parameter of a COSE_Sign object contains an array of
+   signature structure that carries information about the Header
+   parameters relating to the content and header parameters relating to
+   the signer information that is carried along with the signature
+   itself.
 
    signature-structure = [
      protected: bstr .cbor protected-corim-header-map
@@ -993,7 +999,19 @@ Table of Contents
      signature: bstr
    ]
 
-4.2.3.1.  Signature Parameters of Multi Sign CoRIM
+   The following describes each element of signature_structure.
+
+   *  protected: A CBOR Encoded protected header which is protected by
+      the COSE signature.
+
+   *  unprotected: A COSE header that is not protected by COSE signatur.
+
+   *  signature: A COSE signature block, as defined in Section 4 of
+      [STD96].
+
+   Refer section Section 4.2.3.2 when setting the above parameters
+
+4.2.3.2.  Header Parameters of Multiple Signature CoRIM
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
