@@ -3103,7 +3103,7 @@ Before performing the binary comparison, the processor MUST convert the attribut
 If all the attributes which are present in the C-ECT `environment` (e.g., `instance` or `group`) are also present in the ACS-ECT and are binary identical, the two environments match.
 Otherwise, the environments do not match.
 
-In other words, a match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
+A match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.
 Any attribute that is present in the ACS-ECT but not in the C-ECT is ignored in the comparison.
 
 ##### Authority Comparison {#sec-compare-authority}
