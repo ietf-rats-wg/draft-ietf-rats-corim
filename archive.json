@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-09-29T05:22:58.736883+00:00",
+  "timestamp": "2026-10-01T05:25:47.342737+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14349,7 +14349,7 @@
       "id": "I_kwDOH6-tI874sxHW",
       "title": "Language around `authorized-by`",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/569",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -14360,8 +14360,8 @@
       ],
       "body": "Issues raised by @thomas-fossati.\n\nRegarding https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html#section-5.1.4.5-9.3.1\n\n1. \u00a75.1.4.5: (measurements) Semantics of authorized-by are unclear therefore rather unusable: \"designated authority for measurement Claims\" is too generic to be useful. Is this something similar to EAT MC authority, i.e., related to software updates/installations?\n\n2. \u00a75.1.4.5: re: authorized-by, it says: \"For example, the signer of a CoMID triple\". CoMID triples aren't signed! This is the only concrete example and it doesn't compute.\n\n3. \u00a75.1.4.5: re: authorized-by, it says: \"See Section 5.1.4.6.\" which defines the crypto-key-type-choice type. A bit out of the blue and withouth much context.\n\n4. \u00a75.1.4.5: re: authorized-by, it says: \"An entity is authoritative when it makes Claims that are inside its area of competence.\". What is this supposed to mean?",
       "createdAt": "2026-03-30T17:07:01Z",
-      "updatedAt": "2026-09-09T00:17:20Z",
-      "closedAt": null,
+      "updatedAt": "2026-09-30T15:40:25Z",
+      "closedAt": "2026-09-30T15:40:25Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -14613,7 +14613,7 @@
       "id": "I_kwDOH6-tI88AAAABEQovqg",
       "title": "Add matching criterion for `authorized-by` in the ACS",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/588",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -14622,8 +14622,8 @@
       "labels": [],
       "body": "In different places we say:\n\n>\n> * `condition`: Search criterion that locates an Evidence, corroborated Evidence, or Endorsements environment.\n>\n\nHowever, to distinguish between searching for evidence and searching for corroborated evidence, it must be possible to match an `authorised-by` attribute in the C-ECT to the `authority` attribute in the ACS-ECT.\n\nThis matching criterion must be fully and clearly specified.\n\n",
       "createdAt": "2026-06-03T14:36:29Z",
-      "updatedAt": "2026-09-09T01:08:51Z",
-      "closedAt": null,
+      "updatedAt": "2026-09-30T14:17:59Z",
+      "closedAt": "2026-09-30T14:17:59Z",
       "comments": [
         {
           "author": "nedmsmith",
@@ -14631,6 +14631,13 @@
           "body": "The matching criteria are not limited in the context of processing endorsement triples. That is what is stated in the definition of `condition`. Hence, the cm-type is irrelevant as a condition constraint. \n`authorized-by` is also a matching condition which isn't specific to an ECT type. \nA clever endorsement triple author could effect matching logic that is specific to corroborated evidence by knowing that a set of Evidence claims will have authority-A while corroborated evidence claims will have authrority-B. But this is a user-specific scenario. There is nothing special a Verifier implementer has to do.\n",
           "createdAt": "2026-09-09T00:49:10Z",
           "updatedAt": "2026-09-09T01:08:51Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed by PR #633 ",
+          "createdAt": "2026-09-30T14:17:58Z",
+          "updatedAt": "2026-09-30T14:17:58Z"
         }
       ]
     },
@@ -16884,12 +16891,38 @@
       "author": "mbronk-intc",
       "authorAssociation": "NONE",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "Info or Data Model"
+      ],
       "body": "## Issue\n\nThe examples in [`cddl/examples/cmw-corim-collection.diag`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/cmw-corim-collection.diag#L21) - rendered in [\u00a74.3.1](https://datatracker.ietf.org/doc/html/draft-ietf-rats-corim-11#name-corim-collections) (\"CoRIM collections\") - encode the CoRIM `profile` field (key 3) as an **untagged** `tstr`, whereas the `$profile-type-choice` admits only `uri`[^1] and `tagged-oid-type`:\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/profile-type-choice.cddl#L1-L2\n\n [^1]: `uri` is CBOR-tagged (`uri = #6.32(tstr)`, ref. [RFC 8610 App. D](https://www.rfc-editor.org/info/rfc8610/#appendix-D)).\n\nSeparate from the tagging issue, `tag:example.com,2025/example-profile` is not a well-formed `tag:` URI. [RFC 4151 \u00a72.1](https://www.rfc-editor.org/info/rfc4151/#section-2.1):\n```abnf\ntagURI        = \"tag:\" taggingEntity \":\" specific [ \"#\" fragment ]\ntaggingEntity = authorityName \",\" date\n```\n\nThe taggingEntity (`example.com,2025`) must be followed by `:`; while the examples use `/`.\n\n## Where\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/cmw-corim-collection.diag#L21\n\nhttps://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/cmw-corim-collection.diag#L41\n\n> [!NOTE]\n> An untagged `tstr` matches neither arm, so a decoder implementing \u00a74.1.4 does not recognise key 3 as `profile` at all; it falls through to the `$$corim-map-extension` socket. The CoRIM is still *accepted*, but the profile is never *recognised* \u2014 which is the failure mode most likely to go unnoticed.\n>\n> This appears to be an example defect, not an intentional grammar change. Other examples, e.g.  [`cddl/examples/intrep-acs-psa-1.diag`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/7e5c1579ec200c92a47af185f2f7e86613d64f15/cddl/examples/intrep-acs-psa-1.diag#L37) carry correct values.\n\n\n## Suggested fix\n\n```diff\n--- a/cddl/examples/cmw-corim-collection.diag\n+++ b/cddl/examples/cmw-corim-collection.diag\n@@\n-      / profile / 3: \"tag:example.com,2025/example-profile\",\n+      / profile / 3: 32(\"tag:example.com,2025:example-profile\"),\n@@\n-      / id: / 0: h'51a5f63371c045f5855e43e8254c1806',\n+      / id / 0: h'51a5f63371c045f5855e43e8254c1806',\n@@\n-      / profile / 3: \"tag:example.com,2025/software-profile\"})>>]\n+      / profile / 3: 32(\"tag:example.com,2025:software-profile\")})>>]\n```\n",
       "createdAt": "2026-09-28T12:41:46Z",
-      "updatedAt": "2026-09-28T12:41:46Z",
+      "updatedAt": "2026-09-29T18:18:38Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 719,
+      "id": "I_kwDOH6-tI88AAAABUKsDPg",
+      "title": "Remove Un-wanted Binary comparison",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/719",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Remove Environment Map Binary comparision:\n\nRemove lines 3100, 3101, 3102, & 3103\n\nReview other sections for Binary Comparison, where Not Applicable. Remove it!!",
+      "createdAt": "2026-09-30T14:48:49Z",
+      "updatedAt": "2026-09-30T14:56:20Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "[8.3.4.4. ](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/clarify-matchers/draft-ietf-rats-corim.html#section-8.3.4.4)[Rules of Comparison](https://ietf-rats-wg.github.io/draft-ietf-rats-corim/clarify-matchers/draft-ietf-rats-corim.html#name-rules-of-comparison)\n\nNeeds to be thoroughly reviewed",
+          "createdAt": "2026-09-30T14:56:20Z",
+          "updatedAt": "2026-09-30T14:56:20Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -94091,21 +94124,21 @@
       "id": "PR_kwDOH6-tI873elsD",
       "title": "Support for Multiple Signature via COSE_Sign",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/617",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Fix #583",
       "createdAt": "2026-07-28T13:52:12Z",
-      "updatedAt": "2026-09-16T15:04:59Z",
+      "updatedAt": "2026-09-29T09:35:17Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9522de0d705bf7b943a4e0085a446c4e9e50ef9a",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-support",
       "headRefOid": "c1dc644efba90e5effb43cdc879a411ff1e06e51",
-      "closedAt": null,
+      "closedAt": "2026-09-29T09:35:17Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -94221,6 +94254,13 @@
           "body": "To be on the safe side I would:\r\n1. Revert `main`'s `HEAD` back to https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/d387838ebafd6506c689dd9a663f54c0a942c464 with a force push.\r\n2. @yogeshbdeshpande save your work.\r\n3. Close this pull request and open a new one.",
           "createdAt": "2026-09-14T17:19:38Z",
           "updatedAt": "2026-09-14T17:19:38Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR will be abandoned.\r\n\r\nThis PR work will be tracked via: PR #718 ",
+          "createdAt": "2026-09-29T09:35:17Z",
+          "updatedAt": "2026-09-29T09:35:17Z"
         }
       ],
       "reviews": [
@@ -94963,6 +95003,26 @@
               "body": "I will add clarifications here",
               "createdAt": "2026-09-10T12:21:48Z",
               "updatedAt": "2026-09-10T12:21:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABPuObuQ",
+          "commit": {
+            "abbreviatedOid": "c1dc644"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-29T08:56:27Z",
+          "updatedAt": "2026-09-29T08:56:28Z",
+          "comments": [
+            {
+              "originalPosition": 2,
+              "body": "I thought, carefully about this, and came to conclusion that for the degree of consistency, this field will always NOT be set, when single signer is required the corim-meta-map of only first index in the list MUST be populated, will be an appropriate guidance!",
+              "createdAt": "2026-09-29T08:56:27Z",
+              "updatedAt": "2026-09-29T08:56:28Z"
             }
           ]
         }
@@ -96292,7 +96352,7 @@
       "id": "PR_kwDOH6-tI88AAAABCwNQiQ",
       "title": "Address issue 569 authorized-by",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/633",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -96301,17 +96361,19 @@
       "labels": [],
       "body": "Reworded description of authorized-by in section 5.1.4.5.",
       "createdAt": "2026-09-09T00:14:07Z",
-      "updatedAt": "2026-09-23T14:31:42Z",
+      "updatedAt": "2026-09-30T14:17:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "57365f7fe688c6497c984a211a79c43281e695ab",
+      "baseRefOid": "d6fae56c4634152c8ae22d6bee57d74944c0be69",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "authorized-by-fix#569",
-      "headRefOid": "407dc54928f3ee7c503ffde7cf43b08a5c9dd950",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "b9267287eee1bf74af5c43e98d8b59dee7576597",
+      "closedAt": "2026-09-30T14:17:30Z",
+      "mergedAt": "2026-09-30T14:17:30Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6"
+      },
       "comments": [],
       "reviews": [
         {
@@ -96403,53 +96465,53 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABN2PKFQ",
           "commit": {
-            "abbreviatedOid": "407dc54"
+            "abbreviatedOid": "b926728"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "lgtm!",
           "createdAt": "2026-09-16T14:48:07Z",
-          "updatedAt": "2026-09-23T14:31:42Z",
+          "updatedAt": "2026-09-30T14:04:10Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABN2PLHw",
           "commit": {
-            "abbreviatedOid": "407dc54"
+            "abbreviatedOid": "b926728"
           },
           "author": "steven-bellock",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-09-16T14:48:08Z",
-          "updatedAt": "2026-09-23T14:31:42Z",
+          "updatedAt": "2026-09-30T14:04:10Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABO3MI4g",
           "commit": {
-            "abbreviatedOid": "407dc54"
+            "abbreviatedOid": "b926728"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM!",
           "createdAt": "2026-09-23T14:30:33Z",
-          "updatedAt": "2026-09-23T14:31:42Z",
+          "updatedAt": "2026-09-30T14:04:10Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABO3M_hA",
           "commit": {
-            "abbreviatedOid": "407dc54"
+            "abbreviatedOid": "b926728"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-09-23T14:31:32Z",
-          "updatedAt": "2026-09-23T14:31:42Z",
+          "updatedAt": "2026-09-30T14:04:10Z",
           "comments": []
         }
       ]
@@ -96459,7 +96521,7 @@
       "id": "PR_kwDOH6-tI88AAAABCwekZQ",
       "title": "Improve wording for endorsement triple",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/634",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "nedmsmith",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -96468,18 +96530,26 @@
       "labels": [],
       "body": "Improved wording of endorsement triple to clarify how authoritized-by is used to match authority on ACS entries.\r\n\r\nSee Issue #588 ",
       "createdAt": "2026-09-09T01:07:40Z",
-      "updatedAt": "2026-09-23T14:04:03Z",
+      "updatedAt": "2026-09-30T14:18:54Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "9522de0d705bf7b943a4e0085a446c4e9e50ef9a",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "end-triple-authority-fix#588",
       "headRefOid": "4e1fa054a16e0671d022e1e597c48fa574b9e75f",
-      "closedAt": null,
+      "closedAt": "2026-09-30T14:18:54Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Not needed as the external triple definition need not describe ACS matching.\r\n\r\nInternal Authorised by handling done via PR #633 ",
+          "createdAt": "2026-09-30T14:18:54Z",
+          "updatedAt": "2026-09-30T14:18:54Z"
+        }
+      ],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI88AAAABMw8gPA",
@@ -97334,13 +97404,13 @@
       "labels": [],
       "body": "Fix #667.",
       "createdAt": "2026-09-15T17:31:23Z",
-      "updatedAt": "2026-09-23T15:28:13Z",
+      "updatedAt": "2026-09-30T14:40:18Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "7e5c1579ec200c92a47af185f2f7e86613d64f15",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-667",
-      "headRefOid": "398427c999f8a1495f818c06fa11d5d174c1d0d0",
+      "headRefOid": "ec0fe1e2cdb908f42d2ef054349ddbded701208c",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -97354,7 +97424,61 @@
           "updatedAt": "2026-09-16T15:42:12Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABP_C92w",
+          "commit": {
+            "abbreviatedOid": "398427c"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-30T14:34:56Z",
+          "updatedAt": "2026-09-30T14:34:56Z",
+          "comments": [
+            {
+              "originalPosition": 1,
+              "body": "```suggestion\nA match succeeds when the C-ECT's `environment` is contained in the ACS-ECT's `environment` as defined by Attribute Path Containment (see {{sec-glossary}}) - i.e., for every Attribute Path defined in the C-ECT's `environment`, the ACS-ECT's `environment` defines the same path with an equal value.\n```",
+              "createdAt": "2026-09-30T14:34:56Z",
+              "updatedAt": "2026-09-30T14:34:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABP_GVhg",
+          "commit": {
+            "abbreviatedOid": "ec0fe1e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-09-30T14:39:20Z",
+          "updatedAt": "2026-09-30T14:39:20Z",
+          "comments": [
+            {
+              "originalPosition": 3,
+              "body": "Remove lines 3100, 3101, 3102, & 3103",
+              "createdAt": "2026-09-30T14:39:20Z",
+              "updatedAt": "2026-09-30T14:39:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABP_HBtA",
+          "commit": {
+            "abbreviatedOid": "ec0fe1e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! New issue to be created before Merge!",
+          "createdAt": "2026-09-30T14:40:18Z",
+          "updatedAt": "2026-09-30T14:40:18Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 712,
@@ -97751,6 +97875,32 @@
           ]
         }
       ]
+    },
+    {
+      "number": 718,
+      "id": "PR_kwDOH6-tI88AAAABFqt01A",
+      "title": "Introduce Multiple Signature support",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/718",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-09-29T09:33:20Z",
+      "updatedAt": "2026-09-29T18:06:10Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "d6fae56c4634152c8ae22d6bee57d74944c0be69",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "cose-sign-new-pr",
+      "headRefOid": "167e64bf2eea54776efa358631b73795a897da1d",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
