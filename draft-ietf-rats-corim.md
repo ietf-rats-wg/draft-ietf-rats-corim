@@ -3486,6 +3486,8 @@ At this point, all the relations in the Staging Area have been processed, and th
 
 # Implementation Status
 
+This section is to be removed before publishing as an RFC.
+
 This section records the status of known implementations of the protocol
 defined by this specification at the time of posting of this Internet-Draft,
 and is based on a proposal described in {{RFC7942}}. The description of
