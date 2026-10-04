@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-01T05:25:47.342737+00:00",
+  "timestamp": "2026-10-04T05:29:10.572399+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -97900,6 +97900,121 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 720,
+      "id": "PR_kwDOH6-tI88AAAABGI4iUQ",
+      "title": "Drop misplaced .default from tag-version-type",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/720",
+      "state": "OPEN",
+      "author": "Alex-Carter01",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #663.\n\n## Summary\n\n`tag-version-type = uint .default 0` puts [RFC 8610](https://www.rfc-editor.org/rfc/rfc8610#section-3.8.5) `.default` on a named type. That control is defined for a map member that may be absent, and this rule is not a map member. The only use is the optional member in `tag-identity-map`:\n\n```cddl\n? &(tag-version: 1) => tag-version-type\n```\n\nThis change deletes `.default` and leaves the type as `uint`.\n\nThe control is not moved onto that member. Section \"Tag Version\" says the member is optional and that producers typically start at 0. It does not say an omitted `tag-version` is equivalent to 0. Attaching `.default 0` at the use site would add that assumption, including for the rule that a revised tag's `tag-version` MUST be greater than the previous one.\n\nThe fragment is included from the Tag Version section and from both the CoMID and CoTL CDDL bundles, so this is the only edit.\n\n## Test plan\n\n- [x] Confirm `cddl/tag-version-type.cddl` is `tag-version-type = uint`\n- [x] Confirm `tag-identity-map` still has `? &(tag-version: 1) => tag-version-type`\n- [x] Confirm no other `.default` was added\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
+      "createdAt": "2026-10-01T17:03:25Z",
+      "updatedAt": "2026-10-01T18:16:36Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
+      "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
+      "headRefName": "drop-tag-version-default",
+      "headRefOid": "810e60d0ea3fa1e9d3a9400063d2e04d4383aa9b",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "Alex-Carter01",
+          "authorAssociation": "NONE",
+          "body": "Checked the test plan on 5cb6728: tag-version-type is `uint`, the optional tag-identity-map member is unchanged, and the diff does not add `.default`.\r\n\r\nIndependent review against #663 and RFC 8610 \u00a73.8.6: deleting `.default` is the right fix. `.default 0` implies `.ne 0`, so moving it onto the member would reject an explicit tag-version of 0, which the Tag Version text treats as the usual initial value. The prose also does not define an omitted tag-version as 0.\r\n\r\nMarking this ready for review.",
+          "createdAt": "2026-10-01T17:14:32Z",
+          "updatedAt": "2026-10-01T17:14:32Z"
+        },
+        {
+          "author": "Alex-Carter01",
+          "authorAssociation": "NONE",
+          "body": "This is my first change against this repository. I would like to keep helping; pointers to other open issues are welcome. I have been using bugs from https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/638 as a starting point.",
+          "createdAt": "2026-10-01T17:16:35Z",
+          "updatedAt": "2026-10-01T17:16:35Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hi @Alex-Carter01. Please amend your commit message to use `Assisted-by:` instead of `Co-authored-by:`. For example, see the commit message in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/commit/7e5c1579ec200c92a47af185f2f7e86613d64f15.",
+          "createdAt": "2026-10-01T18:06:32Z",
+          "updatedAt": "2026-10-01T18:06:32Z"
+        },
+        {
+          "author": "Alex-Carter01",
+          "authorAssociation": "NONE",
+          "body": "Thank you for the feedback. Updated the commit message to match convention.",
+          "createdAt": "2026-10-01T18:16:36Z",
+          "updatedAt": "2026-10-01T18:16:36Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 721,
+      "id": "PR_kwDOH6-tI88AAAABGJD9BQ",
+      "title": "Ask the RFC Editor to remove Implementation Status",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/721",
+      "state": "OPEN",
+      "author": "Alex-Carter01",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #690.\n\n## Summary\n\nRFC 7942 asks for a note at the top of Implementation Status telling the RFC Editor to remove the section before publication. This draft had the rest of the boilerplate and not that note. The note is now the first paragraph of the section.\n\n## Version compatibility, left unchanged\n\nThe Veraison entry still says \"Version compatibility: Version -06 of the draft\". That sentence describes the implementation. The Veraison README cites draft-ietf-rats-corim-11 only for the CoTL package, and the status section claims coverage of the whole protocol. This pull request does not change -06. Please confirm with the implementation owner before naming a newer revision.\n\n## Test plan\n\n- [x] Implementation Status opens with \"This section is to be removed before publishing as an RFC.\"\n- [x] The existing RFC 7942 paragraphs and the Veraison entry are otherwise unchanged, including the -06 version line.\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
+      "createdAt": "2026-10-01T17:20:01Z",
+      "updatedAt": "2026-10-01T18:18:08Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
+      "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
+      "headRefName": "implementation-status-rfc7942-note",
+      "headRefOid": "d2637cc92129ed9832d8e88ae9c582daead6ba70",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 722,
+      "id": "PR_kwDOH6-tI88AAAABGJD9TQ",
+      "title": "Add the missing CBOR tag 551 earmark",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/722",
+      "state": "OPEN",
+      "author": "Alex-Carter01",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #681.\n\n## Summary\n\nThe New CBOR Tags table skipped 551, between tagged-ueid-type (550) and tagged-svn (552). IANA already records 551 as `any`, \"Earmarked for CoRIM\", referencing draft-ietf-rats-corim-07. This adds that earmark as its own row.\n\nThe current draft does not define a type for tag 551. The row does not allocate one. An earlier revision used `#6.551(int)` and that use is not restored.\n\n## Test plan\n\n- [x] The table contains a 551 row, `any`, \"Earmarked for CoRIM\", between 550 and 552.\n- [x] No CDDL fragment gained a `#6.551` rule.\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
+      "createdAt": "2026-10-01T17:20:02Z",
+      "updatedAt": "2026-10-01T18:15:11Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
+      "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
+      "headRefName": "add-cbor-tag-551",
+      "headRefOid": "d02c17f26d32d8ef572f94e7193edb562628acb9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "Alex-Carter01",
+          "authorAssociation": "NONE",
+          "body": "The New CBOR Tags table skips 551 between tagged-ueid-type (550) and tagged-svn (552). Widening the 509\u2013549 earmark would swallow 550, so 551 needs its own row, same as 507.\r\n\r\nIANA already records 551 as any, \"Earmarked for CoRIM\". This row matches that registration and the other earmark rows. The earlier #6.551(int) / tagged-int-type allocation stays removed: IANA rejected a CBOR tag whose content is a bare integer (#229, #228), and the CDDL still has no #6.551 rule. Checked locally: 551 sits between 550 and 552, tags 500\u2013599 have no gaps or duplicates, and the line matches the existing singleton earmark.\r\n\r\nMarking this ready for review.",
+          "createdAt": "2026-10-01T18:07:10Z",
+          "updatedAt": "2026-10-01T18:07:10Z"
+        }
+      ],
       "reviews": []
     }
   ]
