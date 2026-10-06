@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-04T05:29:10.572399+00:00",
+  "timestamp": "2026-10-06T05:57:41.136695+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -16923,6 +16923,22 @@
           "updatedAt": "2026-09-30T14:56:20Z"
         }
       ]
+    },
+    {
+      "number": 723,
+      "id": "I_kwDOH6-tI88AAAABVOx6sw",
+      "title": "\"New CBOR Tags\" table is out of sync with the IANA CBOR Tags registry",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/723",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "# \"New CBOR Tags\" table is out of sync with the IANA CBOR Tags registry\n\n- **Location:** [L3581-3611](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/22f5b636a788c1a080a880e48fc18ac1e5ed7bd6/draft-ietf-rats-corim.md?plain=1#L3581-L3611) (\u00a7 New CBOR Tags)\n- **Compared against:** the IANA [CBOR Tags registry](https://www.iana.org/assignments/cbor-tags/cbor-tags.xml) (XML form, registry last updated 2026-09-18, retrieved 2026-10-05), tag by tag for 500-599\n\nThe section says *\"IANA is requested to allocate the following tags in the \"CBOR Tags\" registry, preferably with the specific CBOR tag value requested\"* and lists every tag from 500 to 599 with `{{&SELF}}` as the reference. Compared one tag at a time against the registry:\n\n| | Tags | Count |\n| --- | --- | --- |\n| Earmarked in both | (the rest) | 75 |\n| Genuine new allocation requests (IANA has only an earmark) | 500, 508, 557-559, 561-566 | 11 |\n| **Document claims an earmark, IANA has the tag allocated to TCG** | 526, 527, 570, 571 | **4** |\n| **Document asks for allocation, IANA has already allocated it to TCG** | 501, 505, 506, 550, 552-556, 560 | **10** |\n\nTwo of the ten already-allocated tags also have **registered semantics that disagree with CoRIM's definition** (555 and 560, below).\n\n## 1. Four \"Earmarked for CoRIM\" tags are allocated to TCG\n\nThe document's ranges `509-549` and `567-599` cover tags that TCG already holds:\n\n| Tag | IANA data item / semantics | IANA reference (registered) | Document |\n| --- | --- | --- | --- |\n| 526 | `map`: \"A CBOR tag that contains an xcorim-map.\" | TCG DICE Endorsement Architecture for Devices + errata (2025-06-10) | inside `509-549` \"Earmarked for CoRIM\" |\n| 527 | `tagged signature block`: \"A CBOR tag that contains either: xcorimmap, or signed-xcorim.\" | TCG DICE Endorsement Architecture for Devices + errata (2025-06-10) | inside `509-549` \"Earmarked for CoRIM\" |\n| 570 | `map (spdm-toc-map, see CDDL)`: \"spdm-toc-map\" | TCG DICE Concise Evidence Binding for SPDM (2024-03-20) | inside `567-599` \"Earmarked for CoRIM\" |\n| 571 | `map (concise-evidence-map, see CDDL)`: \"concise-evidence-map\" | TCG DICE Concise Evidence Binding for SPDM (2024-03-20) | inside `567-599` \"Earmarked for CoRIM\" |\n\nThe earmark ranges in the two sources therefore differ:\n\n- **IANA earmarks for CoRIM:** 500, 502-504, 507-525, 528-549, 551, 557-559, 561-569, 572-599\n- **Document earmarks** (including 551 from #722): 502-504, 507, 509-549, 551, 567-599\n\n## 2. Ten tags the document asks IANA to allocate are already allocated\n\nEach of these is registered with **TCG DICE Endorsement Architecture for Devices** (plus its errata) as the reference, dated 2025-06-10, yet the document requests them as new allocations with `{{&SELF}}`:\n\n| Tag | Document | IANA semantics |\n| --- | --- | --- |\n| 501 | `tagged-unsigned-corim-map` | \"A CBOR tag that contains a corim-map.\" |\n| 505 | `tagged-concise-swid-tag` | \"A CBOR tag that contains a conciseswid-tag-map.\" |\n| 506 | `tagged-concise-mid-tag` | \"A CBOR tag that contains a concisemid-tag-map.\" |\n| 550 | `tagged-ueid-type` | \"A CBOR tag that contains a UEID between 7 and 33 bytes.\" |\n| 552 | `tagged-svn` | \"\u2026a security version number that is evaluated with equivalence semantics.\" |\n| 553 | `tagged-min-svn` | \"\u2026min-svn that identifies a security version number that is evaluated with greater than or equals semantics\" |\n| 554 | `tagged-pkix-base64-key-type` | \"A CBOR tag that contains a PEM encoded SubjectPublicKeyInfo. See Section 13 of .\" |\n| 555 | `tagged-pkix-base64-cert-type` | \"A CBOR tag that contains a PEM encoded SubjectPublicKeyInfo. See Section 13 of .\" \u2014 **see \u00a73** |\n| 556 | `tagged-pkix-base64-cert-path-type` | \"\u2026an X.509 certificate chain created by the concatenation of as many PEM encoded X.509 certificates as needed\u2026\" |\n| 560 | `tagged-bytes` | \"A CBOR tag that contains a byte string interpreted as an array of bits.\" \u2014 **see \u00a73** |\n\nData items match where it matters (for example, 505/506 are `bytes` in both, consistent with CoRIM's `#6.506(bytes .cbor concise-mid-tag)`).\n\n## 3. Two registrations disagree with CoRIM's definitions\n\n- **555.** The registry text is identical to 554's, describing a PEM-encoded **SubjectPublicKeyInfo**, and it ends with a dangling \"See Section 13 of .\" with no reference. CoRIM defines `tagged-pkix-base64-cert-type = #6.555(tstr)` as a *\"PEM encoded X.509 public key certificate\"* (RFC 7468 \u00a75, not \u00a713). This looks like a copy-paste error in the registration.\n- **560.** The registry says *\"a byte string interpreted as an array of bits.\"* CoRIM defines `tagged-bytes = #6.560(bytes)` as *\"An opaque, variable-length byte string,\"* used as class, instance and group identifiers, key identifiers, and raw values. Bit-array semantics imply an interpretation (bit order, meaning per bit) that CoRIM explicitly does not assign.\n\n## 4. Tag 500\n\nThe document lists 500 with data item `tag` as *\"Reserved for backward compatibility\"*. IANA records 500 as `any`, *\"Earmarked for CoRIM\"*. It isn't clear what the document is asking IANA to do with it.\n\n## Why it matters\n\n- As written, the IANA section requests allocations that already exist and earmarks over another organisation's allocations. IANA review should bounce it.\n- [CONSTRAINTS.md](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/22f5b636a788c1a080a880e48fc18ac1e5ed7bd6/CONSTRAINTS.md?plain=1) requires that CoRIM *\"is not to break compatibility with section 5 of\"* the TCG DICE Endorsement Architecture, which is the registrant for 501, 505, 506, 526, 527, 550, 552-556 and 560. The 555 and 560 mismatches are therefore either errors in the registry or a real divergence from TCG. Either way, an implementation that follows the registry and one that follows CoRIM could disagree about what those tags carry.\n\n## Suggested fix (needs WG decisions)\n\n1. **Split the table** into tags already registered and tags this document requests. For the already-registered ones, either cite the existing registration or ask IANA to add this RFC as an additional reference. TCG is the registrant, so coordinate with them.\n2. **Re-cut the earmark ranges** to exclude TCG's allocations, giving 502-504, 507, 509-525, 528-549, 551, 567-569 and 572-599. Separately, decide whether CoRIM still needs ~75 earmarks at publication or should release them.\n3. **555:** ask for the registry text to be corrected to a PEM-encoded X.509 certificate (RFC 7468 \u00a75), via TCG or the designated expert.\n4. **560:** decide whether CoRIM's opaque `tagged-bytes` is compatible with TCG's \"array of bits\" registration, then either align CoRIM's definition or have the registration corrected.\n5. **500:** state what is being requested \u2014 keep the earmark, release it, or reserve it \u2014 and what \"backward compatibility\" refers to.\n\n## Related\n\n- #494 \u2014 MCR's review: *\"If IANA has done an early allocation for 12.2 (tags 500 thru 599) \u2026 could you note that it's already done that? Otherwise, TBA500, etc.?\"*\n- #681 / PR #722 \u2014 the missing 551 row. That fix is consistent with the registry.\n- #228, #229 \u2014 history of 551: `tagged-int-type` was removed after the IANA experts objected to a tag whose content is a bare integer.\n\n---\n_This was flagged by Claude Code (claude-opus-5-5) during an automated review of the document._\n",
+      "createdAt": "2026-10-05T22:23:58Z",
+      "updatedAt": "2026-10-05T22:24:04Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -97914,7 +97930,7 @@
       "labels": [],
       "body": "Fixes #663.\n\n## Summary\n\n`tag-version-type = uint .default 0` puts [RFC 8610](https://www.rfc-editor.org/rfc/rfc8610#section-3.8.5) `.default` on a named type. That control is defined for a map member that may be absent, and this rule is not a map member. The only use is the optional member in `tag-identity-map`:\n\n```cddl\n? &(tag-version: 1) => tag-version-type\n```\n\nThis change deletes `.default` and leaves the type as `uint`.\n\nThe control is not moved onto that member. Section \"Tag Version\" says the member is optional and that producers typically start at 0. It does not say an omitted `tag-version` is equivalent to 0. Attaching `.default 0` at the use site would add that assumption, including for the rule that a revised tag's `tag-version` MUST be greater than the previous one.\n\nThe fragment is included from the Tag Version section and from both the CoMID and CoTL CDDL bundles, so this is the only edit.\n\n## Test plan\n\n- [x] Confirm `cddl/tag-version-type.cddl` is `tag-version-type = uint`\n- [x] Confirm `tag-identity-map` still has `? &(tag-version: 1) => tag-version-type`\n- [x] Confirm no other `.default` was added\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:03:25Z",
-      "updatedAt": "2026-10-01T18:16:36Z",
+      "updatedAt": "2026-10-05T21:59:55Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
@@ -97955,7 +97971,21 @@
           "updatedAt": "2026-10-01T18:16:36Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABQx-OMA",
+          "commit": {
+            "abbreviatedOid": "810e60d"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-05T21:59:55Z",
+          "updatedAt": "2026-10-05T21:59:55Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 721,
@@ -97969,7 +97999,7 @@
       "labels": [],
       "body": "Fixes #690.\n\n## Summary\n\nRFC 7942 asks for a note at the top of Implementation Status telling the RFC Editor to remove the section before publication. This draft had the rest of the boilerplate and not that note. The note is now the first paragraph of the section.\n\n## Version compatibility, left unchanged\n\nThe Veraison entry still says \"Version compatibility: Version -06 of the draft\". That sentence describes the implementation. The Veraison README cites draft-ietf-rats-corim-11 only for the CoTL package, and the status section claims coverage of the whole protocol. This pull request does not change -06. Please confirm with the implementation owner before naming a newer revision.\n\n## Test plan\n\n- [x] Implementation Status opens with \"This section is to be removed before publishing as an RFC.\"\n- [x] The existing RFC 7942 paragraphs and the Veraison entry are otherwise unchanged, including the -06 version line.\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:20:01Z",
-      "updatedAt": "2026-10-01T18:18:08Z",
+      "updatedAt": "2026-10-05T22:20:36Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
@@ -97980,7 +98010,15 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@Alex-Carter01 is this pull request ready for review?",
+          "createdAt": "2026-10-05T22:20:36Z",
+          "updatedAt": "2026-10-05T22:20:36Z"
+        }
+      ],
       "reviews": []
     },
     {
@@ -97995,7 +98033,7 @@
       "labels": [],
       "body": "Fixes #681.\n\n## Summary\n\nThe New CBOR Tags table skipped 551, between tagged-ueid-type (550) and tagged-svn (552). IANA already records 551 as `any`, \"Earmarked for CoRIM\", referencing draft-ietf-rats-corim-07. This adds that earmark as its own row.\n\nThe current draft does not define a type for tag 551. The row does not allocate one. An earlier revision used `#6.551(int)` and that use is not restored.\n\n## Test plan\n\n- [x] The table contains a 551 row, `any`, \"Earmarked for CoRIM\", between 550 and 552.\n- [x] No CDDL fragment gained a `#6.551` rule.\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:20:02Z",
-      "updatedAt": "2026-10-01T18:15:11Z",
+      "updatedAt": "2026-10-05T22:11:25Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
@@ -98015,7 +98053,21 @@
           "updatedAt": "2026-10-01T18:07:10Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABQyFBoQ",
+          "commit": {
+            "abbreviatedOid": "d02c17f"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-05T22:11:25Z",
+          "updatedAt": "2026-10-05T22:11:25Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
