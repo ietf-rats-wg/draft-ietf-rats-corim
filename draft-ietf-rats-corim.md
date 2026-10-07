@@ -2943,12 +2943,12 @@ FUNC SERIES-MATCH(acs: ACS, series: SERIES)
 
 Keys relations identify cryptographic keys that require additional key verification steps before being appended to the ACS.
 Processing follows the algorithm as defined in {{sec-match-and-augment}}.
-The `keys` list is iterated for each `key-item` where the `acs::MATCH()` function uses `condition`, if specified, to search the ACS for preexisting keys.
+The `keys` list is iterated for each `key-item` where the `acs::MATCH()` function uses `condition`, if specified, to search the ACS for preexisting keys  or to locate claims, where key verification is applied.
 Match conditions may return a variety of results including `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, `Endorsement-addition-ECT`, and `Key-addition-ECT` ECTs.
 If `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, or `Endorsement-addition-ECT` are matched, the `element-list.element-map.measurement-values-map.cryptokeys` list is appended to `key-item.addition.key-list`.
 If `Key-addition-ECT` ECTs are matched, its `key-list` is appended to `key-item.addition.key-list`.
 
-The `acs::CHECK()` function is called with `key-item.addition.key-list` where key verification, such as {{Section 6 of -pkix-cert}} is applied.
+The `acs::CHECK()` function is called with `key-item.addition.key-list` where key verification steps, such as {{Section 6 of -pkix-cert}} are applied.
 
 A key that successfully validates is retained in `key-item.addition.key-list` and the `acs::APPEND()` function is used to append verified keys to the ACS.
 
