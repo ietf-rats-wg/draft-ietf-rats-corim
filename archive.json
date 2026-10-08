@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-06T05:57:41.136695+00:00",
+  "timestamp": "2026-10-08T05:39:56.603082+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -107,6 +107,11 @@
       "name": "editorial",
       "description": "",
       "color": "0251e3"
+    },
+    {
+      "name": "AI Authored",
+      "description": "For issues and pull requests that are authored by our friendly AI agents.",
+      "color": "c16301"
     }
   ],
   "issues": [
@@ -15440,7 +15445,7 @@
       ],
       "body": "Introduction of PR 622, makes the int-range as redundant.\n\nThis issue tracks two things:\n\n1. Investigate, which profile uses code point 564, request them to migrate to 565 code point\n2. Delete int-range (code point 564 reserved) as duplication adds confusion...\n\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/622#discussion_r3922601152_\n            ",
       "createdAt": "2026-09-03T08:34:50Z",
-      "updatedAt": "2026-09-09T23:01:01Z",
+      "updatedAt": "2026-10-07T14:50:26Z",
       "closedAt": null,
       "comments": [
         {
@@ -15463,6 +15468,13 @@
           "body": "I'd rather do it in one go rather than incrementally.  Sufficient to make this issue a must-fix for -12.",
           "createdAt": "2026-09-03T08:43:47Z",
           "updatedAt": "2026-09-03T08:43:47Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "When the item is deprecated : INternal processing guidance and matching steps needs to refer to code point for number-range",
+          "createdAt": "2026-10-07T14:50:26Z",
+          "updatedAt": "2026-10-07T14:50:26Z"
         }
       ]
     },
@@ -15556,11 +15568,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L527](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L527); [`cddl/corim-entity-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-entity-map.cddl), [`cddl/corim-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-map.cddl)\n- **Prior art:** PARTIAL \u2014 [#631](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/631) proposes fixing the wording to \"two or more\"; it does not note that the constraint names the wrong object (a single `corim-entity-map` describes one entity). Add that as a comment there.\n\n[L527](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L527): *\"The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` role.\"*\n\nA `corim-entity-map` is an instantiation of `entity-map<>` and describes exactly **one** entity; it can never contain two. The set of entities lives in `corim-map`'s `entities` member (`? &(entities: 5) => [ + corim-entity-map ]`). As written the requirement is vacuously satisfiable and the intended constraint is unenforced.\n\n**Fix:** Restate as a constraint on `corim-map`: *\"The `entities` array in a `corim-map` MUST NOT contain more than one `corim-entity-map` whose `role` includes `manifest-signer`.\"* State what a Verifier does when the constraint is violated.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T17:50:45Z",
-      "updatedAt": "2026-09-09T17:50:45Z",
+      "updatedAt": "2026-10-07T15:17:08Z",
       "closedAt": null,
       "comments": []
     },
@@ -15574,11 +15587,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L673](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L673); [`cddl/protected-corim-header-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/protected-corim-header-map.cddl)\n\nThe CDDL fixes the value:\n\n```cddl\n&(content-type: 3) => \"application/rim+cbor\"\n&(payload_preimage_content_type: 259) => \"application/rim+cbor\"\n```\n\n[L673](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L673) says: *\"The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.\"*\n\nA header carrying `application/rim+cbor;cmwc_t=\"tag:RFCthis:corim\"` does not validate against a literal-string CDDL member. The two statements cannot both hold.\n\n**Fix:** Either relax the CDDL to a media-type pattern that admits parameters, or drop the `cmwc_t` guidance. Decide which, and make the CDDL the single normative source.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T17:55:10Z",
-      "updatedAt": "2026-09-09T17:55:10Z",
+      "updatedAt": "2026-10-07T15:05:35Z",
       "closedAt": null,
       "comments": []
     },
@@ -15593,10 +15607,12 @@
       "assignees": [
         "nedmsmith"
       ],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [L1540](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1540), [L1578](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1578) vs. [L2773](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2773), [L2783](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2783)\n\n{{sec-comid-triple-identity}} [L1540](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1540) and {{sec-comid-triple-attest-key}} [L1578](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1578) both say: *\"Claims are asserted with the **joint authority of the Endorser (CoRIM signer) and the Verifier**.\"*\n\n`algo-key-transform` sets `item.addition.authority = verifier` ([L2773](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2773)) and [L2783](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2783) states *\"Note that keys are added under the **authority of the verifier**.\"* The CoRIM signer is never recorded. Since `authority` is `[ + $crypto-key-type-choice ]`, joint authority is representable \u2014 the algorithm simply does not do it.\n\n**Fix:** Decide the model and align. If joint, set `item.addition.authority = [signer, verifier]` and give `algo-key-transform` a `signer` parameter (every other transform has one).\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T17:57:50Z",
-      "updatedAt": "2026-09-16T14:20:54Z",
+      "updatedAt": "2026-10-07T15:05:36Z",
       "closedAt": null,
       "comments": []
     },
@@ -15610,11 +15626,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483), [L1515-1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515-L1517)\n\nWithin nine lines the section says:\n\n- [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483): *\"As soon as the condition value is matched the remaining conditions can be ignored.\"*\n- [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515): *\"Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\"*\n- [L1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1517): *\"These restrictions ensure that **evaluation order does not change the meaning of the triple** during the appraisal process.\"*\n\nFirst-match-wins plus an author-controlled ordering means evaluation order *does* determine the result. Additionally, \"most precise\" is never defined, so the ordering requirement is not checkable (see N-04).\n\n**Fix:** State plainly that evaluation is first-match-wins in encoded array order, that the author is responsible for the ordering, and delete the claim that order is insignificant.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:01:50Z",
-      "updatedAt": "2026-09-09T21:13:31Z",
+      "updatedAt": "2026-10-07T15:05:37Z",
       "closedAt": null,
       "comments": []
     },
@@ -15629,10 +15646,12 @@
       "assignees": [
         "henkbirkholz"
       ],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [L1336-1337](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1336-L1337) and [L1340-1370](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1340-L1370) vs. [L1858-1859](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1858-L1859) and [L3213](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3213)\n- **Prior art:** PARTIAL \u2014 [#139](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/139) covers the same ambiguity for `digests` (\"array of digest over the same object\" vs \"digests of different objects\") but not the Integrity Registers \"cross-product\" wording.\n\n- {{sec-common-hash-entry}} [L1858](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1858): *\"A `digests-type` can be used to collect multiple digest values obtained by **applying different hash algorithms on the same input**.\"*\n- {{sec-comid-integrity-registers}} [L1336-1337](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1336-L1337): *\"Any digests associated with a measured object represent **an acceptable state** for the object. Therefore, if multiple digests are provided, the acceptable state is their **cross-product**.\"*\n- {{sec-cmp-digests}} [L3213](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3213): *\"When multiple digests are provided, each represents a different **acceptable algorithm** to the C-ECT author.\"*\n\nThree readings of the same list: (a) conjunction over algorithms of one input, (b) disjunction over alternative acceptable states, (c) a set of acceptable algorithms. \"Cross-product\" is used without defining the operands, and the worked example at [L1340-1370](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1340-L1370) does not disambiguate.\n\n**Fix:** State one normative semantics for a multi-entry `digests-type` and make the three sections consistent. Remove or precisely define \"cross-product\".\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:03:29Z",
-      "updatedAt": "2026-09-16T14:18:16Z",
+      "updatedAt": "2026-10-07T15:05:39Z",
       "closedAt": null,
       "comments": []
     },
@@ -15648,11 +15667,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2858](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2858), [L2860-2881](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2860-L2881) (`algo-init-sa`) vs. [L2919-2921](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2919-L2921)\n\n- [L2858](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2858): *\"The staging area is loaded with `rv`, `ev`, `evs`, `keys`, `dm` and `td` relations, **in that order**.\"* \u2014 `algo-init-sa` implements exactly this fixed order.\n- [L2919](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2919): *\"The verifier MUST ensure that any relation including a matching condition is processed after any other relation that modifies or adds an ACS entry with an `environment` matching the condition.\"*\n- [L2921](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2921): *\"The 'match and augment' algorithm ... **assumes that relations have been topologically sorted** prior to loading into the staging area ({{algo-init-sa}}).\"*\n\n`algo-init-sa` performs no sorting, and the fixed order cannot in general satisfy the [L2919](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2919) MUST (e.g. an `ev` addition that a later `rv` condition depends on).\n\n**Fix:** Either make `algo-init-sa` take a pre-sorted input and say so explicitly, or add the sort to the algorithm, or replace the single pass with an explicit fixpoint iteration.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:06:17Z",
-      "updatedAt": "2026-09-16T14:11:00Z",
+      "updatedAt": "2026-10-07T15:05:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -15674,11 +15694,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2894-2904](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2894-L2904) (`algo-match-and-augment`) vs. [L3004-3013](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3004-L3013)\n\n`algo-match-and-augment` ([L2894-2904](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2894-L2904)) is a single pass: `FOREACH rel IN sa: FOREACH item IN rel: ...`.\n\n{{sec-proc-dm}} [L3005-3011](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3005-L3011) specifies something different: matched entries are *pruned from the `dm` list*, non-matching entries are retried, and *\"If there are additions to ACS, then the above algorithm is repeated until there are no more additions.\"* Neither the pruning (mutation of the staging area) nor the outer fixpoint loop appears in `algo-match-and-augment`, which is the algorithm the example appraisal ([L3467](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3467)) says terminates the process.\n\n**Fix:** Generalise `algo-match-and-augment` to a fixpoint, or define `dm` processing as an explicitly-named exception with its own top-level algorithm.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:07:33Z",
-      "updatedAt": "2026-09-09T21:14:17Z",
+      "updatedAt": "2026-10-07T15:05:42Z",
       "closedAt": null,
       "comments": []
     },
@@ -15692,11 +15713,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2894-2904](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2894-L2904) vs. [`cddl/intrep-evs.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-evs.cddl), [L2960-2976](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2960-L2976)\n\n`evs-item = { series: [ + series-item ] }` \u2014 there is no `item.condition` and no `item.addition`. Yet `algo-match-and-augment` iterates every relation in the staging area (which includes `evs`, per `stagingarea.cddl`) and unconditionally evaluates `acs::MATCH(item.condition)` and `acs::APPEND(item.addition)`.\n\n{{sec-proc-evs-rel}} then defines a **second function with the same name** `match_and_augment` ([L2960](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2960)) for the `evs` case, so the document contains two different definitions of one identifier and no rule for which applies when.\n\n**Fix:** Rename the series variant (e.g. `series_match_and_augment`) and have the generic algorithm dispatch on relation type rather than assuming a uniform `condition`/`addition` shape.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:08:47Z",
-      "updatedAt": "2026-09-09T21:14:27Z",
+      "updatedAt": "2026-10-07T15:05:44Z",
       "closedAt": null,
       "comments": []
     },
@@ -15711,10 +15733,12 @@
       "assignees": [
         "steven-bellock"
       ],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [L1378](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1378) vs. [L3282-3284](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3282-L3284), [L3315-3316](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3315-L3316)\n- **Prior art:** RELATED \u2014 [#628](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/628) proposes deleting codepoint 564 outright as redundant with 565; if adopted, restate this against `tagged-number-range`.\n\n[L1378](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1378): *\"The signed integer range representation is an inclusive range unless either `min` or `max` are infinite as represented by `null`, in which case, each infinity is **necessarily exclusive**.\"*\n\n{{sec-match-int-range}} [L3282-3283](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3282-L3283) specifies the opposite behaviour: *\"CONDITION.min is `null` **or** ENTRY is greater than or equal to CONDITION.min\"* \u2014 i.e. a `null` bound imposes no constraint at all (\"unbounded\"), which admits every value rather than excluding anything. {{sec-match-number}} [L3311](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3311) uses the correct wording (\"no lower bound\").\n\n**Fix:** Reword [L1378](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1378) to \"unbounded\" and drop the \"exclusive\" framing.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:10:24Z",
-      "updatedAt": "2026-09-16T16:01:43Z",
+      "updatedAt": "2026-10-07T15:05:45Z",
       "closedAt": "2026-09-16T16:01:43Z",
       "comments": []
     },
@@ -15728,11 +15752,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) and {{sec-match-one-codepoint}} subsections ([L3148-3331](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3148-L3331))\n- **Prior art:** PARTIAL \u2014 [#564](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/564) asks for a comparison section for `name`; [#506](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506) asks for one for `flags-map`. Neither covers the other five codepoints, nor the consequence that the L3144 MUST turns the gap into a permanent non-match.\n\n[L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144): *\"If the processor is unable to determine the applicable comparison algorithm for an attribute, it **MUST behave as though the C-ECT does not match** the ACS-ECT.\"*\n\n[L3146](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3146) claims: *\"The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.\"* Comparison algorithms are actually defined only for codepoints 0 (version), 1 (svn), 2 (digests), 4 (raw-value), 13 (cryptokeys), 14 (integrity-registers), 15 (int-range), 16 (bool), 17 (number), 18 (text), 19 (bytes).\n\n**No algorithm is defined for:**\n\n| Codepoint | Name |\n| --- | --- |\n| 3 | `flags` |\n| 5 | `raw-value-mask-DEPRECATED` |\n| 6 | `mac-addr` |\n| 7 | `ip-addr` |\n| 8 | `serial-number` |\n| 9 | `ueid` |\n| 10 | `uuid` |\n| 11 | `name` |\n\nCombined with the [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) MUST, a conformant Verifier must treat any condition using `flags`, `mac-addr`, `ip-addr`, `serial-number`, `ueid`, `uuid` or `name` as a non-match \u2014 permanently. `flags` in particular is a headline feature with eleven documented booleans and its own IANA registry.\n\n**Fix:** Add comparison subsections for each of the seven codepoints (`flags` needs a per-boolean containment rule; the rest are plausibly plain equality on deterministic encodings), or state a default \"binary equality of the deterministic encoding\" fallback and scope [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) to profile-defined codepoints only.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:12:26Z",
-      "updatedAt": "2026-09-16T14:08:22Z",
+      "updatedAt": "2026-10-07T15:05:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -15756,11 +15781,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3295-3331](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3295-L3331), [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl), [`cddl/intrep-e-ect.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-e-ect.cddl)\n- **Prior art:** PARTIAL \u2014 [#451](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/451) asks for distinct terminology for ACS ECTs vs staging-area ECTs; this entry is the type-system consequence of the same conflation.\n\n`element-claims` is typed `measurement-values-map` for **both** condition ECTs and ACS ECTs ([`cddl/intrep-e-ect.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-e-ect.cddl)). The matcher rules are written only for the C-ECT side: *\"If the C-ECT value is a `tagged-bool-set` ...\"*. Nothing says what happens when the **ACS-ECT** value is a `tagged-number-set`, `tagged-number-range`, `tagged-text-set` or `tagged-bytes-set` \u2014 which the CDDL permits, since Evidence, Reference Values and Endorsements all use the same map type.\n\n{{sec-match-int-range}} is the only section that handles both directions (it defines `int-range` as ENTRY as well as CONDITION), which highlights the omission for codepoints 16-19.\n\n**Fix:** Either constrain ACS-side `element-claims` to bare values (a separate CDDL type, or a normative statement plus a processing rule), or define the entry-side semantics for each matcher tag.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:13:23Z",
-      "updatedAt": "2026-09-22T20:06:46Z",
+      "updatedAt": "2026-10-07T15:05:48Z",
       "closedAt": null,
       "comments": [
         {
@@ -15782,11 +15808,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3239](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3239), [`cddl/raw-value.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/raw-value.cddl)\n- **Prior art:** PARTIAL \u2014 Same root cause as [#451](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/451) (one `measurement-values-map` type serving both conditions and entries).\n\n[L3239](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3239): *\"The value stored under `measurement-values-map` codepoint 4 in an ACS-ECT **MUST be** a `raw-value` entry, which MUST be `tagged-bytes`.\"*\n\n`$raw-value-type-choice /= tagged-bytes` **and** `/= tagged-masked-raw-value`, and the same `measurement-values-map` type is used for ACS entries. A syntactically valid Evidence or Endorsement ECT can therefore carry `tagged-masked-raw-value` at codepoint 4, and the specification defines no processing for that case: it is neither rejected nor compared.\n\n**Fix:** Specify processor behaviour when the MUST is violated (reject the ECT? treat as non-match?), and consider a distinct type for entry-side raw values.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:14:30Z",
-      "updatedAt": "2026-09-09T21:15:29Z",
+      "updatedAt": "2026-10-07T15:05:49Z",
       "closedAt": null,
       "comments": []
     },
@@ -15798,13 +15825,16 @@
       "state": "OPEN",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "nedmsmith"
+      ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2983-2992](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2983-L2992), [L3068](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3068), [`cddl/intrep-k-ect.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-k-ect.cddl)\n- **Prior art:** PARTIAL \u2014 [#606](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/606) asks for a comparison section for DMT/TDT internals; it does not cover the K-ECT-vs-E-ECT cross-type problem.\n\n[L2983](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2983): *\"For each `keys` entry, the condition ECT is compared with an ACS ECT with `cmtype` 1 or 2.\"* But `cmtype` exists only on `E-ECT`; `K-ECT` has no `cmtype`. So a `K-ECT` condition is being matched against an `E-ECT`.\n\n[L3068](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3068) says *\"Key ECTs will match on `key-list`\"* \u2014 but an `E-ECT` has no `key-list`; the nearest thing is `cryptokeys` inside `element-claims`. The document never states that `K-ECT.key-list` is compared against `E-ECT.element-claims.cryptokeys`, nor how `key-id` relates to `element-id`. {{sec-cryptokeys-matching}} exists but is only reachable from `measurement-values-map` comparison, not from `keys` relation processing.\n\n**Fix:** Specify the cross-type comparison explicitly: which `K-ECT` attribute maps to which `E-ECT` attribute, and how `cmtype` filtering applies to a type that has no `cmtype`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:15:20Z",
-      "updatedAt": "2026-09-09T21:15:43Z",
+      "updatedAt": "2026-10-07T15:05:51Z",
       "closedAt": null,
       "comments": []
     },
@@ -15818,11 +15848,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2203-2208](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2203-L2208)\n\n- [L2203](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2203): *\"If two Element ECTs have the same `environment`, `cmtype`, `authority` and `profile` then their `element-list`s are merged. Any duplicates MUST be pruned.\"*\n- [L2206](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2206): *\"Two `element-map`s containing duplicate codepoints and with non-equivalent measurement values MUST NOT be merged. These are effectively two different acceptable states that need to be processed separately.\"*\n\nWhen two ECTs satisfy the first rule but contain `element-map`s that trip the second, the outcome is unspecified: is the merge abandoned entirely, is it partial, or are the two ECTs kept side by side in the ACS? \"Duplicates\" and \"non-equivalent\" are both undefined \u2014 duplicate by `element-id`? by full deterministic encoding?\n\n**Fix:** Give the merge a deterministic algorithm with an explicit conflict outcome, and define \"duplicate\" and \"equivalent\" against the comparison rules in {{sec-comparison-rules}}.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:16:09Z",
-      "updatedAt": "2026-09-09T21:15:53Z",
+      "updatedAt": "2026-10-07T15:05:52Z",
       "closedAt": null,
       "comments": []
     },
@@ -15838,11 +15869,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3059-3060](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3059-L3060) vs. [L2934](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2934)\n- **Prior art:** PARTIAL \u2014 [#523](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/523) and [#506](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506) both raise the multiple-match problem from the implementer's side.\n\n{{sec-comparison-rules}} [L3059](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3059): *\"the processor creates a 'matched entries' set and populates it with **all** ACS entries that match the C-ECT.\"*\n\n{{sec-proc-rv-rel}} [L2934](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2934) then refers to *\"**the** matched ACS ECT\"* (singular) whose `element-list` is copied into the addition. With two or more matches the result is undefined: copy from the first? produce one addition per match? fail?\n\n**Fix:** Specify per-match behaviour for `rv`, and check `ev`/`evs`/`keys` for the same ambiguity.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:17:00Z",
-      "updatedAt": "2026-09-23T14:41:37Z",
+      "updatedAt": "2026-10-07T15:05:53Z",
       "closedAt": null,
       "comments": []
     },
@@ -15856,11 +15888,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L473-477](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L473-L477), [`cddl/corim-locator-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-locator-map.cddl)\n- **Prior art:** RELATED \u2014 [#73](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73) asks a different locator-map question (referencing a CoRIM by `corim-map.id`).\n\n```cddl\n&(href: 0) => uri / [ + uri ]\n? &(thumbprint: 1) => eatmc.digest / [ + eatmc.digest ]\n```\n\n[L477](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L477): *\"`thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s.\"* Nothing constrains the two arrays to the same length or defines the pairing. `href: [a, b, c]` with `thumbprint: [d1, d2]` is valid CBOR with no defined meaning.\n\n**Fix:** Require `thumbprint` to be positionally aligned with `href` and of equal length, and say what a Verifier does when it is not.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:18:01Z",
-      "updatedAt": "2026-09-09T21:16:26Z",
+      "updatedAt": "2026-10-07T15:05:54Z",
       "closedAt": null,
       "comments": []
     },
@@ -15873,10 +15906,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [L1611](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1611), [L1658](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1658), [L3018](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3018), [L3041](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3041) (contrast [L2466-2467](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2466-L2467))\n- **Prior art:** RELATED \u2014 [#316](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/316) raises the same question for `linked-tags` cycles.\n\n`{{sec-comid-triple-domain-membership}}` [L1611](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1611) (*\"The domain topology MUST be acyclic\"*), `{{sec-comid-triple-trust-dependency}}` [L1658](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1658) (*\"a `domain-id` MUST NOT appear in the `trustees` list or within a trustee's subtree\"*), {{sec-proc-td}} [L3018](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3018) (*\"TDGs MUST be directed acyclic graphs (DAG) before they can be added to the ACS\"*) and [L3041](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3041) (*\"Subsequent to the append, the ACS acyclic consistency check needs to be performed\"*) all state the requirement without specifying processor behaviour on violation.\n\nOnly {{sec-ir-trust-dep}} [L2466-2467](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2466-L2467) defines a consequence (*\"the `td` relation MUST NOT be added to the Staging Area, and this condition SHOULD be logged\"*). The requirement is therefore stated four times and actionable once.\n\n**Fix:** State the detection point and the consequence once, and cross-reference it from the other three sites.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:20:00Z",
-      "updatedAt": "2026-09-09T18:20:00Z",
+      "updatedAt": "2026-10-07T15:05:56Z",
       "closedAt": null,
       "comments": []
     },
@@ -15891,10 +15926,12 @@
       "assignees": [
         "yogeshbdeshpande"
       ],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [L1743-1747](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1743-L1747), [L360-370](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L360-L370)\n- **Prior art:** RELATED \u2014 [#614](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/614) questions whether CoRIM should reference CoTS at all, which bears on which tag types `tags-list` may name.\n\n[L1743](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1743), `tags-list` is described as *\"One or more `tag-identity-maps` identifying the CoMID and CoSWID tags\"*, but {{sec-corim}} [L360-370](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L360-L370) says a CoRIM carries CoMID, CoSWID **and CoTL** tags, and {{sec-phase-1}} [L2536](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2536) says the Verifier extracts *\"CoMID, CoSWID, CoTL, and CoTS\"*. It is not stated whether a CoTL may activate another CoTL, a CoTS, or a future tag type, nor what a Verifier does with a `tags-list` entry naming an unknown tag type. [L1712-1713](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1712-L1713) (*\"If any tag activated by a CoTL is not available to the Verifier, the entire CoTL is rejected\"*) makes this consequential.\n\n**Fix:** State which tag types may appear in `tags-list` and the handling of unrecognised entries.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:21:14Z",
-      "updatedAt": "2026-09-23T15:04:01Z",
+      "updatedAt": "2026-10-07T15:05:57Z",
       "closedAt": null,
       "comments": []
     },
@@ -15910,11 +15947,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/stagingarea.cddl:7`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/stagingarea.cddl?plain=1#L7); rendered at [L2496](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2496) as `{{fig-sa}}` ([L2499](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2499))\n\n```cddl\nStagingArea = [\n  ? rv,\n  ? ev,\n  ? evs,\n  ? keys,\n  ? dm,\n  ? dd,          ; <-- no such rule\n]\n```\n\nThe trust-dependency relation is defined as `td` in [`cddl/intrep-trust-dep.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-trust-dep.cddl) (`td = [ + td-item ]`). No rule named `dd` exists anywhere in `cddl/`. The build does not catch this: `check-intrep-acs` uses `start = ACS` and `check-intrep-rel` uses `start = ae-item / rv-item / ...` ([`cddl/intrep-acs-start.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-acs-start.cddl), [`cddl/intrep-rel-start.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-rel-start.cddl)), so `StagingArea` is unreachable from either entry point and is never validated.\n\nThe same typo is mirrored in `algo-init-sa` (see P-01).\n\n**Fix:** Change `? dd,` to `? td,`. Consider adding a start rule that reaches `StagingArea` so the build catches this class of error.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:22:15Z",
-      "updatedAt": "2026-09-15T17:14:53Z",
+      "updatedAt": "2026-10-07T15:05:58Z",
       "closedAt": null,
       "comments": []
     },
@@ -15928,11 +15966,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/cmw-corim-collection.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/cmw-corim-collection.cddl); rendered at [L676-678](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L676-L678)\n\n```cddl\ncorim-cbor-collection = {\n  \"__cmwc_t\" => \"tag:{{&SELF}}:corim\",\n  + cmw-label => [TBD1, bytes .cbor tagged-corim-map]\n}\ncmw-label = text / int\n```\n\nThree separate defects:\n\n1. `tagged-corim-map` is undefined \u2014 the rule is `tagged-unsigned-corim-map` ([`cddl/tagged-unsigned-corim-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/tagged-unsigned-corim-map.cddl)).\n2. `TBD1` is an IANA placeholder, not a CDDL value; the fragment cannot compile.\n3. `{{&SELF}}` is a kramdown-rfc entity embedded inside a CDDL string literal. Inside a `~~~ cddl` block it will not be expanded, so the published CDDL literally reads `\"tag:{{&SELF}}:corim\"`.\n\nThe file appears in **no** `*_FRAGS` list in [`cddl/corim-frags.mk`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-frags.mk), so `cddlc` never sees it \u2014 which is why all three defects survive.\n\n**Fix:** Correct the rule name, replace `TBD1` with a named placeholder rule (e.g. `cmw-corim-content-format = TBD1` with an RFC-editor note) or a comment, resolve `{{&SELF}}` via an RFC-editor instruction, and add the file to `CORIM_FRAGS`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:23:19Z",
-      "updatedAt": "2026-09-09T21:17:45Z",
+      "updatedAt": "2026-10-07T15:06:00Z",
       "closedAt": null,
       "comments": []
     },
@@ -15948,11 +15987,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/intrep-ect-key-addition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-key-addition.cddl) vs. [`cddl/intrep-ect-key-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-key-condition.cddl); prose at [L2269](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2269), [L2992](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2992)\n\n```cddl\n; addition\nkey-list: [ $crypto-key-type-choice ]      ; exactly one\n; condition\nkey-list: [ + $crypto-key-type-choice ]    ; one or more\n```\n\n[L2269](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2269) describes `key-list` as *\"the **set of keys** associated with `environment`\"* and [L2992](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2992) instructs *\"Add **all the verified keys** to the addition ECT's `key-list`\"* \u2014 both impossible when more than one key is verified. The missing `+` is almost certainly a typo.\n\n**Fix:** `key-list: [ + $crypto-key-type-choice ]` in the addition ECT.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:24:03Z",
-      "updatedAt": "2026-09-16T14:01:56Z",
+      "updatedAt": "2026-10-07T15:06:01Z",
       "closedAt": "2026-09-16T14:01:56Z",
       "comments": []
     },
@@ -15965,10 +16005,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [`cddl/intrep-e-ect.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-e-ect.cddl), [`cddl/intrep-k-ect.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-k-ect.cddl),\n- **Prior art:** PARTIAL \u2014 Related to [#451](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/451) (ACS vs staging-area ECTs need distinct types/terms). [`cddl/intrep-ect-common.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-common.cddl), [`cddl/intrep-ect.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect.cddl)\n\nEvery member of `ECT-common` is optional, and `E-ECT` adds only `? element-list` and `? cmtype`; `K-ECT` adds only optional members too. `ECT = E-ECT / M-ECT / T-ECT / K-ECT` therefore validates `{}`, and `ACS = [ + ECT ]` validates `[{}]`. The rest of the specification is written on the assumption that every ACS ECT has at least an `environment` and an `authority` ([L2143-2147](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2143-L2147)).\n\n**Fix:** Wrap `E-ECT` and `K-ECT` in `non-empty<>`, or make `environment` mandatory in `ECT-common` and rely on the profiled ECTs for the rest.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:25:01Z",
-      "updatedAt": "2026-09-09T18:25:01Z",
+      "updatedAt": "2026-10-07T15:06:02Z",
       "closedAt": null,
       "comments": []
     },
@@ -15982,11 +16024,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/stagingarea.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/stagingarea.cddl); [L2494-2503](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2494-L2503)\n\n`StagingArea = [ ? rv, ? ev, ? evs, ? keys, ? dm, ? dd ]` \u2014 every element is optional and every element is an array of maps. A decoder receiving a two-element array cannot determine which two relations are present. [L2502](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2502) confirms all six are genuinely optional.\n\n**Fix:** Model the staging area as a map keyed by relation type, or make the array positions non-optional with an explicit empty-array encoding.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:25:46Z",
-      "updatedAt": "2026-09-09T21:23:34Z",
+      "updatedAt": "2026-10-07T15:06:04Z",
       "closedAt": null,
       "comments": []
     },
@@ -15999,10 +16042,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [`cddl/concise-tl-tag.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/concise-tl-tag.cddl) vs. {{sec-iana-cotl}} [L3843-3868](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3843-L3868)\n\nThe CoTL Map registry reserves indices 3-255 as \"Unassigned\" and defines a registration procedure, but `concise-tl-tag` has **no** `$$concise-tl-tag-extension` socket. A future registered codepoint could never be legally encoded. Contrast `concise-mid-tag` (`* $$concise-mid-tag-extension`) and `corim-map` (`* $$corim-map-extension`), both of which have registries *and* sockets.\n\n**Fix:** Add `* $$concise-tl-tag-extension` to `concise-tl-tag`, or remove the CoTL Map registry.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:26:33Z",
-      "updatedAt": "2026-09-09T18:26:33Z",
+      "updatedAt": "2026-10-07T15:06:05Z",
       "closedAt": null,
       "comments": []
     },
@@ -16016,11 +16061,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/tag-version-type.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/tag-version-type.cddl)\n\nRFC 8610 \u00a73.8.5 defines `.default` for use on a **map member** to indicate the value assumed when the member is absent. Applying it to a standalone type rule has no defined meaning; the default is silently lost when `tag-version-type` is referenced from `tag-identity-map` as `? &(tag-version: 1) => tag-version-type`.\n\n**Fix:** Move the default to the point of use: `? &(tag-version: 1) => uint .default 0`, or drop `.default` and state the default value in prose ([L809-810](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L809-L810) already does).\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:27:16Z",
-      "updatedAt": "2026-09-09T21:24:01Z",
+      "updatedAt": "2026-10-07T15:06:06Z",
       "closedAt": null,
       "comments": []
     },
@@ -16034,11 +16080,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/int-range-type-choice.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/int-range-type-choice.cddl), [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl)\n- **Prior art:** RELATED \u2014 [#628](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/628) (delete 564) would move this to `tagged-number-range`, which has the same defect.\n\n`int-range = [min: int / negative-inf, max: int / positive-inf]` and `tagged-number-range = #6.565([number / null, number / null])` both permit `[10, 5]`, an empty range that can never match. Neither the CDDL nor the prose forbids it or defines the matching outcome. `[null, null]` \u2014 a range that matches everything \u2014 is likewise permitted with no comment.\n\n**Fix:** Add a normative statement that `min` MUST NOT exceed `max` when both are present, and say what a processor does when it encounters an inverted range.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:28:45Z",
-      "updatedAt": "2026-09-09T22:28:17Z",
+      "updatedAt": "2026-10-07T15:06:08Z",
       "closedAt": null,
       "comments": []
     },
@@ -16054,11 +16101,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl), [L3305](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3305)\n\n`number-matcher = number / tagged-number-range / tagged-number-set` and CDDL's `number` is `int / float`. [L3305](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3305) says *\"If the C-ECT value is a bare `number`, an **equality comparison** is performed with the ACS-ECT value.\"*\n\nUnspecified: whether equality is numeric or byte-wise (CBOR admits half/single/double encodings of the same value, and deterministic encoding preference-shortening is only `SHOULD` elsewhere in this document \u2014 see N-01); how `NaN`, `+0.0`/`-0.0` and infinities behave; and whether an `int` condition can match a `float` entry of equal value.\n\n**Fix:** Either restrict measurement `number` matchers to integers, or specify numeric equality precisely including the special values.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:29:45Z",
-      "updatedAt": "2026-09-23T15:03:32Z",
+      "updatedAt": "2026-10-07T15:06:10Z",
       "closedAt": null,
       "comments": [
         {
@@ -16080,11 +16128,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L1166-1176](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1166-L1176)\n\nThe CDDL copied into the draft ends with `$version-scheme /= int / text`, which subsumes every other alternative. This is faithful to {{Section 4.1 of -coswid}}, but the draft copies the whole block *\"for convenience\"* rather than referencing it, creating a second normative source that can drift from RFC 9393. The new `binary: 5` value is the only locally-defined addition.\n\n**Fix:** Show only the local extension (`$version-scheme /= &(binary: 5)`) and reference RFC 9393 for the rest, or add a note that the copy is informative.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:30:39Z",
-      "updatedAt": "2026-09-09T21:25:29Z",
+      "updatedAt": "2026-10-07T15:06:11Z",
       "closedAt": null,
       "comments": []
     },
@@ -16100,11 +16149,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3081-3082](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3081-L3082), [L3113-3114](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3113-L3114); contrast [L3097](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3097)\n\n{{sec-compare-environment}}:\n\n> The processor **MUST** compare each attribute which is present in the C-ECT's `environment` with the corresponding attribute in the ACS-ECT's `environment` using **binary comparison**. Before performing the binary comparison, the processor **SHOULD** convert the attributes in both `environment`s into a form that meets the CBOR core deterministic encoding requirements ...\n\nA processor that legitimately exercises the `SHOULD` will byte-compare two non-deterministically-encoded but semantically identical environments and report a non-match. Two conformant implementations can therefore reach opposite appraisal results on the same inputs. The identical pattern appears at [L3113-3114](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3113-L3114) for `element-id`.\n\n{{sec-compare-authority}} [L3097](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3097) gets this right with a `MUST`: *\"the processor MUST treat them as equal if their deterministic CBOR encoding is binary equal.\"*\n\n**Fix:** Change both `SHOULD`s to `MUST`, matching [L3097](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3097).\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:32:15Z",
-      "updatedAt": "2026-09-15T17:13:43Z",
+      "updatedAt": "2026-10-07T15:06:13Z",
       "closedAt": null,
       "comments": []
     },
@@ -16118,11 +16168,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L601](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L601)\n\n> To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.\n\n\"Semantic overlap\" is undefined, and `cwt-claims` ends with `* int => any`, so the set of claims a Verifier might encounter is open-ended. No validator can decide this predicate.\n\n**Fix:** Replace with an enumerated prohibition (e.g. a list of CWT claim keys that MUST NOT appear), or downgrade to a `SHOULD NOT` with explanatory guidance.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:33:10Z",
-      "updatedAt": "2026-09-09T21:24:27Z",
+      "updatedAt": "2026-10-07T15:06:14Z",
       "closedAt": null,
       "comments": []
     },
@@ -16136,11 +16187,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515)\n\n> Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\n\n\"Precise\" is never defined for measurement conditions. Given that all series conditions MUST use the same measurement types ([L1513](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1513)), it is not obvious that any precision ordering exists. Combined with C-04, neither an author nor a Verifier can act on this.\n\n**Fix:** Define a precision ordering, or delete the requirement and rely on encoded order plus first-match-wins.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:33:49Z",
-      "updatedAt": "2026-09-09T21:21:07Z",
+      "updatedAt": "2026-10-07T15:06:16Z",
       "closedAt": null,
       "comments": []
     },
@@ -16154,11 +16206,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3338](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3338)\n\n> Note that the processor may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.\n\nStatefulness is an implementation property, not an observable protocol behaviour.\n\n**Fix:** Restate as the observable requirement: *\"The result of comparing a C-ECT against an ACS-ECT MUST NOT depend on the order in which other comparisons were performed.\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:34:28Z",
-      "updatedAt": "2026-09-09T21:20:46Z",
+      "updatedAt": "2026-10-07T15:06:17Z",
       "closedAt": null,
       "comments": []
     },
@@ -16174,11 +16227,12 @@
         "yogeshbdeshpande"
       ],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L537](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L537); contrast [L515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L515), [L657](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L657), [`cddl/corim-role-type-choice.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-role-type-choice.cddl)\n\nThe specification distinguishes `manifest-creator` (role 1) from `manifest-signer` (role 2) precisely so that the two can differ, and {{sec-conveyed-signer}} is entirely about the case where the signing authority is a distinct party. [L537](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L537) forbids that. There is also no procedure by which a Verifier could test the requirement.\n\n**Fix:** Delete or reword \u2014 e.g. *\"The signing entity MUST be identified in `corim-entity-map` with the `manifest-signer` role, or via `CWT-Claims` `iss`.\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:35:10Z",
-      "updatedAt": "2026-09-23T14:57:22Z",
+      "updatedAt": "2026-10-07T15:06:18Z",
       "closedAt": null,
       "comments": [
         {
@@ -16200,11 +16254,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "Info or Data Model"
+        "Info or Data Model",
+        "AI Authored"
       ],
       "body": "- **Location:** [L593](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L593); [`cddl/cwt-claims.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/cwt-claims.cddl), [`cddl/validity-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/validity-map.cddl)\n\n> ... the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.\n\n`cwt-claims` declares `? exp` and `? nbf`; `validity-map` declares `? not-before` and a mandatory `not-after`; and `signature-validity` is itself optional in `corim-meta-map`. The requirement does not say whether a present `not-before` with an absent `nbf` is a violation, nor whether \"match\" means numeric equality across `int`/`float` encodings.\n\n**Fix:** Enumerate the pairings and state the outcome for each present/absent combination.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:35:49Z",
-      "updatedAt": "2026-09-09T21:19:32Z",
+      "updatedAt": "2026-10-07T15:06:20Z",
       "closedAt": null,
       "comments": []
     },
@@ -16217,10 +16272,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "- **Location:** [L419-423](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L419-L423) vs. [L2521-2522](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2521-L2522)\n\n[L419-423](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L419-L423) makes profile rejection an unconditional `MUST`. {{sec-phase-1}} [L2521-2522](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2521-L2522) then frames the same behaviour as optional: *\"Other selection criteria **MAY** be applied. For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier **can be readily discarded**.\"*\n\n**Fix:** Keep the `MUST` and reword [L2521-2522](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2521-L2522) so the example does not read as an optional extra.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:36:19Z",
-      "updatedAt": "2026-09-09T18:36:19Z",
+      "updatedAt": "2026-10-07T15:06:21Z",
       "closedAt": null,
       "comments": []
     },
@@ -16237,11 +16294,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L1644](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1644)\n\n> Environments that have been accepted into the **ACE** are automatically considered Domains.\n\n\"ACE\" is not defined anywhere in the document; the surrounding sentences ([L1643](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1643), [L1645](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1645)) both say ACS.\n\n**Fix:** `ACS`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T19:16:45Z",
-      "updatedAt": "2026-09-23T14:31:01Z",
+      "updatedAt": "2026-10-07T15:06:23Z",
       "closedAt": "2026-09-23T14:31:01Z",
       "comments": []
     },
@@ -16258,11 +16316,12 @@
       ],
       "labels": [
         "Verifier Processing",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3101](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3101)\n\n> A C-ECT's `element-list` matches an **ACS-ETC's** `element-list` if ...\n\nThe same sentence uses `ACS-ECT` correctly later on.\n\n**Fix:** `ACS-ECT`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T19:17:09Z",
-      "updatedAt": "2026-09-23T14:31:02Z",
+      "updatedAt": "2026-10-07T15:06:24Z",
       "closedAt": "2026-09-23T14:31:02Z",
       "comments": []
     },
@@ -16278,11 +16337,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L660](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L660), [L1383](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1383), [L1603](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1603), [L1643](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1643), [L1645](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1645), [L3539](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3539) (and [L998](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L998) \u2192 X-01)\n\n| Line | Character | Context |\n| --- | --- | --- |\n| [660](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L660), [1603](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1603), [3539](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3539) | U+2019 RIGHT SINGLE QUOTATION MARK | `Verifier\u2019s`, `triple\u2019s`, `Verifier\u2019s` |\n| [1383](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1383) | U+2013 EN DASH | `16\u201319` |\n| [1643](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1643), [1645](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1645) | U+2011 NON-BREAKING HYPHEN | `trust\u2011dependency` |\n| [998](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L998) | U+00A0 NO-BREAK SPACE | stray leading space in a heading title \u2014 see X-01 |\n\nThe document otherwise uses ASCII `'`, `-` and `--` exclusively. The U+2011 hyphens will also defeat `grep -n \"trust-dependency\"`.\n\nReproduce with: `grep -nP \"[^\\x00-\\x7F]\" draft-ietf-rats-corim.md`\n\n**Fix:** Normalise to ASCII (leaving `Universit\u00e4t` at [L48](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L48)). Add a CI check.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T19:18:21Z",
-      "updatedAt": "2026-09-16T15:51:47Z",
+      "updatedAt": "2026-10-07T15:06:26Z",
       "closedAt": "2026-09-16T15:51:47Z",
       "comments": []
     },
@@ -16298,11 +16358,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** throughout\n\nBritish: `behaviour` (\u00d73: [L1874](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1874), [L2073](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2073), [L2918](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2918)), `optimised` ([L3012](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3012)), `specialise` ([L2401](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2401)), `parenthesised` ([L1948](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1948)), `catalogue` ([L3479](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3479), RFC 7942 boilerplate). American: `authorized` (\u00d715), `specialized` (\u00d75), `specialization`/`specializations` (\u00d73), `utilized` (\u00d72), `recognize` (\u00d72), `authorization`.\n\n**Fix:** Pick one (RFC Editor style is US English) and apply consistently. The RFC 7942 boilerplate at [L3479](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3479) is quoted and should be left alone.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T19:19:02Z",
-      "updatedAt": "2026-09-23T14:31:02Z",
+      "updatedAt": "2026-10-07T15:06:27Z",
       "closedAt": "2026-09-23T14:31:02Z",
       "comments": [
         {
@@ -16326,11 +16387,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L259](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L259), [L2783](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2783), [L2919](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2919), [L3044](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3044), [L3342](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3342)\n\n[L207-208](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L207-L208) states: *\"Terms and concepts are always referenced as proper nouns, i.e., with Capital Letters.\"* Counter-examples:\n\n| Line | Text |\n| --- | --- |\n| [259](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L259) | *\"the structural composition of the **attester**\"* |\n| [2783](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2783) | *\"keys are added under the authority of the **verifier**\"* |\n| [2919](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2919) | *\"The **verifier** MUST ensure that...\"* (a normative requirement) |\n| [3044](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3044) | *\"a **target environment** (TE-1) ... another trustee **target environment** (TE-2)\"* |\n| [3342](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3342) | *\"handed over to the **verifier** for further processing\"* |\n\n**Fix:** Capitalise. [L2919](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2919) matters most \u2014 it is a `MUST` addressed to a role.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T19:19:52Z",
-      "updatedAt": "2026-09-23T14:31:02Z",
+      "updatedAt": "2026-10-07T15:06:28Z",
       "closedAt": "2026-09-23T14:31:02Z",
       "comments": []
     },
@@ -16346,11 +16408,12 @@
         "steven-bellock"
       ],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** as listed\n\n| Line | Text | Problem |\n| --- | --- | --- |\n| [169](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L169) | *\"Reference Values (e.g., digest )\"* | stray space; should be \"digests\" |\n| [177](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L177) | *\"Not only Attesters can evolve and therefore...\"* | inverted construction |\n| [340](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L340) | *\"The CDDL definitions in this document **follows**\"* | subject-verb disagreement |\n| [492](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L492) | *\"one of the base CoRIM **media type**\"* | should be plural; also only `rim+cbor` is cross-referenced although two exist |\n| [655](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L655) | *\"a payload in an enveloping signed document, {{-pkix-cert}} or it may be...\"* | comma splice; missing \"(e.g., \" |\n| [689](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L689) | *\"with a common signer **but have** different profiles\"* | should be \"but with\" |\n| [766](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L766) | *\"Described in {{sec-comid-linked-tag}}).\"* | stray closing parenthesis |\n| [874-875](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L874-L875) | *\"Not all **category need** to be present\"* | should be \"categories need\" |\n| [1001](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1001) | *\"a number of **Attester are** hidden\"* | should be \"Attesters are\" |\n| [1102](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1102) | *\"Described in {{sec-comid-raw-value-types}}\"* | missing terminating period |\n| [1575](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1575) | *\"see Section 5.1.5.3 in {{DICE.cert}}).\"* | stray closing parenthesis |\n| [1588](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1588) | *\"assert **graphical description** of Attester composition\"* | missing article |\n| [1731](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1731) | *\"The CDDL specification ... MUST be followed when creating or validating a CoTL tag **are given below**:\"* | two finite verbs; sentence does not parse |\n| [1719](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1719) | *\"treated **valid** for appraisal\"* | should be \"treated as valid\" |\n| [1721](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1721) | *\"when **Verifier** receives CoRIMs\"* | missing article |\n| [2089](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2089) | *\"**Instead**, the internal representation of Evidence is used to initialize the ACS.\"* | non-sequitur connective; \"In contrast\" |\n| [2212](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2212) | *\"the `member` nodes that **comprises** the domain\"* | `members` is the CDDL name; verb agreement |\n| [2236](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2236) | *\"the `trustees` nodes that **comprises** the trust chain\"* | verb agreement |\n| [2221](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2221) | *\"encoded in the `members` **attributes**\"* | singular attribute |\n| [2276](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2276) | *\"`key-id` attributes **encodes** the name\"* | verb agreement |\n| [2287](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2287) | *\"if the specified **condition are** met\"* | verb agreement |\n| [2516](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2516) | *\"All available **CoRIMs tags** are collected.\"* | \"CoRIM tags\" |\n| [2571](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2571) | *\"the conveyance protocol used to **collected** it\"* | \"collect\" |\n| [2580](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2580) | *\"the verification public key **use** to verify\"* | \"used\" |\n| [2812](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2812) | *\"the domain **membershp** processing algorithm\"* | typo |\n| [3004](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3004) | *\"the `addition ECT` is added\"* | backticks span two words / wrong identifier |\n| [3007](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3007) | *\"till the list is exhausted and is known as one complete iteration\"* | garbled |\n| [3039](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3039) | *\"The **ACS:: APPEND()** function\"* | stray space in the identifier |\n| [3039](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3039) | *\"adds the **dm-item**.addition\"* | should be `td-item` \u2014 this is {{sec-proc-td}} |\n| [3046](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3046) | *\"TE-2 should have a minimum strength of function **as** TE-1\"* | \"at least the same ... as\" |\n| [3084](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3084) | *\"(e.g., `instance-id` or `group-id`)\"* | CDDL member names are `instance` and `group` |\n| [3421](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3421) | ``set to `MFkw..Lg==\"` `` | stray double-quote inside the code span |\n| [3769](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3769) | *\"index values for items in multiple triples' representations\"* | should name `measurement-values-map` |\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T19:20:45Z",
-      "updatedAt": "2026-09-23T15:21:29Z",
+      "updatedAt": "2026-10-07T15:06:30Z",
       "closedAt": "2026-09-23T15:21:29Z",
       "comments": []
     },
@@ -16367,11 +16430,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3560-3562](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3560-L3562)\n\n```markdown\n## New COSE Header Parameters\n\n\n## New CBOR Tags {#sec-iana-cbor-tags}\n```\n\nThe section has a title and no content. The document defines and normatively requires COSE header parameter **8** (`corim-meta`, [L590](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L590), [`cddl/protected-corim-header-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/protected-corim-header-map.cddl)), which is not a registered COSE header parameter and has no registration request here. Without this section the `corim-meta` codepoint has no IANA basis.\n\n**Fix:** Add the registration request for `corim-meta` (label 8) in the \"COSE Header Parameters\" registry, including value type, value registry and description. Confirm whether labels 258/259/260 (hash-envelope parameters) are registered by {{-cose-hash-envelope}} or need requesting here.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T21:44:27Z",
-      "updatedAt": "2026-09-23T14:40:22Z",
+      "updatedAt": "2026-10-07T15:06:31Z",
       "closedAt": null,
       "comments": [
         {
@@ -16402,18 +16466,19 @@
       "id": "I_kwDOH6-tI88AAAABQirPew",
       "title": "I-02 \u2014 CBOR tag 551 is missing from the allocation table",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/681",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3567-3593](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3567-L3593)\n\nThe table runs `... | 509-549 | Earmarked | ... | 550 | tagged-ueid-type | ... | 552 | tagged-svn | ...`. **551 is absent entirely** \u2014 neither allocated nor covered by an \"Earmarked for CoRIM\" range. The earmarked ranges are 502-504, 507, 509-549 and 567-599, none of which include 551.\n\n**Fix:** Add a row for 551 (allocated or earmarked), or extend the 509-549 range.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T21:46:01Z",
-      "updatedAt": "2026-09-09T21:51:14Z",
-      "closedAt": null,
+      "updatedAt": "2026-10-07T15:06:32Z",
+      "closedAt": "2026-10-07T14:56:38Z",
       "comments": []
     },
     {
@@ -16429,11 +16494,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3623](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3623)\n\n```\n| 4 | rim-validity | {{&SELF}}\n| 5 | entities | {{&SELF}}\n| 3-255 | Unassigned\n```\n\nIndices 3, 4 and 5 are assigned above, then declared Unassigned. Should be `6-255`.\n\n**Fix:** `| 6-255 | Unassigned`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T21:46:31Z",
-      "updatedAt": "2026-09-23T14:15:16Z",
+      "updatedAt": "2026-10-07T15:06:33Z",
       "closedAt": "2026-09-23T14:15:16Z",
       "comments": []
     },
@@ -16450,11 +16516,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3706-3730](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3706-L3730) (esp. [L3708-3709](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3708-L3709))\n\n> ## CoMID Entity Map Registry {#sec-iana-comid-entity-map} This document defines a new registry titled **\"CoRIM Entity Map\"**. The registry uses integer values as index values for items in **`corim-entity-map`** CBOR maps.\n\nCopy-paste from {{sec-iana-corim-entity-map}} ([L3626-3651](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3626-L3651)). As written the document asks IANA to create the *same* registry twice.\n\n**Fix:** *\"...titled 'CoMID Entity Map' ... for items in `comid-entity-map` CBOR maps.\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T21:47:38Z",
-      "updatedAt": "2026-09-23T14:15:17Z",
+      "updatedAt": "2026-10-07T15:06:35Z",
       "closedAt": "2026-09-23T14:15:16Z",
       "comments": []
     },
@@ -16471,11 +16538,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3824](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3824)\n\n> Initial registrations for the **\"CoMID Measurement Values Map\"** registry are provided below.\n\nThis is in {{sec-iana-comid-flags-map}}; the table below it (`tbl-iana-comid-flags-map-items`) lists the flags.\n\n**Fix:** *\"Initial registrations for the 'CoMID Flags Map' registry...\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T21:50:44Z",
-      "updatedAt": "2026-09-23T14:15:17Z",
+      "updatedAt": "2026-10-07T15:06:36Z",
       "closedAt": "2026-09-23T14:15:17Z",
       "comments": []
     },
@@ -16492,11 +16560,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3698](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3698), [L3700](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3700) vs. [`cddl/concise-mid-tag.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/concise-mid-tag.cddl), [L748](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L748), [L754](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L754)\n\n| IANA table | CDDL | Draft prose |\n| --- | --- | --- |\n| `language` (0) | `language` (0) | **`lang`** ([L748](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L748)) |\n| `entity` (2) | `entities` (2) | `entities` ([L757](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L757)) |\n\nTwo distinct mismatches: the prose at [L748](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L748) disagrees with the CDDL for index 0, and the IANA table at [L3700](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3700) disagrees with the CDDL for index 2.\n\n**Fix:** Use `language` and `entities` consistently in all three places.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:06:17Z",
-      "updatedAt": "2026-09-23T15:26:29Z",
+      "updatedAt": "2026-10-07T15:06:38Z",
       "closedAt": "2026-09-23T15:26:28Z",
       "comments": []
     },
@@ -16514,11 +16583,12 @@
       "labels": [
         "Info or Data Model",
         "IANA",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3739-3742](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3739-L3742), [L3773-3776](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3773-L3776), [L3816-3819](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3816-L3819)\n\nThe CoMID Triples Map, CoMID Measurement Values Map and CoMID Flags Map procedure tables go straight from `| Range | Registration Procedures` to the first data row, with no `|---` separator. The six other registry tables in the document ([L3605](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3605), [L3634](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3634), [L3660](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3660), [L3686](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3686), [L3714](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3714), [L3851](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3851)) all have one. Without the separator kramdown will not treat the first row as a header.\n\n**Fix:** Insert `|---` after the header row in all three.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:07:54Z",
-      "updatedAt": "2026-09-23T14:31:03Z",
+      "updatedAt": "2026-10-07T15:06:39Z",
       "closedAt": "2026-09-23T14:31:03Z",
       "comments": []
     },
@@ -16536,11 +16606,12 @@
       "labels": [
         "Info or Data Model",
         "IANA",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3644-3649](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3644-L3649), [L3724-3729](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3724-L3729)\n\n```\n| Index | Item Name | Value Type | Specification\n|---\n| 0     | entity-name | `text` | Name of the entity responsible for the actions of the role. |\n```\n\nThe fourth column holds a description, not a specification reference. Every other registry table in the document puts `{{&SELF}}` there. Both entity-map tables are affected.\n\n**Fix:** Rename the column to \"Description\" and add a \"Specification\" column, or move the descriptions.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:09:20Z",
-      "updatedAt": "2026-09-23T14:31:03Z",
+      "updatedAt": "2026-10-07T15:06:41Z",
       "closedAt": "2026-09-23T14:31:03Z",
       "comments": []
     },
@@ -16555,11 +16626,12 @@
       "assignees": [],
       "labels": [
         "Info or Data Model",
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "- **Location:** [`cddl/corim-role-type-choice.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-role-type-choice.cddl), [`cddl/comid-role-type-choice.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/comid-role-type-choice.cddl); {{sec-iana-cons}}\n\nBoth role type choices are extensible sockets with allocated integer codepoints (`manifest-creator: 1`, `manifest-signer: 2`; `tag-creator: 0`, `creator: 1`, `maintainer: 2`), and the document explicitly anticipates future roles. No IANA registry is requested for either, so future allocations have no coordination point. Similarly, `$tag-rel-type-choice` (`supplements: 0`, `replaces: 1`) has no registry.\n\n**Fix:** Add registries for CoRIM Role, CoMID Role and Tag Relationship type choices, or state that extension is by profile only.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:10:17Z",
-      "updatedAt": "2026-09-09T22:10:17Z",
+      "updatedAt": "2026-10-07T15:06:43Z",
       "closedAt": null,
       "comments": []
     },
@@ -16576,11 +16648,12 @@
       ],
       "labels": [
         "IANA",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3936-3937](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3936-L3937), [L3996-3997](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3996-L3997)\n\nBoth `rim+cbor` and `rim+cose` registration templates answer the provisional-registration question with \"Maybe\". IANA requires \"yes\" or \"no\".\n\n**Fix:** Answer \"no\" for a standards-track registration.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:47:03Z",
-      "updatedAt": "2026-09-23T14:31:03Z",
+      "updatedAt": "2026-10-07T15:06:44Z",
       "closedAt": "2026-09-23T14:31:03Z",
       "comments": []
     },
@@ -16595,11 +16668,12 @@
       "assignees": [],
       "labels": [
         "IANA",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3469-3530](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3469-L3530), esp. [L3516](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3516)\n- **Prior art:** PARTIAL \u2014 [#562](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/562) (OPSDIR) touches the Implementation Status section but not the missing removal note or the stale version line.\n\n- [L3516](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3516): *\"Version compatibility: Version -06 of the draft\"* \u2014 stale.\n- {{Section 2.1 of RFC7942}} requires a note asking the RFC Editor to remove the section before publication. There is none.\n\n**Fix:** Add *\"This section is to be removed before publishing as an RFC.\"* and refresh the version-compatibility line.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:48:32Z",
-      "updatedAt": "2026-09-09T22:48:32Z",
+      "updatedAt": "2026-10-07T15:06:46Z",
       "closedAt": null,
       "comments": []
     },
@@ -16616,11 +16690,12 @@
       ],
       "labels": [
         "Info or Data Model",
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "- **Location:** [L851](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L851) (compare [L780](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L780))\n\n> ### Linked Tag {#sec-comid-linked-tag} ... The following describes each member of the **`tag-identity-map`**. * `linked-tag-id` (index 0): ...\n\nThe members listed are `linked-tag-map` members. [L780](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L780) legitimately uses the same sentence for `tag-identity-map`.\n\n**Fix:** *\"The following describes each member of the `linked-tag-map`.\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T22:49:53Z",
-      "updatedAt": "2026-09-23T14:31:03Z",
+      "updatedAt": "2026-10-07T15:06:52Z",
       "closedAt": "2026-09-23T14:31:03Z",
       "comments": []
     },
@@ -16636,11 +16711,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2861-2881](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2861-L2881)\n\n```pseudocode\nFUNC init_staging_area(\n    rv: rv, ev: ev, evs: evs, keys: keys, dm: dm,\n    dd: td,                       // parameter is named dd\n) -> StagingArea {\n    ...\n    IF td:   sa::APPEND(td)       // but the body uses td\n```\n\n`td` is a *type* name here, not a bound variable; the parameter `dd` is never used. Same root cause as D-01.\n\n**Fix:** Rename the parameter to `td`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:35:40Z",
-      "updatedAt": "2026-09-11T19:35:40Z",
+      "updatedAt": "2026-10-07T15:17:14Z",
       "closedAt": null,
       "comments": []
     },
@@ -16656,11 +16732,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2819-2839](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819-L2839)\n\n```pseudocode\nFUNC transform(\n    T: trust-dependcy-triple-record,        // (1) typo: \"dependcy\"\n    signer: [ + $crypto-key-type-choice ],\n    profile: $profile-type-choice\n) -> trust-dependency-item                  // (2) no such type; and (3) missing \"{\"\n    item := T-ECT::NEW()                    // (4) should be td-item::NEW()\n\n    item.condition.environment = T.domain-id\n    item.condition.members = T.members      // (5) trust-dependency-triple-record\n    item.addition.environment = T.domain-id //     has no \"members\"; it has \"trustees\"\n    item.addition.members = T.members       //     and T-ECT has \"trustees\", not \"members\"\n    ...\n}\n```\n\n1. `trust-dependcy-triple-record` \u2014 misspelled type name.\n2. `trust-dependency-item` \u2014 the CDDL rule is `td-item` ([`cddl/intrep-trust-dep-item.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-trust-dep-item.cddl)).\n3. The opening `{` is missing while a closing `}` is present; every other `FUNC` in the document has both.\n4. `T-ECT::NEW()` constructs a single ECT, but the function assigns to `item.condition` and `item.addition` and returns a condition/addition pair.\n5. `T.members` does not exist \u2014 `trust-dependency-triple-record = [ domain-id, trustees ]`. Likewise `Trust-Dependency-condition-ECT` and `-addition-ECT` declare `trustees`, not `members`. Four occurrences.\n\n**Fix:** Rewrite the function, modelled on `algo-domain-member-transform`, substituting `trustees` throughout.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:36:26Z",
-      "updatedAt": "2026-09-11T19:36:26Z",
+      "updatedAt": "2026-10-07T15:17:16Z",
       "closedAt": null,
       "comments": []
     },
@@ -16676,11 +16753,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2708-2738](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2708-L2738); [`cddl/conditional-endorsement-series-triple-record.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/conditional-endorsement-series-triple-record.cddl), [`cddl/conditional-series-record.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/conditional-series-record.cddl), [`cddl/intrep-evs.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-evs.cddl)\n\n```pseudocode\nsitem.condition.environment = T.condition.environment   // (1)\nems1 = mms_to_ems(T.condition.claims-list)              // (1)(3)(4)\nsitem.condition.element-list = ems1                     // (2)\nems2 := mms_to_ems(csr.condition)\nsitem.condition.element-list::APPEND(ems2)\nIF T.condition.authorized-by:                           // (1)\n    ...\nELIF csr.series.condition.authorized-by:                // (5)\n...\nevsitem[INDEXOF(sitem)] = sitem                         // (6)\n```\n\n1. `T.condition` does not exist. The CDDL member is **`common-condition`**. Five occurrences.\n2. `series-item.condition` and `series-item.addition` are **arrays** (`[ + Endorsement-condition-ECT ]` / `[ + Endorsement-addition-ECT ]`), not single ECTs, so `sitem.condition.environment` and `sitem.addition.*` are type errors throughout the function.\n3. `claims-list` is `[ * measurement-map ]` (possibly empty) but `mms_to_ems` is declared `(mms: [ + measurement-map ]) -> [ + element-map ]` \u2014 non-empty. The empty case is a type error.\n4. `ems1 =` and `ems3 =` use the update operator where the document's own notation ({{sec-pseudocode-notation}} [L1934-1944](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1934-L1944)) requires `:=` for introduction. `ems2 :=` on the adjacent line is correct, so this is inconsistent within one function.\n5. `csr.series.condition.authorized-by` \u2014 `csr` is already an element of `T.series`, so `csr.series` is wrong; and `csr.condition` is `[ + measurement-map ]`, a list, so `.authorized-by` is not addressable on it.\n6. `evsitem[INDEXOF(sitem)] = sitem` \u2014 `evs-item = { series: [ + series-item ] }`, so this should be `evsitem.series::APPEND(sitem)`. `INDEXOF(x)` is defined ({{tbl-pseudocode-ops}}) as *\"Return the position of x within its enclosing sequence\"*, and `sitem` is not yet in any sequence.\n\n**Fix:** Rewrite the function against the actual CDDL.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:37:16Z",
-      "updatedAt": "2026-09-11T19:37:16Z",
+      "updatedAt": "2026-10-07T15:17:18Z",
       "closedAt": null,
       "comments": []
     },
@@ -16696,11 +16774,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L3025-3035](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3025-L3035)\n\n```pseudocode\nFUNC ACS::MATCH(condition: Trust-Dependency-condition-ECT) -> bool {\n    FOREACH dm-item IN ACS.ECT(.cm==member):\n        IF condition.environment == dm-item.environment:\n            FOREACH trustee IN condition.trustees:\n                IF !trustee::MEMBEROF(dm-item.members):\n                    BREAK   # break inner loop, try another dm-item\n            RETURN TRUE\n\n    RETURN FALSE\n```\n\n`BREAK` exits the inner `FOREACH` and control falls straight through to `RETURN TRUE`. The function therefore returns TRUE **whenever the environment matches**, regardless of whether any trustee is a domain member \u2014 inverting the check the section exists to perform. The comment (*\"try another dm-item\"*) describes behaviour the code does not have.\n\nAdditional defects in the same block:\n\n- `ACS.ECT(.cm==member)` \u2014 `cm` is not an attribute (`cmtype` is), and `member` is not a `cm-type` value (`reference-values` / `endorsements` / `evidence` are). The notation is undefined.\n- The closing `}` is missing.\n- `#` is used for a comment, but {{sec-pseudocode-notation}} [L1893](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1893) defines `//`.\n- The function is named `ACS::MATCH` here and `acs::MATCH` in {{tbl-pseudocode-ops}}/{{algo-match-and-augment}}.\n\n**Fix:** Restructure so that failure sets a flag / `CONTINUE`s the outer loop, correct the ECT selector, close the block, and use `//`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:37:56Z",
-      "updatedAt": "2026-09-11T19:37:56Z",
+      "updatedAt": "2026-10-07T15:17:20Z",
       "closedAt": null,
       "comments": []
     },
@@ -16716,11 +16795,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2792-2810](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2792-L2810), [L2747-2781](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2747-L2781), [L2819-2839](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819-L2839); [`cddl/intrep-ect-domain-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-domain-condition.cddl), [`cddl/intrep-ect-trust-dep-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-trust-dep-condition.cddl), [`cddl/intrep-ect-key-condition.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-ect-key-condition.cddl)\n\nAll three condition ECTs declare `authority: [ + $crypto-key-type-choice ]` as **mandatory**. The transformations set only `item.addition.authority`; `item.condition.authority` is set in `algo-key-transform` merely as a conditional (`IF T.conditions.authorized-by:`). The objects produced therefore do not validate against their own declared types.\n\n**Fix:** Either set `condition.authority` in each transform, or make `authority` optional in the three condition ECTs (which is what `Reference-Value-condition-ECT` and `Endorsement-condition-ECT` already do).\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:38:35Z",
-      "updatedAt": "2026-09-11T19:38:35Z",
+      "updatedAt": "2026-10-07T15:17:21Z",
       "closedAt": null,
       "comments": []
     },
@@ -16736,11 +16816,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2849-2856](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2849-L2856)\n\n```pseudocode\nFUNC init_acs(ae: ae) -> ACS {\n    FOREACH item IN ae:\n        acs::APPEND(item.addition)      // acs is never introduced\n    RETURN acs\n}\n```\n\n`acs` is never bound with `:=`, unlike every other algorithm in the document (`item := rv-item::NEW()`, `sa := StagingArea::NEW()`, \u2026). Additionally, `ACS = [ + ECT ]` is non-empty by construction, so the function's declared return type is unsatisfiable when `ae` is empty.\n\n**Fix:** Add `acs := ACS::NEW()` and state what happens when there is no Evidence.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:39:03Z",
-      "updatedAt": "2026-09-11T19:39:03Z",
+      "updatedAt": "2026-10-07T15:17:22Z",
       "closedAt": null,
       "comments": []
     },
@@ -16756,11 +16837,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2969-2976](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2969-L2976)\n\n```pseudocode\nFUNC SERIES-MATCH(acs: ACS, series: SERIES)\n    -> Endorsement-addition-ECT {\n    FOREACH sitem IN series:\n        IF acs::MATCH(sitem.condition):\n            RETURN sitem.addition\n}\n```\n\n1. `SERIES` is not a defined type. The CDDL has `series: [ + series-item ]` as a member of `evs-item`; there is no named `SERIES` rule.\n2. `sitem.addition` is `[ + Endorsement-addition-ECT ]` (an array), but the declared return type is a single `Endorsement-addition-ECT`.\n3. There is no `RETURN` on the no-match path, yet the caller tests `IF ser-add = SERIES-MATCH(...)`.\n4. That caller uses `=` (the update operator) where `:=` is required, and `ser-add` is never introduced.\n\n**Fix:** Name the series type, return the array (or a nullable single ECT with an explicit `RETURN` on fall-through), and use `:=`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:39:30Z",
-      "updatedAt": "2026-09-11T19:39:30Z",
+      "updatedAt": "2026-10-07T15:17:24Z",
       "closedAt": null,
       "comments": []
     },
@@ -16776,11 +16858,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2894-2904](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2894-L2904)\n- **Prior art:** PARTIAL \u2014 [#604](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/604) debates whether `CHECK()` is needed at all; it does not note the missing failure path or the indentation defect.\n\n```pseudocode\nIF acs::MATCH(item.condition):\n    IF acs::CHECK(item.addition):\n            acs::APPEND(item.addition)      // over-indented by 8, not 4\n```\n\nThere is no `ELSE` branch, so the document never says what happens when `acs::CHECK` fails \u2014 silently dropped? logged? fatal? [L2911](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2911) (*\"The addition could result in inconsistent ACS. Additional ACS consistency checking might be needed.\"*) leaves this open with no normative language.\n\n**Fix:** Normalise indentation and specify `CHECK`-failure behaviour.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:39:59Z",
-      "updatedAt": "2026-09-11T19:39:59Z",
+      "updatedAt": "2026-10-07T15:17:25Z",
       "closedAt": null,
       "comments": []
     },
@@ -16796,11 +16879,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2766](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2766), [L2770](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2770); [`cddl/identity-triple-record.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/identity-triple-record.cddl)\n\n```pseudocode\nIF T.conditions.mkey:\nIF T.conditions.authorized-by:\n```\n\n`conditions` is itself optional (`? conditions: non-empty<{...}>`). When it is absent, `T.conditions.mkey` dereferences a missing member. Every other algorithm guards optionals explicitly (`IF profile:`, `IF mm.mkey:`).\n\n**Fix:** Guard with `IF T.conditions AND T.conditions.mkey:` or an outer `IF T.conditions:`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:40:39Z",
-      "updatedAt": "2026-09-11T19:40:39Z",
+      "updatedAt": "2026-10-07T15:17:26Z",
       "closedAt": null,
       "comments": []
     },
@@ -16816,11 +16900,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2793](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2793)\n\n```pseudocode\nFUNC transform(\n    T: domain-membership-triple-record      // <- missing comma\n    signer: [ + $crypto-key-type-choice ],\n```\n\nAll other `FUNC` parameter lists in the document are comma-separated.\n\n**Fix:** Add the comma.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:40:59Z",
-      "updatedAt": "2026-09-11T19:40:59Z",
+      "updatedAt": "2026-10-07T15:17:28Z",
       "closedAt": null,
       "comments": []
     },
@@ -16836,11 +16921,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2612](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2612), [L2654](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2654), [L2730](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2730)\n\n`algo-rv-transform` ([L2612](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2612)) writes `item.addition.cmtype = reference-values`, `algo-ev-transform` ([L2654](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2654)) writes `ect-add.cmtype = endorsements`, and `algo-ces-transform` ([L2730](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2730)) writes ` sitem.addition.cmtype = \\`endorsements\\` ` \u2014 backticked. The document's pseudocode notation defines no backtick convention.\n\n**Fix:** Use the bare identifier form everywhere.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:41:48Z",
-      "updatedAt": "2026-09-11T19:41:48Z",
+      "updatedAt": "2026-10-07T15:17:29Z",
       "closedAt": null,
       "comments": []
     },
@@ -16856,11 +16942,12 @@
         "thomas-fossati"
       ],
       "labels": [
-        "Verifier Processing"
+        "Verifier Processing",
+        "AI Authored"
       ],
       "body": "- **Location:** [L2605](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2605), [L2640](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2640), [L2670](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2670), [L2708](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2708), [L2747](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2747), [L2792](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2792), [L2819](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2819)\n\nSeven distinct functions all named `FUNC transform(...)`, distinguished only by the CDDL type of their first parameter. The document never states that the pseudocode language supports overloading, and `algo-key-transform` already relies on `TYPEOF` dispatch *inside* one of them, showing that the intent is not uniform.\n\n**Fix:** Give each a distinct name (`transform_rv`, `transform_ev`, \u2026) or state that dispatch is on the first parameter's type.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:42:29Z",
-      "updatedAt": "2026-09-11T19:42:29Z",
+      "updatedAt": "2026-10-07T15:17:31Z",
       "closedAt": null,
       "comments": []
     },
@@ -16933,10 +17020,46 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "# \"New CBOR Tags\" table is out of sync with the IANA CBOR Tags registry\n\n- **Location:** [L3581-3611](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/22f5b636a788c1a080a880e48fc18ac1e5ed7bd6/draft-ietf-rats-corim.md?plain=1#L3581-L3611) (\u00a7 New CBOR Tags)\n- **Compared against:** the IANA [CBOR Tags registry](https://www.iana.org/assignments/cbor-tags/cbor-tags.xml) (XML form, registry last updated 2026-09-18, retrieved 2026-10-05), tag by tag for 500-599\n\nThe section says *\"IANA is requested to allocate the following tags in the \"CBOR Tags\" registry, preferably with the specific CBOR tag value requested\"* and lists every tag from 500 to 599 with `{{&SELF}}` as the reference. Compared one tag at a time against the registry:\n\n| | Tags | Count |\n| --- | --- | --- |\n| Earmarked in both | (the rest) | 75 |\n| Genuine new allocation requests (IANA has only an earmark) | 500, 508, 557-559, 561-566 | 11 |\n| **Document claims an earmark, IANA has the tag allocated to TCG** | 526, 527, 570, 571 | **4** |\n| **Document asks for allocation, IANA has already allocated it to TCG** | 501, 505, 506, 550, 552-556, 560 | **10** |\n\nTwo of the ten already-allocated tags also have **registered semantics that disagree with CoRIM's definition** (555 and 560, below).\n\n## 1. Four \"Earmarked for CoRIM\" tags are allocated to TCG\n\nThe document's ranges `509-549` and `567-599` cover tags that TCG already holds:\n\n| Tag | IANA data item / semantics | IANA reference (registered) | Document |\n| --- | --- | --- | --- |\n| 526 | `map`: \"A CBOR tag that contains an xcorim-map.\" | TCG DICE Endorsement Architecture for Devices + errata (2025-06-10) | inside `509-549` \"Earmarked for CoRIM\" |\n| 527 | `tagged signature block`: \"A CBOR tag that contains either: xcorimmap, or signed-xcorim.\" | TCG DICE Endorsement Architecture for Devices + errata (2025-06-10) | inside `509-549` \"Earmarked for CoRIM\" |\n| 570 | `map (spdm-toc-map, see CDDL)`: \"spdm-toc-map\" | TCG DICE Concise Evidence Binding for SPDM (2024-03-20) | inside `567-599` \"Earmarked for CoRIM\" |\n| 571 | `map (concise-evidence-map, see CDDL)`: \"concise-evidence-map\" | TCG DICE Concise Evidence Binding for SPDM (2024-03-20) | inside `567-599` \"Earmarked for CoRIM\" |\n\nThe earmark ranges in the two sources therefore differ:\n\n- **IANA earmarks for CoRIM:** 500, 502-504, 507-525, 528-549, 551, 557-559, 561-569, 572-599\n- **Document earmarks** (including 551 from #722): 502-504, 507, 509-549, 551, 567-599\n\n## 2. Ten tags the document asks IANA to allocate are already allocated\n\nEach of these is registered with **TCG DICE Endorsement Architecture for Devices** (plus its errata) as the reference, dated 2025-06-10, yet the document requests them as new allocations with `{{&SELF}}`:\n\n| Tag | Document | IANA semantics |\n| --- | --- | --- |\n| 501 | `tagged-unsigned-corim-map` | \"A CBOR tag that contains a corim-map.\" |\n| 505 | `tagged-concise-swid-tag` | \"A CBOR tag that contains a conciseswid-tag-map.\" |\n| 506 | `tagged-concise-mid-tag` | \"A CBOR tag that contains a concisemid-tag-map.\" |\n| 550 | `tagged-ueid-type` | \"A CBOR tag that contains a UEID between 7 and 33 bytes.\" |\n| 552 | `tagged-svn` | \"\u2026a security version number that is evaluated with equivalence semantics.\" |\n| 553 | `tagged-min-svn` | \"\u2026min-svn that identifies a security version number that is evaluated with greater than or equals semantics\" |\n| 554 | `tagged-pkix-base64-key-type` | \"A CBOR tag that contains a PEM encoded SubjectPublicKeyInfo. See Section 13 of .\" |\n| 555 | `tagged-pkix-base64-cert-type` | \"A CBOR tag that contains a PEM encoded SubjectPublicKeyInfo. See Section 13 of .\" \u2014 **see \u00a73** |\n| 556 | `tagged-pkix-base64-cert-path-type` | \"\u2026an X.509 certificate chain created by the concatenation of as many PEM encoded X.509 certificates as needed\u2026\" |\n| 560 | `tagged-bytes` | \"A CBOR tag that contains a byte string interpreted as an array of bits.\" \u2014 **see \u00a73** |\n\nData items match where it matters (for example, 505/506 are `bytes` in both, consistent with CoRIM's `#6.506(bytes .cbor concise-mid-tag)`).\n\n## 3. Two registrations disagree with CoRIM's definitions\n\n- **555.** The registry text is identical to 554's, describing a PEM-encoded **SubjectPublicKeyInfo**, and it ends with a dangling \"See Section 13 of .\" with no reference. CoRIM defines `tagged-pkix-base64-cert-type = #6.555(tstr)` as a *\"PEM encoded X.509 public key certificate\"* (RFC 7468 \u00a75, not \u00a713). This looks like a copy-paste error in the registration.\n- **560.** The registry says *\"a byte string interpreted as an array of bits.\"* CoRIM defines `tagged-bytes = #6.560(bytes)` as *\"An opaque, variable-length byte string,\"* used as class, instance and group identifiers, key identifiers, and raw values. Bit-array semantics imply an interpretation (bit order, meaning per bit) that CoRIM explicitly does not assign.\n\n## 4. Tag 500\n\nThe document lists 500 with data item `tag` as *\"Reserved for backward compatibility\"*. IANA records 500 as `any`, *\"Earmarked for CoRIM\"*. It isn't clear what the document is asking IANA to do with it.\n\n## Why it matters\n\n- As written, the IANA section requests allocations that already exist and earmarks over another organisation's allocations. IANA review should bounce it.\n- [CONSTRAINTS.md](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/22f5b636a788c1a080a880e48fc18ac1e5ed7bd6/CONSTRAINTS.md?plain=1) requires that CoRIM *\"is not to break compatibility with section 5 of\"* the TCG DICE Endorsement Architecture, which is the registrant for 501, 505, 506, 526, 527, 550, 552-556 and 560. The 555 and 560 mismatches are therefore either errors in the registry or a real divergence from TCG. Either way, an implementation that follows the registry and one that follows CoRIM could disagree about what those tags carry.\n\n## Suggested fix (needs WG decisions)\n\n1. **Split the table** into tags already registered and tags this document requests. For the already-registered ones, either cite the existing registration or ask IANA to add this RFC as an additional reference. TCG is the registrant, so coordinate with them.\n2. **Re-cut the earmark ranges** to exclude TCG's allocations, giving 502-504, 507, 509-525, 528-549, 551, 567-569 and 572-599. Separately, decide whether CoRIM still needs ~75 earmarks at publication or should release them.\n3. **555:** ask for the registry text to be corrected to a PEM-encoded X.509 certificate (RFC 7468 \u00a75), via TCG or the designated expert.\n4. **560:** decide whether CoRIM's opaque `tagged-bytes` is compatible with TCG's \"array of bits\" registration, then either align CoRIM's definition or have the registration corrected.\n5. **500:** state what is being requested \u2014 keep the earmark, release it, or reserve it \u2014 and what \"backward compatibility\" refers to.\n\n## Related\n\n- #494 \u2014 MCR's review: *\"If IANA has done an early allocation for 12.2 (tags 500 thru 599) \u2026 could you note that it's already done that? Otherwise, TBA500, etc.?\"*\n- #681 / PR #722 \u2014 the missing 551 row. That fix is consistent with the registry.\n- #228, #229 \u2014 history of 551: `tagged-int-type` was removed after the IANA experts objected to a tag whose content is a bare integer.\n\n---\n_This was flagged by Claude Code (claude-opus-5-5) during an automated review of the document._\n",
       "createdAt": "2026-10-05T22:23:58Z",
-      "updatedAt": "2026-10-05T22:24:04Z",
+      "updatedAt": "2026-10-07T15:17:41Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 724,
+      "id": "I_kwDOH6-tI88AAAABVonIAQ",
+      "title": "In Phase 1 processing keys can be added to ACS",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/724",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [
+        "nedmsmith"
+      ],
+      "labels": [],
+      "body": "When Evidence is Validated in Phase 1 using Keys from Attest Key Triple, then there is no statement that says the Keys can be added to the ACS, which may be required in certain use cases,\n",
+      "createdAt": "2026-10-07T14:37:42Z",
+      "updatedAt": "2026-10-07T14:38:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 725,
+      "id": "I_kwDOH6-tI88AAAABVo10qg",
+      "title": "document general principles of deprecation",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/725",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Highlight where the dperecated item goes\n\npoint to its equivalent element internal transformation and verification logics, which replaces the deprecated.\n\nAdd a general note/section to measurement-values-map specific transformation section, handling deprecation",
+      "createdAt": "2026-10-07T14:53:47Z",
+      "updatedAt": "2026-10-07T14:53:47Z",
       "closedAt": null,
       "comments": []
     }
@@ -96063,13 +96186,13 @@
       "labels": [],
       "body": "PR updates key triple transformation and processing sections. \r\nSee Issue #590.\r\nAlso see [PR #28 in draft-ietf-rats-evidence-trans repo. ](https://github.com/ietf-rats-wg/draft-ietf-rats-evidence-trans/pull/28)",
       "createdAt": "2026-09-04T22:12:33Z",
-      "updatedAt": "2026-09-23T14:11:36Z",
+      "updatedAt": "2026-10-07T15:53:08Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "9522de0d705bf7b943a4e0085a446c4e9e50ef9a",
+      "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "keys-issue590",
-      "headRefOid": "fac5a29b4e4cfa4d60a4a2250c33336b8a19194b",
+      "headRefOid": "6171b7eb0813e2536a7eef02ee31d3ee26b463f3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -96154,6 +96277,112 @@
           "createdAt": "2026-09-23T14:11:36Z",
           "updatedAt": "2026-09-23T14:11:36Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRHQfAg",
+          "commit": {
+            "abbreviatedOid": "fac5a29"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-07T13:58:34Z",
+          "updatedAt": "2026-10-07T13:58:35Z",
+          "comments": [
+            {
+              "originalPosition": 360,
+              "body": "```suggestion\nThe `keys` list is iterated for each `key-item` where the `acs::MATCH()` function uses `condition`, if specified, to search the ACS for preexisting keys  or to locate claims, where key verification is applied.\n```",
+              "createdAt": "2026-10-07T13:58:35Z",
+              "updatedAt": "2026-10-07T14:22:20Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRHSHaA",
+          "commit": {
+            "abbreviatedOid": "fac5a29"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-07T14:00:33Z",
+          "updatedAt": "2026-10-07T14:00:33Z",
+          "comments": [
+            {
+              "originalPosition": 368,
+              "body": "```suggestion\nThe `acs::CHECK()` function is called with `key-item.addition.key-list` where key verification steps, such as {{Section 6 of -pkix-cert}} are applied.\n```",
+              "createdAt": "2026-10-07T14:00:33Z",
+              "updatedAt": "2026-10-07T14:00:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRHSr3w",
+          "commit": {
+            "abbreviatedOid": "fac5a29"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Reviewed it, in general makes sense and will be a useful addition.\n\nVery few minor concerns exist that can be addressed!",
+          "createdAt": "2026-10-07T14:01:16Z",
+          "updatedAt": "2026-10-07T14:01:16Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRHtORA",
+          "commit": {
+            "abbreviatedOid": "6171b7e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-07T14:33:12Z",
+          "updatedAt": "2026-10-07T14:33:12Z",
+          "comments": [
+            {
+              "originalPosition": 64,
+              "body": "CHECK() needs to be replaced by pre-post condition of the ACS::APPEND()",
+              "createdAt": "2026-10-07T14:33:12Z",
+              "updatedAt": "2026-10-07T14:33:12Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRHtd3g",
+          "commit": {
+            "abbreviatedOid": "6171b7e"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Some comments",
+          "createdAt": "2026-10-07T14:33:29Z",
+          "updatedAt": "2026-10-07T14:33:29Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRIm6kA",
+          "commit": {
+            "abbreviatedOid": "6171b7e"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-07T15:53:07Z",
+          "updatedAt": "2026-10-07T15:53:08Z",
+          "comments": [
+            {
+              "originalPosition": 67,
+              "body": "```suggestion\nKey verification steps, such as {{Section 6 of -pkix-cert}}, are applied to each key in `key-item.addition.key-list`.\nA key that is successfully verified is retained in `key-item.addition.key-list`; any other key is discarded.\n\nThe pre-condition of `acs::APPEND` for `keys` relations is that `key-item.addition.key-list` contains at least one verified key.\n\nThe post-condition of `acs::APPEND` for `keys` relations is null.\n```",
+              "createdAt": "2026-10-07T15:53:08Z",
+              "updatedAt": "2026-10-07T15:53:08Z"
+            }
+          ]
         }
       ]
     },
@@ -96891,11 +97120,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "Fix #674.\r\nFix #675.\r\nFix #677.\r\nFix #678.\r\nFix #686.\r\nFix #687.\r\nFix #689.\r\nFix #691.",
       "createdAt": "2026-09-09T23:39:21Z",
-      "updatedAt": "2026-09-23T14:31:00Z",
+      "updatedAt": "2026-10-07T15:17:09Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "7ba8d46b16151b2fd7a2d96e013226102bc04bf4",
@@ -96961,11 +97191,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "Fix #679.",
       "createdAt": "2026-09-09T23:51:01Z",
-      "updatedAt": "2026-09-23T15:21:37Z",
+      "updatedAt": "2026-10-07T15:17:11Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "57365f7fe688c6497c984a211a79c43281e695ab",
@@ -97194,11 +97425,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "IANA"
+        "IANA",
+        "AI Authored"
       ],
       "body": "Fix #682.\r\nFix #683.\r\nFix #684.",
       "createdAt": "2026-09-10T14:49:31Z",
-      "updatedAt": "2026-09-23T14:15:15Z",
+      "updatedAt": "2026-10-07T15:17:13Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "a2e4d752bd3e8c8d080920d0ba4e0c5bbaf775ba",
@@ -97263,10 +97495,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "Fix #685.",
       "createdAt": "2026-09-15T17:28:04Z",
-      "updatedAt": "2026-09-23T15:26:41Z",
+      "updatedAt": "2026-10-07T15:17:32Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "2ac72fa6dc9f46fa130e164a6c1749c19707e157",
@@ -97340,11 +97574,12 @@
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [
-        "editorial"
+        "editorial",
+        "AI Authored"
       ],
       "body": "Fix #676.",
       "createdAt": "2026-09-15T17:30:11Z",
-      "updatedAt": "2026-09-16T15:52:00Z",
+      "updatedAt": "2026-10-07T15:17:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "08e7b2796ac24050e13d3df488f30d0854f79bc2",
@@ -97417,10 +97652,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "Fix #667.",
       "createdAt": "2026-09-15T17:31:23Z",
-      "updatedAt": "2026-09-30T14:40:18Z",
+      "updatedAt": "2026-10-07T15:17:35Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "7e5c1579ec200c92a47af185f2f7e86613d64f15",
@@ -97505,10 +97742,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "Fix #647.",
       "createdAt": "2026-09-15T17:33:04Z",
-      "updatedAt": "2026-09-16T16:01:52Z",
+      "updatedAt": "2026-10-07T15:17:38Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "aadb5431b3d4c6225d76953249d6c9ca67bf9384",
@@ -97588,10 +97827,12 @@
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
-      "labels": [],
+      "labels": [
+        "AI Authored"
+      ],
       "body": "Fix #659.",
       "createdAt": "2026-09-15T17:34:05Z",
-      "updatedAt": "2026-09-16T14:01:56Z",
+      "updatedAt": "2026-10-07T15:17:40Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "6ae55229c57385c27635a8966344b631217a3452",
@@ -97994,18 +98235,18 @@
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/721",
       "state": "OPEN",
       "author": "Alex-Carter01",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #690.\n\n## Summary\n\nRFC 7942 asks for a note at the top of Implementation Status telling the RFC Editor to remove the section before publication. This draft had the rest of the boilerplate and not that note. The note is now the first paragraph of the section.\n\n## Version compatibility, left unchanged\n\nThe Veraison entry still says \"Version compatibility: Version -06 of the draft\". That sentence describes the implementation. The Veraison README cites draft-ietf-rats-corim-11 only for the CoTL package, and the status section claims coverage of the whole protocol. This pull request does not change -06. Please confirm with the implementation owner before naming a newer revision.\n\n## Test plan\n\n- [x] Implementation Status opens with \"This section is to be removed before publishing as an RFC.\"\n- [x] The existing RFC 7942 paragraphs and the Veraison entry are otherwise unchanged, including the -06 version line.\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:20:01Z",
-      "updatedAt": "2026-10-05T22:20:36Z",
+      "updatedAt": "2026-10-07T14:59:31Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
+      "baseRefOid": "e1fc29a06d0b2c01ba24656c13ccaec58b4a8a4c",
       "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
       "headRefName": "implementation-status-rfc7942-note",
-      "headRefOid": "d2637cc92129ed9832d8e88ae9c582daead6ba70",
+      "headRefOid": "209367912faa2d0d3607250c65d5dce4eeb2c619",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98019,35 +98260,64 @@
           "updatedAt": "2026-10-05T22:20:36Z"
         }
       ],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRICMmA",
+          "commit": {
+            "abbreviatedOid": "2093679"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2026-10-07T14:58:19Z",
+          "updatedAt": "2026-10-07T14:59:30Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRICm7A",
+          "commit": {
+            "abbreviatedOid": "2093679"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-10-07T14:58:51Z",
+          "updatedAt": "2026-10-07T14:59:31Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 722,
       "id": "PR_kwDOH6-tI88AAAABGJD9TQ",
       "title": "Add the missing CBOR tag 551 earmark",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/722",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "Alex-Carter01",
-      "authorAssociation": "NONE",
+      "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #681.\n\n## Summary\n\nThe New CBOR Tags table skipped 551, between tagged-ueid-type (550) and tagged-svn (552). IANA already records 551 as `any`, \"Earmarked for CoRIM\", referencing draft-ietf-rats-corim-07. This adds that earmark as its own row.\n\nThe current draft does not define a type for tag 551. The row does not allocate one. An earlier revision used `#6.551(int)` and that use is not restored.\n\n## Test plan\n\n- [x] The table contains a 551 row, `any`, \"Earmarked for CoRIM\", between 550 and 552.\n- [x] No CDDL fragment gained a `#6.551` rule.\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:20:02Z",
-      "updatedAt": "2026-10-05T22:11:25Z",
+      "updatedAt": "2026-10-07T14:56:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "22f5b636a788c1a080a880e48fc18ac1e5ed7bd6",
       "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
       "headRefName": "add-cbor-tag-551",
       "headRefOid": "d02c17f26d32d8ef572f94e7193edb562628acb9",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-10-07T14:56:34Z",
+      "mergedAt": "2026-10-07T14:56:34Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "e1fc29a06d0b2c01ba24656c13ccaec58b4a8a4c"
+      },
       "comments": [
         {
           "author": "Alex-Carter01",
-          "authorAssociation": "NONE",
+          "authorAssociation": "CONTRIBUTOR",
           "body": "The New CBOR Tags table skips 551 between tagged-ueid-type (550) and tagged-svn (552). Widening the 509\u2013549 earmark would swallow 550, so 551 needs its own row, same as 507.\r\n\r\nIANA already records 551 as any, \"Earmarked for CoRIM\". This row matches that registration and the other earmark rows. The earlier #6.551(int) / tagged-int-type allocation stays removed: IANA rejected a CBOR tag whose content is a bare integer (#229, #228), and the CDDL still has no #6.551 rule. Checked locally: 551 sits between 550 and 552, tags 500\u2013599 have no gaps or duplicates, and the line matches the existing singleton earmark.\r\n\r\nMarking this ready for review.",
           "createdAt": "2026-10-01T18:07:10Z",
           "updatedAt": "2026-10-01T18:07:10Z"
@@ -98065,6 +98335,32 @@
           "body": "",
           "createdAt": "2026-10-05T22:11:25Z",
           "updatedAt": "2026-10-05T22:11:25Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRIAosA",
+          "commit": {
+            "abbreviatedOid": "d02c17f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-07T14:56:21Z",
+          "updatedAt": "2026-10-07T14:56:21Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABRIAsfA",
+          "commit": {
+            "abbreviatedOid": "d02c17f"
+          },
+          "author": "nedmsmith",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2026-10-07T14:56:26Z",
+          "updatedAt": "2026-10-07T14:56:26Z",
           "comments": []
         }
       ]
