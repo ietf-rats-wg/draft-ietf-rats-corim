@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 2 April 2027                                             NVIDIA
+Expires: 15 April 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                       29 September 2026
+                                                         12 October 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 2 April 2027.
+   This Internet-Draft will expire on 15 April 2027.
 
 Copyright Notice
 
@@ -735,7 +735,7 @@ Table of Contents
    and Encryption [STD96].  A CoRIM tag MUST be wrapped either in a
    COSE_Sign1 structure or a COSE_Sign structure.
 
-   The COSE_Sign structure may be used when:
+   The COSE_Sign structure must be used when:
 
    1.  Multiple authorities need to sign the same unsigned CoRIM
        payload; or
@@ -786,18 +786,16 @@ Table of Contents
 
 4.2.2.  Header Parameters
 
-   This section describes the header parameters, when
+   This section describes the header parameters, that needs to be set
+   when:
 
    a.  A single signer needs to produce a signature using (COSE_Sign1)
    object.
 
    OR
 
-   b.  When multiple signers, each with different authority, needs to
-   sign the same unsigned CoRIM, using COSE_Sign object.  In this case
-   each array entry of signature_structure has the header parameters
-   that carry the details of the signature algorithm and signer
-   information as detailed in Section 4.2.3
+   b.  When multiple signatures needs to be produced using (COSE_Sign)
+   object.  See Section 4.2.3 for further details.
 
 4.2.2.1.  Protected Header Map
 
@@ -948,7 +946,7 @@ Table of Contents
 
    An Endorser or a Reference Value Provider may need to generate
    multiple signatures over the same unsigned CoRIM.  This is required
-   for the following two use cases.
+   in the following use cases.
 
    a.  To support multiple signature algorithms (such as a traditional
    algorithm and a post-quantum algorithm) without having to produce
@@ -958,14 +956,14 @@ Table of Contents
    Endorsements needs to be signed by multiple different signers, such
    as a component manufacturer and a device manufacturer.
 
-   In both the above cases, COSE_Sign object is used.
+   In both these cases, COSE_Sign object is used.
 
    When using COSE_Sign the following CDDL specification defines the
    overall structure.
 
    COSE-Sign-corim = [
-     protected: bstr .size 0
-     unprotected: {},
+     protected: bstr .cbor protected-corim-header-map
+     unprotected: unprotected-corim-header-map
      payload: bstr .cbor tagged-unsigned-corim-map /
                          hash-envelope-digest /
                          nil
@@ -974,13 +972,13 @@ Table of Contents
 
    The following describes each child element of this type.
 
-   *  protected: The top level protected header MUST not be used.
-      Instead the protected header that is in each signature structure
-      is used.  See Section 4.2.3.1
+   *  protected: The top level protected header parameter.  Contains the
+      information pertaining to the signature algorithm and signer
+      details of the authority producing the signature.  Refer to
+      Section 4.2.3.2 for details.
 
-   *  unprotected: The top level unprotected header MUST not be used.
-      Instead the unprotected header that is in each signature structure
-      is used.  See Section 4.2.3.1
+   *  unprotected: The top level unprotected header parameter.  Refer to
+      Section 4.2.3.2 for details.
 
    *  payload: When the payload is signed directly, either a CBOR-
       encoded tagged CoRIM, or nil if it is detached.  When the payload
@@ -1007,66 +1005,48 @@ Table of Contents
    *  protected: A CBOR Encoded protected header which is protected by
       the COSE signature.
 
-   *  unprotected: A COSE header that is not protected by COSE signatur.
+   *  unprotected: A COSE header that is not protected by COSE
+      signature.
 
    *  signature: A COSE signature block, as defined in Section 4 of
       [STD96].
 
    Refer section Section 4.2.3.2 when setting the above parameters
 
-4.2.3.2.  Header Parameters
+4.2.3.2.  Use of Header Parameters and Signatures in COSE_Sign
 
-   *  Single Signer, multiple signing algorithms When a single signer
-      (i.e. a single authority) produces multiple signatures each
-      corresponding to different signature algorithm (such as a
-      traditional algorithm and a post-quantum algorithm), the Header
-      parameters are set using the following rules.
+   This section provides the necessary order of setting the Protected
+   and Unprotected Header Parameters, alongwith array of signature
+   structure in a CoSE_Sign object.
 
-   1.  The first entry of the signature_structure array is populated
-       with details set in Section 4.2.2.
+   *  Single Signer, multiple signing algorithms
 
-   2.  The subsequent entries ONLY populate the minimum required
-       elements, to describe the details about the signature algorithm
-       as under:
+   1.  The top level protected and unprotected parameters as detailed in
+       Section 4.2.3 are always set first.  This contains the details of
+       first signature algorithm and the authority signing the CoRIM.
+       The signature bytes are carried in signature element of the first
+       entry of the signature-structure array.
 
-   The CoRIM protected header map uses some common COSE header
-   parameters.
+   2.  The header parameters of the next entry of the signature-
+       structure array contains the algorithm and signature bytes
+       pertaining to each different algorithm used to produce the
+       signature.  A CoRIM signer may choose to omit the signer details,
+       of the same authority producing the signatures.
 
-   The following describes each child item of this map.
+   *  Multiple Signers
 
-   *  alg (index 1): An integer that identifies a signature algorithm.
+   1.  The top level protected and unprotected parameters as detailed in
+       Section 4.2.3 are always set first, using the details in
+       Section 4.2.2.  This contains the details of first signature
+       algorithm and the authority signing the CoRIM.  The signature
+       bytes are carried in signature element of the first entry of the
+       signature-structure array.
 
-   Either, when the payload is signed directly:
-
-   *  content-type (index 3): A string that represents the "MIME Content
-      type" carried in the CoRIM payload.
-
-   Or, when the payload is signed indirectly using a Hash Envelope
-   ([RFC9995]):
-
-   *  payload_hash_alg (index 258): The hash algorithm used to produce
-      the payload.
-
-   *  payload_preimage_content_type (index 259): A string that
-      represents the "MIME Content type" of the CoRIM document used as
-      the pre-image of the payload.
-
-   Note: A CoRIM Signer MAY choose to omit the following CWT Claims when
-   the details of the Signer and CoRIM Validity are identical across
-   multiple entries and conveyed via first entry of signature_structure
-   array.
-
-   *  CWT-Claims (index 15): A map that contains metadata associated
-      with a signed CoRIM.  Described in [RFC9597].
-
-   *  corim-meta (index 8): A map that contains metadata associated with
-      a signed CoRIM.  Described in Section 4.2.2.3.
-
-   *  Multiple Signers When an unsigned CoRIM is signed by multiple
-      authorities, the Header Parameters of each entry in the
-      'signature_structure', is populated with details of each signer,
-      algorithm used to sign the CORIM as well as other signer & CoRIM
-      Validity metadata as detailed in section Section 4.2.2.
+   2.  The next entries of the signature-structure array contain the
+       details of signature algorithms and the signer authority of each
+       of the individual authorities signing the same unsigned CoRIM
+       payload, using the header parameters as detailed in
+       Section 4.2.2.
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
 
@@ -6518,11 +6498,11 @@ Table of Contents
               concise-ta-stores-03>.
 
    [I-D.ietf-rats-endorsements]
-              Thaler, D., Birkholz, H., and T. Fossati, "RATS
-              Endorsements", Work in Progress, Internet-Draft, draft-
-              ietf-rats-endorsements-11, 22 September 2026,
-              <https://datatracker.ietf.org/doc/html/draft-ietf-rats-
-              endorsements-11>.
+              Thaler, D., Birkholz, H., and T. Fossati, "Remote
+              Attestation Procedures (RATS) Endorsements", Work in
+              Progress, Internet-Draft, draft-ietf-rats-endorsements-12,
+              12 October 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-endorsements-12>.
 
    [I-D.ietf-rats-evidence-trans]
               Damato, F., Draper, A., and N. Smith, "Evidence
@@ -6644,8 +6624,8 @@ Appendix A.  Base CoRIM CDDL
    ]
    hash-envelope-digest = bstr
    COSE-Sign-corim = [
-     protected: bstr .size 0,
-     unprotected: {},
+     protected: bstr .cbor protected-corim-header-map,
+     unprotected: unprotected-corim-header-map,
      payload: bstr .cbor tagged-unsigned-corim-map / hash-envelope-\
                                                            digest / nil,
      signature: [2*signature-structure],
