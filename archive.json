@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-08T05:39:56.603082+00:00",
+  "timestamp": "2026-10-13T06:30:14.723935+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14560,15 +14560,17 @@
       "id": "I_kwDOH6-tI88AAAABDjb3vw",
       "title": "CoRIM Needs to support Multiple Signatures, via COSE_Sign",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/583",
-      "state": "CLOSED",
+      "state": "OPEN",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
-      "assignees": [],
+      "assignees": [
+        "yogeshbdeshpande"
+      ],
       "labels": [],
       "body": "Need to support Multiple Signature types in CoRIM:\n\nFor a specific use case, coming from regulation (please see below) : CoRIM MUST support this.\n\nA manufacturer wishes to produce a CoRIM relating to some product or deliverable. Some customers can require single ML-DSA signature, some require hybrid ML-DSA with ECDSA, some have not yet enabled PQC crypto infrastructure and some Chinese customers require SM2-DSA. In some cases these cryptographic requirements might be regulatory.\n\nIn this case, the manufacturer either produces four internally identical but differently signed CoRIMs to comply with the present specification or it produces one multiply signed CoRIM where the same signing authority has simply used different cryptographic mechanisms to endorse. I do not think the countersignature case covers this ideally as a countersignature serves as a notarization by a different counterparty whereas in the use-case I describe - which I believe occurs inevitably in a diverse cryptographic environment - we have different mechanisms all representing endorsements by the same owner.\n\n\n",
       "createdAt": "2026-05-27T15:11:16Z",
-      "updatedAt": "2026-09-10T15:42:16Z",
-      "closedAt": "2026-09-10T15:42:15Z",
+      "updatedAt": "2026-10-12T19:09:48Z",
+      "closedAt": null,
       "comments": [
         {
           "author": "steven-bellock",
@@ -15629,9 +15631,9 @@
         "Info or Data Model",
         "AI Authored"
       ],
-      "body": "- **Location:** [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483), [L1515-1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515-L1517)\n\nWithin nine lines the section says:\n\n- [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483): *\"As soon as the condition value is matched the remaining conditions can be ignored.\"*\n- [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515): *\"Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\"*\n- [L1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1517): *\"These restrictions ensure that **evaluation order does not change the meaning of the triple** during the appraisal process.\"*\n\nFirst-match-wins plus an author-controlled ordering means evaluation order *does* determine the result. Additionally, \"most precise\" is never defined, so the ordering requirement is not checkable (see N-04).\n\n**Fix:** State plainly that evaluation is first-match-wins in encoded array order, that the author is responsible for the ordering, and delete the claim that order is insignificant.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "body": "- **Location:** [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483), [L1515-1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515-L1517)\n\nWithin nine lines the section says:\n\n- [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483): *\"As soon as the condition value is matched the remaining conditions can be ignored.\"*\n- [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515): *\"Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\"*\n- [L1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1517): *\"These restrictions ensure that **evaluation order does not change the meaning of the triple** during the appraisal process.\"*\n\nFirst-match-wins plus an author-controlled ordering means evaluation order *does* determine the result. Additionally, \"most precise\" is never defined, so the ordering requirement is not checkable (see [N-04](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/669)).\n\n**Fix:** State plainly that evaluation is first-match-wins in encoded array order, that the author is responsible for the ordering, and delete the claim that order is insignificant.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:01:50Z",
-      "updatedAt": "2026-10-07T15:05:37Z",
+      "updatedAt": "2026-10-12T19:18:59Z",
       "closedAt": null,
       "comments": []
     },
@@ -15950,9 +15952,9 @@
         "Verifier Processing",
         "AI Authored"
       ],
-      "body": "- **Location:** [`cddl/stagingarea.cddl:7`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/stagingarea.cddl?plain=1#L7); rendered at [L2496](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2496) as `{{fig-sa}}` ([L2499](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2499))\n\n```cddl\nStagingArea = [\n  ? rv,\n  ? ev,\n  ? evs,\n  ? keys,\n  ? dm,\n  ? dd,          ; <-- no such rule\n]\n```\n\nThe trust-dependency relation is defined as `td` in [`cddl/intrep-trust-dep.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-trust-dep.cddl) (`td = [ + td-item ]`). No rule named `dd` exists anywhere in `cddl/`. The build does not catch this: `check-intrep-acs` uses `start = ACS` and `check-intrep-rel` uses `start = ae-item / rv-item / ...` ([`cddl/intrep-acs-start.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-acs-start.cddl), [`cddl/intrep-rel-start.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-rel-start.cddl)), so `StagingArea` is unreachable from either entry point and is never validated.\n\nThe same typo is mirrored in `algo-init-sa` (see P-01).\n\n**Fix:** Change `? dd,` to `? td,`. Consider adding a start rule that reaches `StagingArea` so the build catches this class of error.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "body": "- **Location:** [`cddl/stagingarea.cddl:7`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/stagingarea.cddl?plain=1#L7); rendered at [L2496](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2496) as `{{fig-sa}}` ([L2499](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2499))\n\n```cddl\nStagingArea = [\n  ? rv,\n  ? ev,\n  ? evs,\n  ? keys,\n  ? dm,\n  ? dd,          ; <-- no such rule\n]\n```\n\nThe trust-dependency relation is defined as `td` in [`cddl/intrep-trust-dep.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-trust-dep.cddl) (`td = [ + td-item ]`). No rule named `dd` exists anywhere in `cddl/`. The build does not catch this: `check-intrep-acs` uses `start = ACS` and `check-intrep-rel` uses `start = ae-item / rv-item / ...` ([`cddl/intrep-acs-start.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-acs-start.cddl), [`cddl/intrep-rel-start.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/intrep-rel-start.cddl)), so `StagingArea` is unreachable from either entry point and is never validated.\n\nThe same typo is mirrored in `algo-init-sa` (see [P-01](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/697)).\n\n**Fix:** Change `? dd,` to `? td,`. Consider adding a start rule that reaches `StagingArea` so the build catches this class of error.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:22:15Z",
-      "updatedAt": "2026-10-07T15:05:58Z",
+      "updatedAt": "2026-10-12T19:19:02Z",
       "closedAt": null,
       "comments": []
     },
@@ -16104,9 +16106,9 @@
         "Verifier Processing",
         "AI Authored"
       ],
-      "body": "- **Location:** [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl), [L3305](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3305)\n\n`number-matcher = number / tagged-number-range / tagged-number-set` and CDDL's `number` is `int / float`. [L3305](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3305) says *\"If the C-ECT value is a bare `number`, an **equality comparison** is performed with the ACS-ECT value.\"*\n\nUnspecified: whether equality is numeric or byte-wise (CBOR admits half/single/double encodings of the same value, and deterministic encoding preference-shortening is only `SHOULD` elsewhere in this document \u2014 see N-01); how `NaN`, `+0.0`/`-0.0` and infinities behave; and whether an `int` condition can match a `float` entry of equal value.\n\n**Fix:** Either restrict measurement `number` matchers to integers, or specify numeric equality precisely including the special values.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "body": "- **Location:** [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl), [L3305](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3305)\n\n`number-matcher = number / tagged-number-range / tagged-number-set` and CDDL's `number` is `int / float`. [L3305](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3305) says *\"If the C-ECT value is a bare `number`, an **equality comparison** is performed with the ACS-ECT value.\"*\n\nUnspecified: whether equality is numeric or byte-wise (CBOR admits half/single/double encodings of the same value, and deterministic encoding preference-shortening is only `SHOULD` elsewhere in this document \u2014 see [N-01](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/667)); how `NaN`, `+0.0`/`-0.0` and infinities behave; and whether an `int` condition can match a `float` entry of equal value.\n\n**Fix:** Either restrict measurement `number` matchers to integers, or specify numeric equality precisely including the special values.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:29:45Z",
-      "updatedAt": "2026-10-07T15:06:10Z",
+      "updatedAt": "2026-10-12T19:19:06Z",
       "closedAt": null,
       "comments": [
         {
@@ -16190,9 +16192,9 @@
         "Info or Data Model",
         "AI Authored"
       ],
-      "body": "- **Location:** [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515)\n\n> Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\n\n\"Precise\" is never defined for measurement conditions. Given that all series conditions MUST use the same measurement types ([L1513](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1513)), it is not obvious that any precision ordering exists. Combined with C-04, neither an author nor a Verifier can act on this.\n\n**Fix:** Define a precision ordering, or delete the requirement and rely on encoded order plus first-match-wins.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "body": "- **Location:** [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515)\n\n> Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\n\n\"Precise\" is never defined for measurement conditions. Given that all series conditions MUST use the same measurement types ([L1513](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1513)), it is not obvious that any precision ordering exists. Combined with [C-04](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/642), neither an author nor a Verifier can act on this.\n\n**Fix:** Define a precision ordering, or delete the requirement and rely on encoded order plus first-match-wins.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:33:49Z",
-      "updatedAt": "2026-10-07T15:06:16Z",
+      "updatedAt": "2026-10-12T19:19:09Z",
       "closedAt": null,
       "comments": []
     },
@@ -16714,9 +16716,9 @@
         "Verifier Processing",
         "AI Authored"
       ],
-      "body": "- **Location:** [L2861-2881](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2861-L2881)\n\n```pseudocode\nFUNC init_staging_area(\n    rv: rv, ev: ev, evs: evs, keys: keys, dm: dm,\n    dd: td,                       // parameter is named dd\n) -> StagingArea {\n    ...\n    IF td:   sa::APPEND(td)       // but the body uses td\n```\n\n`td` is a *type* name here, not a bound variable; the parameter `dd` is never used. Same root cause as D-01.\n\n**Fix:** Rename the parameter to `td`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
+      "body": "- **Location:** [L2861-2881](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L2861-L2881)\n\n```pseudocode\nFUNC init_staging_area(\n    rv: rv, ev: ev, evs: evs, keys: keys, dm: dm,\n    dd: td,                       // parameter is named dd\n) -> StagingArea {\n    ...\n    IF td:   sa::APPEND(td)       // but the body uses td\n```\n\n`td` is a *type* name here, not a bound variable; the parameter `dd` is never used. Same root cause as [D-01](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/657).\n\n**Fix:** Rename the parameter to `td`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-11T19:35:40Z",
-      "updatedAt": "2026-10-07T15:17:14Z",
+      "updatedAt": "2026-10-12T19:19:13Z",
       "closedAt": null,
       "comments": []
     },
@@ -98145,19 +98147,66 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-09-29T09:33:20Z",
-      "updatedAt": "2026-09-29T18:06:10Z",
+      "updatedAt": "2026-10-12T19:06:12Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d6fae56c4634152c8ae22d6bee57d74944c0be69",
+      "baseRefOid": "e1fc29a06d0b2c01ba24656c13ccaec58b4a8a4c",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-new-pr",
-      "headRefOid": "167e64bf2eea54776efa358631b73795a897da1d",
+      "headRefOid": "bac4dbc68815b243d14519104c61d1ba66cfd22b",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
-      "reviews": []
+      "comments": [
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "request @nedmsmith. @thomas-fossati @henkbirkholz and @steven-bellock to review this please....",
+          "createdAt": "2026-10-12T16:48:18Z",
+          "updatedAt": "2026-10-12T16:48:18Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABR4YEyg",
+          "commit": {
+            "abbreviatedOid": "bac4dbc"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-12T19:02:53Z",
+          "updatedAt": "2026-10-12T19:06:12Z",
+          "comments": [
+            {
+              "originalPosition": 110,
+              "body": "```suggestion\nHeader parameters along with signature bytes. The Header parameters contain information relating to the\n```",
+              "createdAt": "2026-10-12T19:02:53Z",
+              "updatedAt": "2026-10-12T19:06:12Z"
+            },
+            {
+              "originalPosition": 32,
+              "body": "```suggestion\nThis section describes the header parameters, that need to be set when:\n```",
+              "createdAt": "2026-10-12T19:03:22Z",
+              "updatedAt": "2026-10-12T19:06:12Z"
+            },
+            {
+              "originalPosition": 38,
+              "body": "```suggestion\nb. When multiple signatures need to be produced using (COSE_Sign) object. See {{sec-mult-sign}} for further details.\n```",
+              "createdAt": "2026-10-12T19:03:41Z",
+              "updatedAt": "2026-10-12T19:06:12Z"
+            },
+            {
+              "originalPosition": 20,
+              "body": "```suggestion\nCOSE_Sign1 is used when a single signer needs to produce a signature over an unsigned CoRIM (`tagged-unsigned-corim-map`).\n```",
+              "createdAt": "2026-10-12T19:04:57Z",
+              "updatedAt": "2026-10-12T19:06:12Z"
+            }
+          ]
+        }
+      ]
     },
     {
       "number": 720,
