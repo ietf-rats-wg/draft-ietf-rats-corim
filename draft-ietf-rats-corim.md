@@ -3350,10 +3350,16 @@ The comparison MUST return true if and only if both of the following conditions 
 *  The C-ECT `min` is `null` or the ACS-ECT value is greater than or equal to `min`.
 *  The C-ECT `max` is `null` or the ACS-ECT value is less than or equal to `max`.
 
+The `min` and `max` of a `tagged-number-range` MUST NOT be `+Infinity` or `-Infinity`; `null` is the only way to express an unbounded range.
+A `tagged-number-range` that violates this requirement is malformed and MUST be rejected.
+
+At least one of `min` and `max` of a `tagged-number-range` MUST be non-`null`.
+A `tagged-number-range` whose `min` and `max` are both `null` is malformed and MUST be rejected; to match any value, the entry is omitted.
+
 If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
 
 The `min` and `max` values of a `tagged-number-range` (when neither is `null`), and all the elements of a `tagged-number-set`, MUST be of exactly the same numeric type.
-Any `tagged-number-range` or a `tagged-number-set` that violates this requirement is malformed, and any comparison involving it MUST fail.
+Any `tagged-number-range` or a `tagged-number-set` that violates this requirement is malformed and MUST be rejected.
 Additionally, as per the above rule, the comparison MUST fail if the numeric type of the range or set differs from that of the ACS-ECT value.
 
 ###### Comparison for text entries {#sec-match-text}
