@@ -3429,14 +3429,16 @@ Table of Contents
    keys = [ + key-item ]
 
    key-item = {
-     condition: Key-condition-ECT
+     ? condition: Key-condition-ECT
      addition: Key-addition-ECT
    }
 
                           Figure 27: Keys Relation
 
-
-   // [TODO] Specialize condition/addition ECTs.  Define constraints.
+   If key-item is used to transform Evidence, key-item.condition is
+   omitted since Evidence addition is unconditional.  Nevertheless, key-
+   item.addition is merely staged for addition pending successful key
+   verification checks.
 
 8.3.2.2.5.  Domain Memberships
 
@@ -3884,11 +3886,11 @@ Table of Contents
 8.3.3.7.4.  Keys
 
    Keys transformation involves mapping Attest Key and Device Identity
-   triples into a key relation (see Section 8.3.2.2.4).
+   triples into into a keys relation (see Section 8.3.2.2.4).
 
    An attest-key-triple-record (Figure 6) or an identity-triple-record
    (Figure 5) is transformed into a key-item (Figure 27) as described in
-   Figure 42.
+   Figure 42 pseudocode.
 
    FUNC transform(
        T: attest-key-triple-record / identity-triple-record,
@@ -3924,9 +3926,13 @@ Table of Contents
        RETURN item
    }
 
-                    Figure 42: Key Triple Transformation
+                   Figure 42: Key Triples Transformation
 
-   Note that keys are added under the authority of the Verifier.
+   Note that keys are added under the authority of the Verifier because
+   the key verification check is performed by the Verifier.
+
+   After the keys relations are staged, processing commences as
+   described in Section 8.3.4.3.3.
 
 8.3.3.7.5.  Domain Membership Transformation
 
@@ -4176,28 +4182,26 @@ Table of Contents
 8.3.4.3.3.  Processing keys Relations
 
    Keys relations identify cryptographic keys that require additional
-   key verification steps.
+   key verification steps before being appended to the ACS.  Processing
+   follows the algorithm as defined in Section 8.3.4.  The keys list is
+   iterated for each key-item where the acs::MATCH() function uses
+   condition, if specified, to search the ACS for preexisting keys or to
+   locate claims, where key verification is applied.  Match conditions
+   may return a variety of results including Evidence-addition-ECT,
+   Reference-Value-addition-ECT, Endorsement-addition-ECT, and Key-
+   addition-ECT ECTs.  If Evidence-addition-ECT, Reference-Value-
+   addition-ECT, or Endorsement-addition-ECT are matched, the element-
+   list.element-map.measurement-values-map.cryptokeys list is appended
+   to key-item.addition.key-list.  If Key-addition-ECT ECTs are matched,
+   its key-list is appended to key-item.addition.key-list.
 
-   Keys are matched with ACS entries by iterating through the keys list.
-   For each keys entry, the condition ECT is compared with an ACS ECT
-   with cmtype 1 or 2 (i.e., endorsements or evidence).  If they match,
-   perform the following steps for each key in the condition ECT key-
-   list:
-
-   1.  Verify the certificate signatures for each certificate in the
-       certification path.
-
-   2.  Verify the revocation status for each certificate in the
-       certification path.
-
-   3.  Verify the key usage restrictions that are appropriate for key-
-       type.
-
-   A key that successfully passes the above checks is said to be
-   verified.
-
-   Add all the verified keys to the addition ECT's key-list and add the
-   addition ECT to the ACS.
+   Key verification steps, such as Section 6 of [RFC5280], are applied
+   to each key in key-item.addition.key-list.  A key that is
+   successfully verified is retained in key-item.addition.key-list; any
+   other key is discarded.  The pre-condition of acs::APPEND for keys
+   relations is that key-item.addition.key-list contains at least one
+   verified key.  The post-condition of acs::APPEND for keys relations
+   is null.
 
 8.3.4.3.4.  Processing dm Relations
 
@@ -6379,9 +6383,9 @@ Table of Contents
    [I-D.ietf-rats-endorsements]
               Thaler, D., Birkholz, H., and T. Fossati, "Remote
               Attestation Procedures (RATS) Endorsements", Work in
-              Progress, Internet-Draft, draft-ietf-rats-endorsements-12,
-              12 October 2026, <https://datatracker.ietf.org/doc/html/
-              draft-ietf-rats-endorsements-12>.
+              Progress, Internet-Draft, draft-ietf-rats-endorsements-13,
+              14 October 2026, <https://datatracker.ietf.org/doc/html/
+              draft-ietf-rats-endorsements-13>.
 
    [I-D.ietf-rats-evidence-trans]
               Damato, F., Draper, A., and N. Smith, "Evidence
