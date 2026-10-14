@@ -3326,6 +3326,22 @@ A set of two or more elements represents the full domain, which can be already e
 The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
 The ACS-ECT value at this codepoint is always a bare `number` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
+The numeric type (`int` or `float`) of the ACS-ECT value is determined by the Evidence transformation that produced it (see {{sec-trans-evidence}}).
+An Evidence transformation algorithm, or the CoRIM profile that defines it, MUST specify the numeric type of each `number` value that it produces.
+The C-ECT author is responsible for using the numeric type produced by the applicable transformation for the Evidence being matched.
+If the numeric type of the C-ECT value and that of the ACS-ECT value are not the same, the comparison MUST fail.
+In particular, an `int` never matches a `float`, even when they denote the same value, whichever of the two is the C-ECT value.
+
+Comparison between values of the same numeric type is numeric, not byte-wise: it does not depend on the width (e.g., half, single or double precision) or on the preferred or non-preferred serialization used to encode a value.
+For `float` values:
+
+*  `+0.0` and `-0.0` are equal.
+*  `+Infinity` and `-Infinity` are equal only to themselves, and order above and below all finite values, respectively.
+
+`NaN` MUST NOT appear in a `number-matcher`, whether as a bare value, as a range bound, or as a set element.
+A `number-matcher` that contains a `NaN` is malformed and MUST be rejected.
+An Evidence transformation MUST NOT produce a `NaN` as the ACS-ECT value; Evidence that would result in one MUST be rejected.
+
 If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
 
 If the C-ECT value is a `tagged-number-range` (CBOR tag 565), `null` in the first element represents negative infinity (no lower bound) and `null` in the second element represents positive infinity (no upper bound).
@@ -3335,6 +3351,10 @@ The comparison MUST return true if and only if both of the following conditions 
 *  The C-ECT `max` is `null` or the ACS-ECT value is less than or equal to `max`.
 
 If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+The `min` and `max` values of a `tagged-number-range` (when neither is `null`), and all the elements of a `tagged-number-set`, MUST be of exactly the same numeric type.
+Any `tagged-number-range` or a `tagged-number-set` that violates this requirement is malformed, and any comparison involving it MUST fail.
+Additionally, as per the above rule, the comparison MUST fail if the numeric type of the range or set differs from that of the ACS-ECT value.
 
 ###### Comparison for text entries {#sec-match-text}
 
