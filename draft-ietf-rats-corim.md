@@ -1053,12 +1053,9 @@ The following describes each member of the `measurement-map`:
 * `mval` (index 1): The measurements associated with the environment.
  Described in {{sec-comid-mval}}.
 
-* `authorized-by` (index 2): The cryptographic identity of the entity (individual or organization) that is
- the designated authority for measurement Claims.
- For example, the signer of a CoMID triple.
- See {{sec-crypto-keys}}.
- An entity is authoritative when it makes Claims that are inside its area of
-competence.
+* `authorized-by` (index 2): Identifies the authority, an individual or organization, under whose control an entity asserts Claims.
+The authority is represented using `$crypto-key-type-choice` (see {{sec-crypto-keys}}), which binds the Claim to a specific cryptographic identity.
+The `authorized-by` element participates in the matching and augmentation process defined in {{sec-match-and-augment}}, where it provides the conditions under which a Claim is applicable.
 
 ##### Measurement Keys {#sec-comid-mkey}
 
@@ -3498,6 +3495,8 @@ At this point, all the relations in the Staging Area have been processed, and th
 
 # Implementation Status
 
+This section is to be removed before publishing as an RFC.
+
 This section records the status of known implementations of the protocol
 defined by this specification at the time of posting of this Internet-Draft,
 and is based on a proposal described in {{RFC7942}}. The description of
@@ -3605,6 +3604,7 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     508 | `bytes`             | A tagged-concise-tl-tag, see {{sec-corim-tags}}              | {{&SELF}} |
 | 509-549 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     550 | `bytes .size (7..33)` | tagged-ueid-type, see {{sec-common-ueid}}                     | {{&SELF}} |
+|     551 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 |     552 | `uint`              | tagged-svn, see {{sec-comid-svn}}                             | {{&SELF}} |
 |     553 | `uint`              | tagged-min-svn, see {{sec-comid-svn}}                         | {{&SELF}} |
 |     554 | `text`              | tagged-pkix-base64-key-type, see {{sec-crypto-keys}}          | {{&SELF}} |
