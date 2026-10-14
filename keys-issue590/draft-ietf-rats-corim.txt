@@ -4196,11 +4196,14 @@ Table of Contents
    its key-list is appended to key-item.addition.key-list.
 
    Key verification steps, such as Section 6 of [RFC5280], are applied
-   to each key in key-item.addition.key-list.
-
-   A key that successfully validates is retained in key-
-   item.addition.key-list and the acs::APPEND() function is used to
-   append verified keys to the ACS.
+   to each key in key-item.addition.key-list.  A key that successfully
+   validates is retained in key-item.addition.key-list and the
+   acs::APPEND() function is used to append verified keys to the ACS.  A
+   key that is successfully verified is retained in key-
+   item.addition.key-list; any other key is discarded.  The pre-
+   condition of acs::APPEND for keys relations is that key-
+   item.addition.key-list contains at least one verified key.  The post-
+   condition of acs::APPEND for keys relations is null.
 
 8.3.4.3.4.  Processing dm Relations
 

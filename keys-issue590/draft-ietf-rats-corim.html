@@ -6040,8 +6040,11 @@ The <code>keys</code> list is iterated for each <code>key-item</code> where the 
 Match conditions may return a variety of results including <code>Evidence-addition-ECT</code>, <code>Reference-Value-addition-ECT</code>, <code>Endorsement-addition-ECT</code>, and <code>Key-addition-ECT</code> ECTs.
 If <code>Evidence-addition-ECT</code>, <code>Reference-Value-addition-ECT</code>, or <code>Endorsement-addition-ECT</code> are matched, the <code>element-list.element-map.measurement-values-map.cryptokeys</code> list is appended to <code>key-item.addition.key-list</code>.
 If <code>Key-addition-ECT</code> ECTs are matched, its <code>key-list</code> is appended to <code>key-item.addition.key-list</code>.<a href="#section-8.3.4.3.3-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.3-2">Key verification steps, such as <span><a href="https://rfc-editor.org/rfc/rfc5280#section-6" class="relref">Section 6</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>, are applied to each key in <code>key-item.addition.key-list</code>.<a href="#section-8.3.4.3.3-2" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.3.3-3">A key that successfully validates is retained in <code>key-item.addition.key-list</code> and the <code>acs::APPEND()</code> function is used to append verified keys to the ACS.<a href="#section-8.3.4.3.3-3" class="pilcrow">¶</a></p>
+<p id="section-8.3.4.3.3-2">Key verification steps, such as <span><a href="https://rfc-editor.org/rfc/rfc5280#section-6" class="relref">Section 6</a> of [<a href="#RFC5280" class="cite xref">RFC5280</a>]</span>, are applied to each key in <code>key-item.addition.key-list</code>.
+A key that successfully validates is retained in <code>key-item.addition.key-list</code> and the <code>acs::APPEND()</code> function is used to append verified keys to the ACS.
+A key that is successfully verified is retained in <code>key-item.addition.key-list</code>; any other key is discarded.
+The pre-condition of <code>acs::APPEND</code> for <code>keys</code> relations is that <code>key-item.addition.key-list</code> contains at least one verified key.
+The post-condition of <code>acs::APPEND</code> for <code>keys</code> relations is null.<a href="#section-8.3.4.3.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-proc-dm">
