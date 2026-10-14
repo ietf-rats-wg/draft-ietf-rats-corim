@@ -3008,9 +3008,10 @@ Match conditions may return a variety of results including `Evidence-addition-EC
 If `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, or `Endorsement-addition-ECT` are matched, the `element-list.element-map.measurement-values-map.cryptokeys` list is appended to `key-item.addition.key-list`.
 If `Key-addition-ECT` ECTs are matched, its `key-list` is appended to `key-item.addition.key-list`.
 
-The `acs::CHECK()` function is called with `key-item.addition.key-list` where key verification steps, such as {{Section 6 of -pkix-cert}} are applied.
-
-A key that successfully validates is retained in `key-item.addition.key-list` and the `acs::APPEND()` function is used to append verified keys to the ACS.
+Key verification steps, such as {{Section 6 of -pkix-cert}}, are applied to each key in `key-item.addition.key-list`.
+A key that is successfully verified is retained in `key-item.addition.key-list`; any other key is discarded.
+The pre-condition of `acs::APPEND` for `keys` relations is that `key-item.addition.key-list` contains at least one verified key.
+The post-condition of `acs::APPEND` for `keys` relations is null.
 
 ##### Processing `dm` Relations {#sec-proc-dm}
 
