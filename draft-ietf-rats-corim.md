@@ -1395,6 +1395,12 @@ For the numeric, text and byte-string entries, matching semantics are configurab
 
 The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
 
+The range and set forms are meaningful only as a condition, when the `measurement-values-map` entry appears in a C-ECT.
+`measurement-values-map` is also used, unmodified, for ACS-ECTs (the values asserted by Evidence, Reference Values and Endorsements); the CDDL does not by itself distinguish the two uses.
+An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form.
+The range and set forms MUST NOT be used outside a condition.
+The comparison rules in {{sec-match-bool}}, {{sec-match-number}}, {{sec-match-text}} and {{sec-match-bytes}} are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.
+
 ~~~ cddl
 {::include cddl/matcher.cddl}
 ~~~
@@ -2409,11 +2415,8 @@ The internal representation of Attest Key and Device Identity triples uses the `
 ~~~
 {: #fig-k title="Keys Relation"}
 
-<cref>
-[TODO]
-Specialize condition/addition ECTs.
-Define constraints.
-</cref>
+If `key-item` is used to transform Evidence, `key-item.condition` is omitted since Evidence addition is unconditional.
+Nevertheless, `key-item.addition` is merely staged for addition pending successful key verification checks.
 
 ##### Domain Memberships {#sec-ir-domain-mem}
 
@@ -2752,9 +2755,9 @@ FUNC transform(
 
 ##### Keys
 
-Keys transformation involves mapping Attest Key and Device Identity triples into a `key` relation (see {{sec-ir-keys}}).
+Keys transformation involves mapping Attest Key and Device Identity triples into into a `keys` relation (see {{sec-ir-keys}}).
 
-An `attest-key-triple-record` ({{triple-ak}}) or an `identity-triple-record` ({{triple-di}}) is transformed into a `key-item` ({{fig-k}}) as described in {{algo-key-transform}}.
+An `attest-key-triple-record` ({{triple-ak}}) or an `identity-triple-record` ({{triple-di}}) is transformed into a `key-item` ({{fig-k}}) as described in {{algo-key-transform}} pseudocode.
 
 ~~~ pseudocode
 FUNC transform(
@@ -2791,9 +2794,11 @@ FUNC transform(
     RETURN item
 }
 ~~~
-{: #algo-key-transform title="Key Triple Transformation"}
+{: #algo-key-transform title="Key Triples Transformation"}
 
-Note that keys are added under the authority of the Verifier.
+Note that keys are added under the authority of the Verifier because the key verification check is performed by the Verifier.
+
+After the `keys` relations are staged, processing commences as described in {{sec-proc-keys}}.
 
 ##### Domain Membership Transformation {#sec-trans-domain-mem}
 
@@ -2994,21 +2999,19 @@ FUNC SERIES-MATCH(acs: ACS, series: SERIES)
 ~~~
 {: #algo-series-match-and-augment title="Series Match and Augment Algorithm"}
 
-##### Processing `keys` Relations
+##### Processing `keys` Relations {#sec-proc-keys}
 
-Keys relations identify cryptographic keys that require additional key verification steps.
+Keys relations identify cryptographic keys that require additional key verification steps before being appended to the ACS.
+Processing follows the algorithm as defined in {{sec-match-and-augment}}.
+The `keys` list is iterated for each `key-item` where the `acs::MATCH()` function uses `condition`, if specified, to search the ACS for preexisting keys  or to locate claims, where key verification is applied.
+Match conditions may return a variety of results including `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, `Endorsement-addition-ECT`, and `Key-addition-ECT` ECTs.
+If `Evidence-addition-ECT`, `Reference-Value-addition-ECT`, or `Endorsement-addition-ECT` are matched, the `element-list.element-map.measurement-values-map.cryptokeys` list is appended to `key-item.addition.key-list`.
+If `Key-addition-ECT` ECTs are matched, its `key-list` is appended to `key-item.addition.key-list`.
 
-Keys are matched with ACS entries by iterating through the `keys` list.
-For each `keys` entry, the condition ECT is compared with an ACS ECT with `cmtype` 1 or 2 (i.e., endorsements or evidence).
-If they match, perform the following steps for each key in the condition ECT `key-list`:
-
-1. Verify the certificate signatures for each certificate in the certification path.
-1. Verify the revocation status for each certificate in the certification path.
-1. Verify the key usage restrictions that are appropriate for `key-type`.
-
-A key that successfully passes the above checks is said to be verified.
-
-Add all the verified keys to the addition ECT's `key-list` and add the addition ECT to the ACS.
+Key verification steps, such as {{Section 6 of -pkix-cert}}, are applied to each key in `key-item.addition.key-list`.
+A key that is successfully verified is retained in `key-item.addition.key-list`; any other key is discarded.
+The pre-condition of `acs::APPEND` for `keys` relations is that `key-item.addition.key-list` contains at least one verified key.
+The post-condition of `acs::APPEND` for `keys` relations is null.
 
 ##### Processing `dm` Relations {#sec-proc-dm}
 
@@ -3321,6 +3324,7 @@ A set of two or more elements represents the full domain, which can be already e
 ###### Comparison for number entries {#sec-match-number}
 
 The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
+The ACS-ECT value at this codepoint is always a bare `number` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3335,6 +3339,7 @@ If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST 
 ###### Comparison for text entries {#sec-match-text}
 
 The value stored under `measurement-values-map` codepoint 18 is of type `text-matcher`.
+The ACS-ECT value at this codepoint is always a bare `text` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `text`, an equality comparison is performed with the ACS-ECT value.
 
@@ -3343,6 +3348,7 @@ If the C-ECT value is a `tagged-text-set` (CBOR tag 566), the comparison MUST re
 ###### Comparison for bytes entries {#sec-match-bytes}
 
 The value stored under `measurement-values-map` codepoint 19 is of type `bytes-matcher`.
+The ACS-ECT value at this codepoint is always a bare `bytes` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
 If the C-ECT value is a bare `bytes`, an equality comparison is performed with the ACS-ECT value.
 
