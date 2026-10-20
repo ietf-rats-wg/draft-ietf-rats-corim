@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-18T04:06:47.621500+00:00",
+  "timestamp": "2026-10-20T04:27:30.034375+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -98748,7 +98748,7 @@
       "labels": [],
       "body": "I can currently specify an svn or a min-svn in a single measurement-values-map, but cannot specify both. This change allows for both.",
       "createdAt": "2026-10-14T22:28:36Z",
-      "updatedAt": "2026-10-15T20:13:27Z",
+      "updatedAt": "2026-10-18T06:13:56Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
@@ -98773,6 +98773,13 @@
           "body": "The intention isn't to create a way to scalably include many MIN-SVNs. I'm not sure what value that would have. To reduce downtime, many server products are starting to support FW updates without costly platform restarts. In these environments, FW measurements are not static. Also, the security postures of booting into a FW environment vs runtime updating into that FW environment are not equivalent. Attesting to the current hash & SVN of the environment is an incomplete. Some indication that the current SW environment was previously exposed to a lower FW version is necessary.\r\n\r\nIdeally a complete historic log would be available, but a valuable middle ground is to simply reflect the current FW measurements plus a historic reflection of the lowest SVN this component has or could run this boot cycle. The latter is best reflected with an accompanied MIN-SVN.\r\n\r\nYes, we can hack this by splitting off the MIN-SVN from the rest of the measurements in another MKEY, but this really is a hack for what I think will become a more and more common requirement that could easily be cleanly accommodated with a MEASUREMENT-VALUE-MAP index assigned to the MIN-SVN of the environment.",
           "createdAt": "2026-10-15T20:13:26Z",
           "updatedAt": "2026-10-15T20:13:26Z"
+        },
+        {
+          "author": "dkumar-nv",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@vinscarlata ,\r\nI can see the following \"min-svn\"s to be required to be delivered in evidence\r\n\r\n1. min-journey-svn: This is same as what you described.\r\n2. min-rtu-svn: This is the min-svn enforced by RTU.\r\n3. min-rtm-svn: This is the min-svn enforced by RTM.\r\n\r\nHere's an example with different values for the above:\r\n\r\n- RTM (e.g., HW for FMC) enforces min-svn of 1 at boot. The value 1 could be baked into RTM or burnt into fuses\r\n- Actual (current) SVN is actually 3. RTM allows this SVN upon boot.\r\n- After boot, a command was sent to RTU to start enforcing min-svn of 2\r\n- Hitless/Live FW update happens and latest (current) SVN is 5\r\nIn the above case, min-journey-svn = MIN(3, 5) = 3, min-rtu-svn = 2, min-rtm-svn = 1",
+          "createdAt": "2026-10-18T06:13:55Z",
+          "updatedAt": "2026-10-18T06:13:55Z"
         }
       ],
       "reviews": []
