@@ -589,6 +589,9 @@ Or, when the payload is signed indirectly using a Hash Envelope ({{-cose-hash-en
 
 * `payload_location` (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.
 
+The value of `content-type` or `payload_preimage_content_type` is exactly `application/rim+cbor`, without media type parameters.
+In particular, the `profile` parameter is not used in the COSE header, because the profile is carried in the `profile` field of the `corim-map` ({{sec-corim-map}}).
+
 At least one of:
 
 * `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
@@ -677,7 +680,6 @@ The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
 These metadata containers ensure that each CoRIM in the collection has an identified signer.
-The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.
 
 If using other signing envelope formats, ({{sec-conveyed-signer}}) the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
