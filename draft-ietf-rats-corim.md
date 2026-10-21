@@ -1383,6 +1383,9 @@ An int range is represented with either major type 0 or major type 1 ints.
 
 The signed integer range representation is an inclusive range.
 A `min` or `max` of `null` means that the range is effectively unbounded in that direction.
+At least one of `min` and `max` MUST be non-`null`; to match any value, the entry is omitted.
+If both `min` and `max` are integers, `min` MUST be less than or equal to `max`.
+An `int-range` that violates either requirement is malformed, and the tag that contains it MUST be discarded (see {{sec-phase-1}}).
 
 #### Type Matchers {#sec-comid-matchers}
 
@@ -1392,6 +1395,9 @@ For the numeric, text and byte-string entries, matching semantics are configurab
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
 * CBOR tag 566 (`tagged-*-set`, numeric, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
 * CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+If both `min` and `max` of a `tagged-number-range` are non-`null`, `min` MUST be less than or equal to `max`.
+A `tagged-number-range` that violates this requirement is malformed, and the tag that contains it MUST be discarded (see {{sec-phase-1}}).
 
 The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
 
