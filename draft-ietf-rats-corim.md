@@ -480,8 +480,13 @@ Verifiers are not required to follow these URLs or use the information retrieved
 The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
+  Every URI in the array identifies the same resource.
 
-* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See {{sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests of the resource identified by `href`. See {{sec-common-hash-entry}}.
+  Every digest in the array is computed over the same resource, and each uses a different hash algorithm.
+
+If `thumbprint` is present, a Verifier that fetches the resource MUST check it against `thumbprint` following the rules in {{sec-cmp-digests}}, with the digests computed over the fetched resource in place of the ACS-ECT digests.
+If that check fails, the Verifier MUST NOT use the fetched resource.
 
 ### Profile Types {#sec-corim-profile-types}
 
