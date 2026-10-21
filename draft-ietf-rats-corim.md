@@ -480,8 +480,10 @@ Verifiers are not required to follow these URLs or use the information retrieved
 The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
+  Every URI in the array identifies the same resource.
 
-* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See {{sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests of the resource identified by `href`. See {{sec-common-hash-entry}}.
+  Every digest in the array is computed over the same resource, and each uses a different hash algorithm.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -2549,6 +2551,9 @@ All available CoRIM tags are collected.
 
 CoRIM tags MUST be discarded if they have expired, or if they are not associated with an authenticated and authorized source, or if they have been revoked by an authorized source.
 Any CoRIM secured by a cryptographic mechanism that fails validation MUST be discarded.
+
+If the Verifier fetches a resource identified by a `corim-locator-map` ({{sec-corim-locator-map}}) that includes a `thumbprint`, it MUST check the fetched resource against `thumbprint` following the rules in {{sec-cmp-digests}}, with the digests computed over the fetched resource in place of the ACS-ECT digests.
+If that check fails, the Verifier MUST NOT use the fetched resource.
 
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
