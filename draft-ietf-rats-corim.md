@@ -1532,9 +1532,10 @@ Addition Claims are added to the ACS record matching `common-condition`.`environ
 
 For consistent results, every series item condition MUST use the same measurement types; differing only in terms of measurement values.
 This requirement also extends to use of `mkey` in `measurement-map`.
-Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.
+Series entries are evaluated in array order.
 The first series condition that matches terminates series matching and the endorsement values are added to the Attester's actual state.
-These restrictions ensure that evaluation order does not change the meaning of the triple during the appraisal process.
+The author of the triple is responsible for the order of the series entries.
+For example, a condition that matches a narrower set of values is placed before a condition that matches a broader set that includes it.
 
 Note: `authorized-by` in `common-condition` takes precedence over the `authorized-by` in `condition`.
 
