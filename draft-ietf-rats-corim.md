@@ -597,7 +597,10 @@ At least one of:
 * `corim-meta` (index 8): A map that contains metadata associated with a signed CoRIM.
   Described in {{sec-corim-meta}}.
 
-Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`, and the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.
+Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the signer MUST ensure that their contents are semantically identical: the `CWT-Claims` issuer (`iss`) MUST have the same value as `signer-name` in `corim-meta`.
+If both `nbf` in the `CWT-Claims` and `not-before` in the `signature-validity` of `corim-meta` are present, they MUST represent the same time.
+Likewise, if both `exp` and `not-after` are present, they MUST represent the same time.
+A time that is present on only one side is not a mismatch.
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
