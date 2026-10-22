@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 17 April 2027                                            NVIDIA
+Expires: 25 April 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         14 October 2026
+                                                         22 October 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 17 April 2027.
+   This Internet-Draft will expire on 25 April 2027.
 
 Copyright Notice
 
@@ -1928,7 +1928,11 @@ Table of Contents
 
    The signed integer range representation is an inclusive range.  A min
    or max of null means that the range is effectively unbounded in that
-   direction.
+   direction.  At least one of min and max MUST be non-null; to match
+   any value, the entry is omitted.  If both min and max are integers,
+   min MUST be less than or equal to max.  An int-range that violates
+   either requirement is malformed, and the tag that contains it MUST be
+   discarded (see Section 8.3.3).
 
 5.1.4.9.  Type Matchers
 
@@ -1949,6 +1953,11 @@ Table of Contents
    *  CBOR tag 565 (tagged-number-range, numeric types only) means range
       match: the target value must lie within the inclusive [min, max]
       interval; null means unbounded.
+
+   If both min and max of a tagged-number-range are non-null, min MUST
+   be less than or equal to max.  A tagged-number-range that violates
+   this requirement is malformed, and the tag that contains it MUST be
+   discarded (see Section 8.3.3).
 
    The boolean entry (index 16) supports only exact match; see
    Section 8.3.4.4.5.9 for why this is the case.
