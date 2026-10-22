@@ -543,10 +543,6 @@ Signing a CoRIM follows the procedures defined in CBOR Object Signing and
 Encryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
 COSE_Sign structure.
 
-The COSE_Sign structure must be used when:
-
-1. Multiple authorities need to sign the same unsigned CoRIM payload; or
-2. A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
 
 See {{sec-mult-sign}} for details on multi-signature CoRIM.
 
@@ -554,7 +550,7 @@ The CoRIM MUST be signed by the CoRIM creator.
 
 ### Signing with single signature
 
-COSE_Sign1 is used when a single signer needs to produce a signature over an unsigned corim (`tagged-unsigned-corim-map`).
+COSE_Sign1 is used when a single signer needs to produce a signature over an unsigned CoRIM (`tagged-unsigned-corim-map`).
 When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header
 parameters that MUST be used in the protected header alongside additional
 information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
@@ -583,7 +579,7 @@ a. A single signer needs to produce a signature using (COSE_Sign1) object.
 
 OR
 
-b. When multiple signatures needs to be produced using (COSE_Sign) object. See {{sec-mult-sign}} for further details.
+b. When multiple signatures need to be produced using (COSE_Sign) object. See {{sec-mult-sign}} for further details.
 
 #### Protected Header Map
 
