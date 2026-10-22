@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-20T04:27:30.034375+00:00",
+  "timestamp": "2026-10-22T04:18:24.411998+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -15471,7 +15471,7 @@
       ],
       "body": "Introduction of PR 622, makes the int-range as redundant.\n\nThis issue tracks two things:\n\n1. Investigate, which profile uses code point 564, request them to migrate to 565 code point\n2. Delete int-range (code point 564 reserved) as duplication adds confusion...\n\n_Originally posted by @thomas-fossati in https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/622#discussion_r3922601152_\n            ",
       "createdAt": "2026-09-03T08:34:50Z",
-      "updatedAt": "2026-10-15T11:34:35Z",
+      "updatedAt": "2026-10-21T16:52:13Z",
       "closedAt": null,
       "comments": [
         {
@@ -15543,6 +15543,13 @@
           "body": "> Also `int-range` was a recent addition, so I assume it is likely not fully implemented by all solutions\n\nwell, it first appeared in -08 (7 July 2025) and has remained largely unchanged for four iterations of the draft.\nIOW, it has enjoyed a relatively substantial amount of airtime and stability.\nIt has also been integrated into the Veraison tooling, which makes it widely available.\nThis means that caution is warranted, and we should try to reach out to as many implementers as possible to ensure that we are not disrupting a feature on which they rely.\nSo, keep on broadcasting! :-)\n\n",
           "createdAt": "2026-10-15T11:34:34Z",
           "updatedAt": "2026-10-15T11:34:34Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I wanted to ask about this in today's call, but I forgot.\nIs there any news on this front?  I'd like to make progress, but I need the community's approval before I can prepare the PR.",
+          "createdAt": "2026-10-21T16:52:13Z",
+          "updatedAt": "2026-10-21T16:52:13Z"
         }
       ]
     },
@@ -15660,9 +15667,17 @@
       ],
       "body": "- **Location:** [L673](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L673); [`cddl/protected-corim-header-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/protected-corim-header-map.cddl)\n\nThe CDDL fixes the value:\n\n```cddl\n&(content-type: 3) => \"application/rim+cbor\"\n&(payload_preimage_content_type: 259) => \"application/rim+cbor\"\n```\n\n[L673](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L673) says: *\"The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.\"*\n\nA header carrying `application/rim+cbor;cmwc_t=\"tag:RFCthis:corim\"` does not validate against a literal-string CDDL member. The two statements cannot both hold.\n\n**Fix:** Either relax the CDDL to a media-type pattern that admits parameters, or drop the `cmwc_t` guidance. Decide which, and make the CDDL the single normative source.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T17:55:10Z",
-      "updatedAt": "2026-10-07T15:05:35Z",
+      "updatedAt": "2026-10-21T16:57:44Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option B, keep the literal. `content-type` stays `\"application/rim+cbor\"`. The sentence suggesting a `cmwc_t` parameter will be deleted. The draft will also state that the `profile` media-type parameter isn't used in the COSE header, because `corim-map` carries the profile.\n",
+          "createdAt": "2026-10-21T16:57:44Z",
+          "updatedAt": "2026-10-21T16:57:44Z"
+        }
+      ]
     },
     {
       "number": 641,
@@ -15699,9 +15714,17 @@
       ],
       "body": "- **Location:** [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483), [L1515-1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515-L1517)\n\nWithin nine lines the section says:\n\n- [L1483](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1483): *\"As soon as the condition value is matched the remaining conditions can be ignored.\"*\n- [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515): *\"Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\"*\n- [L1517](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1517): *\"These restrictions ensure that **evaluation order does not change the meaning of the triple** during the appraisal process.\"*\n\nFirst-match-wins plus an author-controlled ordering means evaluation order *does* determine the result. Additionally, \"most precise\" is never defined, so the ordering requirement is not checkable (see [N-04](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/669)).\n\n**Fix:** State plainly that evaluation is first-match-wins in encoded array order, that the author is responsible for the ordering, and delete the claim that order is insignificant.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:01:50Z",
-      "updatedAt": "2026-10-12T19:18:59Z",
+      "updatedAt": "2026-10-21T16:57:41Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option A, array order, first match wins. Series entries are evaluated in array order, and the first matching entry ends matching. Ordering them is the author's responsibility. The requirement to put the \"most precise\" entry first, and the claim that evaluation order doesn't change the meaning, will both be deleted. This also resolves #669.\n",
+          "createdAt": "2026-10-21T16:57:40Z",
+          "updatedAt": "2026-10-21T16:57:40Z"
+        }
+      ]
     },
     {
       "number": 643,
@@ -15825,7 +15848,7 @@
       ],
       "body": "- **Location:** [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) and {{sec-match-one-codepoint}} subsections ([L3148-3331](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3148-L3331))\n- **Prior art:** PARTIAL \u2014 [#564](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/564) asks for a comparison section for `name`; [#506](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506) asks for one for `flags-map`. Neither covers the other five codepoints, nor the consequence that the L3144 MUST turns the gap into a permanent non-match.\n\n[L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144): *\"If the processor is unable to determine the applicable comparison algorithm for an attribute, it **MUST behave as though the C-ECT does not match** the ACS-ECT.\"*\n\n[L3146](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3146) claims: *\"The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.\"* Comparison algorithms are actually defined only for codepoints 0 (version), 1 (svn), 2 (digests), 4 (raw-value), 13 (cryptokeys), 14 (integrity-registers), 15 (int-range), 16 (bool), 17 (number), 18 (text), 19 (bytes).\n\n**No algorithm is defined for:**\n\n| Codepoint | Name |\n| --- | --- |\n| 3 | `flags` |\n| 5 | `raw-value-mask-DEPRECATED` |\n| 6 | `mac-addr` |\n| 7 | `ip-addr` |\n| 8 | `serial-number` |\n| 9 | `ueid` |\n| 10 | `uuid` |\n| 11 | `name` |\n\nCombined with the [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) MUST, a conformant Verifier must treat any condition using `flags`, `mac-addr`, `ip-addr`, `serial-number`, `ueid`, `uuid` or `name` as a non-match \u2014 permanently. `flags` in particular is a headline feature with eleven documented booleans and its own IANA registry.\n\n**Fix:** Add comparison subsections for each of the seven codepoints (`flags` needs a per-boolean containment rule; the rest are plausibly plain equality on deterministic encodings), or state a default \"binary equality of the deterministic encoding\" fallback and scope [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) to profile-defined codepoints only.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:12:26Z",
-      "updatedAt": "2026-10-07T15:05:46Z",
+      "updatedAt": "2026-10-21T16:57:36Z",
       "closedAt": null,
       "comments": [
         {
@@ -15834,6 +15857,13 @@
           "body": "Flags is something to worked upon!\n\nOtherwise if not stated, binary comparison is the default should be stated.",
           "createdAt": "2026-09-16T14:07:07Z",
           "updatedAt": "2026-09-16T14:08:22Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):**\n- Codepoints 6\u201311: Option A, one default rule. A codepoint defined in this document that has no comparison subsection of its own is compared by binary equality of its deterministic encoding. The rule that a missing comparison algorithm means no match will apply only to codepoints the processor doesn't recognize. The sentence claiming the subsections cover every codepoint will be corrected.\n- `flags` (codepoint 3): Option A. Each flag in the condition must appear in the entry with the same value. Flags the condition leaves out are ignored. A flag missing from the entry doesn't satisfy the condition.\n\nThe fix will also state that codepoint 5 is handled by the codepoint 4 comparison and isn't compared on its own.\n",
+          "createdAt": "2026-10-21T16:57:36Z",
+          "updatedAt": "2026-10-21T16:57:36Z"
         }
       ]
     },
@@ -15961,9 +15991,17 @@
       ],
       "body": "- **Location:** [L473-477](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L473-L477), [`cddl/corim-locator-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-locator-map.cddl)\n- **Prior art:** RELATED \u2014 [#73](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73) asks a different locator-map question (referencing a CoRIM by `corim-map.id`).\n\n```cddl\n&(href: 0) => uri / [ + uri ]\n? &(thumbprint: 1) => eatmc.digest / [ + eatmc.digest ]\n```\n\n[L477](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L477): *\"`thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s.\"* Nothing constrains the two arrays to the same length or defines the pairing. `href: [a, b, c]` with `thumbprint: [d1, d2]` is valid CBOR with no defined meaning.\n\n**Fix:** Require `thumbprint` to be positionally aligned with `href` and of equal length, and say what a Verifier does when it is not.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:18:01Z",
-      "updatedAt": "2026-10-07T15:05:54Z",
+      "updatedAt": "2026-10-21T16:57:50Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option A, alternatives. Every `href` locates the same resource, and the thumbprints are digests of that one resource under different algorithms. They are checked with the digest comparison rules, and a fetched resource that fails the check isn't used.\n",
+          "createdAt": "2026-10-21T16:57:50Z",
+          "updatedAt": "2026-10-21T16:57:50Z"
+        }
+      ]
     },
     {
       "number": 655,
@@ -16039,9 +16077,17 @@
       ],
       "body": "- **Location:** [`cddl/cmw-corim-collection.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/cmw-corim-collection.cddl); rendered at [L676-678](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L676-L678)\n\n```cddl\ncorim-cbor-collection = {\n  \"__cmwc_t\" => \"tag:{{&SELF}}:corim\",\n  + cmw-label => [TBD1, bytes .cbor tagged-corim-map]\n}\ncmw-label = text / int\n```\n\nThree separate defects:\n\n1. `tagged-corim-map` is undefined \u2014 the rule is `tagged-unsigned-corim-map` ([`cddl/tagged-unsigned-corim-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/tagged-unsigned-corim-map.cddl)).\n2. `TBD1` is an IANA placeholder, not a CDDL value; the fragment cannot compile.\n3. `{{&SELF}}` is a kramdown-rfc entity embedded inside a CDDL string literal. Inside a `~~~ cddl` block it will not be expanded, so the published CDDL literally reads `\"tag:{{&SELF}}:corim\"`.\n\nThe file appears in **no** `*_FRAGS` list in [`cddl/corim-frags.mk`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-frags.mk), so `cddlc` never sees it \u2014 which is why all three defects survive.\n\n**Fix:** Correct the rule name, replace `TBD1` with a named placeholder rule (e.g. `cmw-corim-content-format = TBD1` with an RFC-editor note) or a comment, resolve `{{&SELF}}` via an RFC-editor instruction, and add the file to `CORIM_FRAGS`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:23:19Z",
-      "updatedAt": "2026-10-07T15:06:00Z",
+      "updatedAt": "2026-10-21T16:57:45Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option A. The CoRIM collection type identifier becomes a tag URI under ietf.org, for example `tag:ietf.org,2026:corim`, with no IANA action. We will confirm this with the CMW authors. `tag:{{&SELF}}:local,` gets the same treatment. The fix also includes the mechanical changes: rename `tagged-corim-map` to `tagged-unsigned-corim-map`, bind `TBD1` to a named rule with an RFC Editor note, and add the file and its example to the CDDL build.\n",
+          "createdAt": "2026-10-21T16:57:45Z",
+          "updatedAt": "2026-10-21T16:57:45Z"
+        }
+      ]
     },
     {
       "number": 659,
@@ -16153,9 +16199,17 @@
       ],
       "body": "- **Location:** [`cddl/int-range-type-choice.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/int-range-type-choice.cddl), [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl)\n- **Prior art:** RELATED \u2014 [#628](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/628) (delete 564) would move this to `tagged-number-range`, which has the same defect.\n\n`int-range = [min: int / negative-inf, max: int / positive-inf]` and `tagged-number-range = #6.565([number / null, number / null])` both permit `[10, 5]`, an empty range that can never match. Neither the CDDL nor the prose forbids it or defines the matching outcome. `[null, null]` \u2014 a range that matches everything \u2014 is likewise permitted with no comment.\n\n**Fix:** Add a normative statement that `min` MUST NOT exceed `max` when both are present, and say what a processor does when it encounters an inverted range.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:28:45Z",
-      "updatedAt": "2026-10-07T15:06:08Z",
+      "updatedAt": "2026-10-21T16:57:37Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option A, invalid input. `min` MUST NOT exceed `max` in `int-range` and `tagged-number-range`, and `[null, null]` is forbidden for `int-range`, matching PR #727. A range that breaks this is invalid, and its tag is discarded.\n",
+          "createdAt": "2026-10-21T16:57:37Z",
+          "updatedAt": "2026-10-21T16:57:37Z"
+        }
+      ]
     },
     {
       "number": 665,
@@ -16241,9 +16295,17 @@
       ],
       "body": "- **Location:** [L601](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L601)\n\n> To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.\n\n\"Semantic overlap\" is undefined, and `cwt-claims` ends with `* int => any`, so the set of claims a Verifier might encounter is open-ended. No validator can decide this predicate.\n\n**Fix:** Replace with an enumerated prohibition (e.g. a list of CWT claim keys that MUST NOT appear), or downgrade to a `SHOULD NOT` with explanatory guidance.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:33:10Z",
-      "updatedAt": "2026-10-07T15:06:14Z",
+      "updatedAt": "2026-10-21T16:57:49Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option A. CWT-Claims carry metadata about the CoRIM and its signer only, and a Verifier MUST NOT derive Claims about the Attester from them. This replaces the \"no semantic overlap\" sentence.\n",
+          "createdAt": "2026-10-21T16:57:48Z",
+          "updatedAt": "2026-10-21T16:57:48Z"
+        }
+      ]
     },
     {
       "number": 669,
@@ -16260,9 +16322,17 @@
       ],
       "body": "- **Location:** [L1515](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1515)\n\n> Series entries are ordered such that the most precise match is evaluated first and least precise match is evaluated last.\n\n\"Precise\" is never defined for measurement conditions. Given that all series conditions MUST use the same measurement types ([L1513](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L1513)), it is not obvious that any precision ordering exists. Combined with [C-04](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/642), neither an author nor a Verifier can act on this.\n\n**Fix:** Define a precision ordering, or delete the requirement and rely on encoded order plus first-match-wins.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:33:49Z",
-      "updatedAt": "2026-10-12T19:19:09Z",
+      "updatedAt": "2026-10-21T16:57:42Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Resolved with #642. Series entries are evaluated in array order and the first match wins, so the undefined \"most precise\" requirement will be deleted. See #642.\n",
+          "createdAt": "2026-10-21T16:57:42Z",
+          "updatedAt": "2026-10-21T16:57:42Z"
+        }
+      ]
     },
     {
       "number": 670,
@@ -16279,9 +16349,17 @@
       ],
       "body": "- **Location:** [L3338](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3338)\n\n> Note that the processor may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.\n\nStatefulness is an implementation property, not an observable protocol behaviour.\n\n**Fix:** Restate as the observable requirement: *\"The result of comparing a C-ECT against an ACS-ECT MUST NOT depend on the order in which other comparisons were performed.\"*\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:34:28Z",
-      "updatedAt": "2026-10-07T15:06:17Z",
+      "updatedAt": "2026-10-21T16:57:39Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option C, delete \"The comparison SHOULD NOT be stateful\" from Profile-directed Comparison.\n",
+          "createdAt": "2026-10-21T16:57:39Z",
+          "updatedAt": "2026-10-21T16:57:39Z"
+        }
+      ]
     },
     {
       "number": 671,
@@ -16327,9 +16405,17 @@
       ],
       "body": "- **Location:** [L593](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L593); [`cddl/cwt-claims.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/cwt-claims.cddl), [`cddl/validity-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/validity-map.cddl)\n\n> ... the `nbf` and `exp` values in the `CWT-Claims` MUST match the `signature-validity` in `corim-meta`.\n\n`cwt-claims` declares `? exp` and `? nbf`; `validity-map` declares `? not-before` and a mandatory `not-after`; and `signature-validity` is itself optional in `corim-meta-map`. The requirement does not say whether a present `not-before` with an absent `nbf` is a violation, nor whether \"match\" means numeric equality across `int`/`float` encodings.\n\n**Fix:** Enumerate the pairings and state the outcome for each present/absent combination.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:35:49Z",
-      "updatedAt": "2026-10-07T15:06:20Z",
+      "updatedAt": "2026-10-21T16:57:47Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "**Decision (Weekly call, 21-Oct-2026):** Option B, lenient. When CWT-Claims and `corim-meta` are both present, only the pairs present on both sides are compared (`nbf` with `not-before`, `exp` with `not-after`), and their values must be equal. A field missing on one side isn't a violation.\n",
+          "createdAt": "2026-10-21T16:57:46Z",
+          "updatedAt": "2026-10-21T16:57:46Z"
+        }
+      ]
     },
     {
       "number": 673,
@@ -98748,7 +98834,7 @@
       "labels": [],
       "body": "I can currently specify an svn or a min-svn in a single measurement-values-map, but cannot specify both. This change allows for both.",
       "createdAt": "2026-10-14T22:28:36Z",
-      "updatedAt": "2026-10-18T06:13:56Z",
+      "updatedAt": "2026-10-21T21:30:23Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
@@ -98780,9 +98866,345 @@
           "body": "@vinscarlata ,\r\nI can see the following \"min-svn\"s to be required to be delivered in evidence\r\n\r\n1. min-journey-svn: This is same as what you described.\r\n2. min-rtu-svn: This is the min-svn enforced by RTU.\r\n3. min-rtm-svn: This is the min-svn enforced by RTM.\r\n\r\nHere's an example with different values for the above:\r\n\r\n- RTM (e.g., HW for FMC) enforces min-svn of 1 at boot. The value 1 could be baked into RTM or burnt into fuses\r\n- Actual (current) SVN is actually 3. RTM allows this SVN upon boot.\r\n- After boot, a command was sent to RTU to start enforcing min-svn of 2\r\n- Hitless/Live FW update happens and latest (current) SVN is 5\r\nIn the above case, min-journey-svn = MIN(3, 5) = 3, min-rtu-svn = 2, min-rtm-svn = 1",
           "createdAt": "2026-10-18T06:13:55Z",
           "updatedAt": "2026-10-18T06:13:55Z"
+        },
+        {
+          "author": "fchinchilla",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> @vinscarlata , I can see the following \"min-svn\"s to be required to be delivered in evidence\r\n> \r\n> 1. min-journey-svn: This is same as what you described.\r\n> 2. min-rtu-svn: This is the min-svn enforced by RTU.\r\n> 3. min-rtm-svn: This is the min-svn enforced by RTM.\r\n> \r\n> ...\r\n@dkumar-nv Are you suggesting to add these 3 new codepoints or do you believe @thomas-fossati 's suggested approach is better?\r\n",
+          "createdAt": "2026-10-20T18:29:49Z",
+          "updatedAt": "2026-10-20T18:29:49Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > @vinscarlata , I can see the following \"min-svn\"s to be required to be delivered in evidence\r\n> > \r\n> > 1. min-journey-svn: This is same as what you described.\r\n> > 2. min-rtu-svn: This is the min-svn enforced by RTU.\r\n> > 3. min-rtm-svn: This is the min-svn enforced by RTM.\r\n> > \r\n> > ...\r\n> > @dkumar-nv Are you suggesting to add these 3 new codepoints or do you believe @thomas-fossati 's suggested approach is better?\r\n\r\nI don't have the expertise to assess whether these new SVNs are necessary. Fortunately, that is not my job in this context :-)\r\n\r\nThe principle we must follow is to decide whether these SVNs have distinct semantics and are, in fact, separate first-class types.\r\n\r\nIf they are, then it makes sense to allocate the relevant codepoints.\r\n\r\nOtherwise, if the semantics are essentially the same, using mkey to disambiguate the context is not a hack, but rather the native CoRIM mechanism.",
+          "createdAt": "2026-10-20T23:33:56Z",
+          "updatedAt": "2026-10-20T23:33:56Z"
+        },
+        {
+          "author": "dkumar-nv",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "@fchinchilla ,\r\nBased on the needs I have seen across many attesters, my recommendation is to add the 3 new code points if we are going to add any new one.\r\n\r\nThere may be some differences in opinions on the naming specially min-rtm-svn. An alternative name for that might be min-boot-svn.",
+          "createdAt": "2026-10-21T05:09:22Z",
+          "updatedAt": "2026-10-21T05:09:22Z"
+        },
+        {
+          "author": "fchinchilla",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The suggested solution in today's meeting was to use a number-matcher to a tagged-number-range. The definition is available in the 2026-10-14 update to https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html\r\n\r\nWe plan on using it as follows:\r\n\r\n`/ measurement-map / {`\r\n`            / mval / 1 : / measurement-values-map / {`\r\n`                        / svn / 1 : 255, / current svn /`\r\n`                        / number-matcher / 17 : 565([100, 255])  / Inclusive range of min-svn to max-svn  /`\r\n`            }`\r\n`}`\r\n\r\nI'll close this PR after I get a chance to modify some of our diags and validate them.",
+          "createdAt": "2026-10-21T21:30:23Z",
+          "updatedAt": "2026-10-21T21:30:23Z"
         }
       ],
       "reviews": []
+    },
+    {
+      "number": 729,
+      "id": "PR_kwDOH6-tI88AAAABJ2ZfRw",
+      "title": "Remove the untestable statefulness sentence",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/729",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #670.\n\nDeletes \"the comparison SHOULD NOT be stateful\" from Profile-directed Comparison, as decided on the 21-Oct-2026 weekly call.\n",
+      "createdAt": "2026-10-21T17:53:57Z",
+      "updatedAt": "2026-10-21T19:08:14Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-670",
+      "headRefOid": "70dcf197ae8153e66ea88435f9fc9c8610f55e02",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 730,
+      "id": "PR_kwDOH6-tI88AAAABJ2Zuug",
+      "title": "Make the CWT Claims scope rule checkable",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/730",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #668.\n\nReplaces the \"no semantic overlap with CoRIM tags\" requirement, which no validator can decide, with option A from the 21-Oct-2026 weekly call: the CWT Claims map carries metadata about the CoRIM and its signer only, and a Verifier MUST NOT derive Claims about an Attester from it.\n",
+      "createdAt": "2026-10-21T17:54:16Z",
+      "updatedAt": "2026-10-21T19:08:17Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-668",
+      "headRefOid": "f002b933b9bf7974e6feddb7d57304499c997154",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 731,
+      "id": "PR_kwDOH6-tI88AAAABJ2Z-lw",
+      "title": "Define validity matching when a time is missing",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/731",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #672.\n\nImplements option B (lenient) from the 21-Oct-2026 weekly call. When `CWT-Claims` and `corim-meta` are both present, `nbf`/`not-before` and `exp`/`not-after` are compared only when both sides of a pair are present, and must then represent the same time. A time present on only one side isn't a mismatch.\n\n\"Represent the same time\" is used because the two sides have different encodings: NumericDate in CWT, `time` (tag 1) in `validity-map`.\n\nPR #718 changes the heading levels around this text, so whichever lands second needs a small rebase.\n",
+      "createdAt": "2026-10-21T17:54:36Z",
+      "updatedAt": "2026-10-21T19:08:20Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-672",
+      "headRefOid": "99ac42b4bc37427a387d7cf1eebb9882b39e9e95",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 732,
+      "id": "PR_kwDOH6-tI88AAAABJ2aR1Q",
+      "title": "Define how locator thumbprints relate to hrefs",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/732",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #654.\n\nImplements option A from the 21-Oct-2026 weekly call:\n\n- Every `href` in the array identifies the same resource (keeps the existing \"alternative URIs\" wording).\n- Every `thumbprint` digest is over that one resource, each with a different hash algorithm.\n- A Verifier that fetches the resource checks it using the digest comparison rules in Comparison for digests entries, with the digests computed over the fetched resource in place of the ACS-ECT digests. That reuses the existing rules: common algorithms must all match, there must be at least one common algorithm, and an algorithm can't appear twice. If the check fails, the resource isn't used.\n",
+      "createdAt": "2026-10-21T17:54:59Z",
+      "updatedAt": "2026-10-21T19:08:23Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-654",
+      "headRefOid": "a892967fe4f2bdd312caba5e039eb2b2e8c45ea9",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 733,
+      "id": "PR_kwDOH6-tI88AAAABJ2ahQQ",
+      "title": "Make series evaluation order explicit",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/733",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #642.\nFix #669.\n\nImplements option A from the 21-Oct-2026 weekly call. Series entries are evaluated in array order and the first match wins, which is what the processing pseudocode already does. The author is responsible for the order.\n\n- Deletes the undefined \"most precise match is evaluated first\" requirement (#669).\n- Deletes the claim that evaluation order doesn't change the meaning of the triple (#642).\n- Adds an example of author ordering: narrower conditions before broader ones that include them.\n\nBoth issues are fixed in one PR because they concern the same three sentences.\n",
+      "createdAt": "2026-10-21T17:55:18Z",
+      "updatedAt": "2026-10-21T19:08:26Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-642",
+      "headRefOid": "600338dfda51fbd90ebee354d3221edac8d536e0",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 734,
+      "id": "PR_kwDOH6-tI88AAAABJ2a10w",
+      "title": "Keep the CoRIM content type a parameterless literal",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/734",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #640.\n\nImplements option B from the 21-Oct-2026 weekly call. The CDDL keeps `content-type` and `payload_preimage_content_type` fixed to `\"application/rim+cbor\"`.\n\n- Deletes the sentence in CoRIM collections that suggested adding a `cmwc_t` parameter to that header, which the CDDL rejects. (`cmwc_t` is also defined only for the `application/cmw+*` media types.)\n- States that the value carries no media type parameters, and that the registered `profile` parameter isn't used in the COSE header because `corim-map` carries the profile.\n\nNo CDDL change.\n",
+      "createdAt": "2026-10-21T17:55:43Z",
+      "updatedAt": "2026-10-21T19:08:29Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-640",
+      "headRefOid": "0e46a7762b5ac8d67ee0ea106f68a028bbddff82",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABThJO2w",
+          "commit": {
+            "abbreviatedOid": "0e46a77"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-21T19:03:34Z",
+          "updatedAt": "2026-10-21T19:03:34Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 735,
+      "id": "PR_kwDOH6-tI88AAAABJ2hLcw",
+      "title": "Fix and build the CoRIM collection CDDL",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/735",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #658.\n\nImplements option A from the 21-Oct-2026 weekly call, plus the mechanical fixes.\n\n**Type identifier**\n- The Collection CMW type becomes `tag:ietf.org,2026:corim`, which is a valid RFC 4151 tag URI. `tag:{{&SELF}}:corim` was rendered literally and wasn't valid.\n- The local reference form becomes `tag:ietf.org,2026:corim:local,`_tag-id-tstr_ for the same reason.\n- This still needs confirming with the CMW authors, since the CMW draft points to this section.\n\n**CDDL** (`cddl/cmw-corim-collection.cddl`)\n- `tagged-corim-map` (undefined) \u2192 `tagged-unsigned-corim-map`.\n- `TBD1` \u2192 the named rule `rim-cbor-content-format`, set to the placeholder 65000 (CoAP Content-Format experimental range), with an RFC Editor note to substitute the assigned ID. The IANA table still says TBD1.\n\n**Build**\n- New `cmwc` check target with the CoRIM fragments, so `make -C cddl check` and the draft build (and so CI) now compile the collection CDDL and validate its example.\n\n**Example** (`cddl/examples/cmw-corim-collection.diag`). It had never been validated, and several parts didn't match the CDDL:\n- `ref-claims` was a map, not a list of `measurement-map`.\n- The profile-specific key `-404` in `measurement-values-map` became `raw-value` with `tagged-bytes`.\n- The CoSWID key `4294967295` with a map value isn't allowed by RFC 9393's `any-attribute`, so it was removed.\n- `profile` and `href` values were plain text instead of `uri` (tag 32). The profile tag URIs also used `/` where RFC 4151 needs `:`.\n- The `coswid-triples` entry was removed. `coswid-triple-record` uses `coswid.tag-id`, which RFC 9393 defines as the map key `0`, not the tag-id type, so no real tag ID validates against it. That bug is separate from this PR.\n\nCI now builds and validates the collection CDDL and example, and passes.\n",
+      "createdAt": "2026-10-21T18:04:04Z",
+      "updatedAt": "2026-10-21T19:10:12Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-658",
+      "headRefOid": "6b18f05dcd8d2026794470b4469ce626c4fa8830",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABThOCZQ",
+          "commit": {
+            "abbreviatedOid": "6b18f05"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-21T19:10:12Z",
+          "updatedAt": "2026-10-21T19:10:12Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 736,
+      "id": "PR_kwDOH6-tI88AAAABJ2inZw",
+      "title": "Make inverted and doubly-unbounded ranges malformed",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/736",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #664.\n\nImplements option A from the 21-Oct-2026 weekly call.\n\n- `int-range`: at least one of `min` and `max` MUST be non-`null`, and `min` MUST be \u2264 `max` when both are integers.\n- `tagged-number-range`: `min` MUST be \u2264 `max` when both are non-`null`. PR #727 already forbids `[null, null]` here.\n- A range that breaks these rules is malformed, and its tag is discarded under the existing Phase 1 rule.\n\nThis closes the live bug where an entry range `[10, 5]` was subsumed by a condition range `[6, 9]`.\n\nThe rules sit in the Int Range and Type Matchers sections, not in the comparison sections, so they don't textually overlap PR #727.\n\n**Examples:** the generated `intrep-rel-*` examples had five `564([null, null])` values and two inverted ranges (`[1878, -370]`, `[3404, -88]`). They're now `[0, null]` and swapped to `[-370, 1878]` and `[-88, 3404]`. These are value-only edits, so the examples still match the CDDL. I couldn't run the CDDL checks locally.\n",
+      "createdAt": "2026-10-21T18:05:54Z",
+      "updatedAt": "2026-10-21T19:08:36Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-664",
+      "headRefOid": "68ddcf3c943153e53661fddbdf7233fa70b67fd8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABThKu-g",
+          "commit": {
+            "abbreviatedOid": "68ddcf3"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-21T19:05:35Z",
+          "updatedAt": "2026-10-21T19:05:35Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 737,
+      "id": "PR_kwDOH6-tI88AAAABJ2jXvg",
+      "title": "Define comparison for flags and the remaining codepoints",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/737",
+      "state": "OPEN",
+      "author": "steven-bellock",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [
+        "AI Authored"
+      ],
+      "body": "Fix #648.\n\nImplements the 21-Oct-2026 weekly call decisions.\n\n**Codepoints 6\u201311 (option A):** an attribute defined by this specification that has no comparison subsection of its own is compared by binary comparison of the deterministic encodings. The text names the codepoints this covers: `mac-addr`, `ip-addr`, `serial-number`, `ueid`, `uuid` and `name`. The \"no algorithm \u2192 no match\" rule now applies only to attributes the processor doesn't recognize, and the sentence claiming the subsections cover every attribute is corrected. The conversion to deterministic encoding is a MUST, in line with PR #711.\n\n**`flags` (option A):** new Comparison for flags entries subsection. Each flag in the condition must be present in the entry with the same value. Flags the condition leaves out are ignored, and a flag missing from the entry isn't treated as `false`. The `flags` description in the measurement-values-map list now points to it.\n\n**Codepoint 5:** the raw-value comparison now says that codepoint 5 is used only as part of the codepoint 4 comparison, isn't compared on its own, and so doesn't need to be present in the ACS-ECT. Without this, Attribute Path Containment would require path 5 in the entry, and a condition carrying the deprecated mask could never match.\n\nNot addressed here: #564 (whether `name` is metadata). If it is, `name` would be dropped from the binary-comparison list.\n",
+      "createdAt": "2026-10-21T18:06:53Z",
+      "updatedAt": "2026-10-21T19:09:08Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "headRepository": "steven-bellock/draft-ietf-rats-corim",
+      "headRefName": "fix-648",
+      "headRefOid": "884f2d77b7374255422e0091a37e30ab028d5839",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABThNReA",
+          "commit": {
+            "abbreviatedOid": "884f2d7"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-21T19:09:07Z",
+          "updatedAt": "2026-10-21T19:09:07Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
