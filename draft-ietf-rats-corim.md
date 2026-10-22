@@ -681,15 +681,6 @@ Signer map.
 
 ### Signing with Multiple Signatures {#sec-mult-sign}
 
-An Endorser or a Reference Value Provider may need to generate multiple signatures over the same unsigned CoRIM.
-This is required in the following use cases.
-
-a. To support multiple signature algorithms (such as a traditional algorithm and a post-quantum algorithm) without having to produce multiple identical CoRIMs.
-
-b. Alternatively, an unsigned CoRIM containing Reference Values or Endorsements needs to be signed by multiple different signers, such as
-a component manufacturer and a device manufacturer.
-
-In both these cases, COSE_Sign object is used.
 
 When using COSE_Sign the following CDDL specification defines the overall structure.
 
@@ -716,7 +707,7 @@ The following describes each child element of this type.
 #### Signature Parameters of Multi Sign CoRIM {#sec-multiple-sigs}
 
 The signature parameter of a COSE_Sign object contains an array of signature structure that has
-Header parameters alongwith signature bytes. The Header parameters contain information relating to the
+Header parameters along with signature bytes. The Header parameters contain information relating to the
 content and the details about the signer performing the signature.
 
 ~~~ cddl
