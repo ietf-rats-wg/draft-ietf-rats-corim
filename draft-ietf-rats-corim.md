@@ -573,7 +573,7 @@ The following describes each child element of this type.
 
 ### Header Parameters  {#sec-header}
 
-This section describes the header parameters, that needs to be set when:
+This section describes the header parameters, that need to be set when:
 
 a. A single signer needs to produce a signature using (COSE_Sign1) object.
 
