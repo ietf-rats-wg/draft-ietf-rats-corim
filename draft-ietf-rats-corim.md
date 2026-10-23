@@ -1152,9 +1152,6 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bytes}}.
 
-* `min-svn` (index 20): The security version number typically changes only when a security relevant change is made to the measured environment. The min-svn is the lowest that can be tolerated.
-  Described in {{sec-comid-svn}}.
-
 ##### Version {#sec-comid-version}
 
 A `version-map` contains details about the versioning of a measured
@@ -3835,8 +3832,7 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 17    | number                    | {{&SELF}}     |
 | 18    | text                      | {{&SELF}}     |
 | 19    | bytes                     | {{&SELF}}     |
-| 20    | min-svn                   | {{&SELF}}     |
-| 21-18446744073709551616 | Unassigned | |
+| 20-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
