@@ -24,7 +24,7 @@ $(eval $(call cddl_check_template,intrep-rel,$(INTREP_REL_FRAGS),$(INTREP_REL_EX
 clean: ; rm -f $(CLEANFILES)
 
 # Extract the CBOR tags defined by CoRIM/CoMID (i.e., those in the 5xx space)
-cbor-tags.txt: $(wildcard *.cddl) ; grep -h '#6\.5' *cddl | sort -u -t'=' -k2 > $@
+cbor-tags.txt: $(wildcard *.cddl) ; grep -h '#6\.5' *cddl | tr -d '\r' | sort -u -t'=' -k2 > $@
 
 # Return an error if there are duplicate CBOR Tags defined
 cbor-tags-unique: cbor-tags.txt
