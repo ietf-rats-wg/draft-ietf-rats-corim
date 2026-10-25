@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-22T04:18:24.411998+00:00",
+  "timestamp": "2026-10-25T04:16:04.088831+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -16189,7 +16189,7 @@
       "id": "I_kwDOH6-tI88AAAABQg8sSA",
       "title": "D-09 \u2014 No constraint prevents inverted ranges (`min > max`)",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/664",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -16199,8 +16199,8 @@
       ],
       "body": "- **Location:** [`cddl/int-range-type-choice.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/int-range-type-choice.cddl), [`cddl/matcher.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/matcher.cddl)\n- **Prior art:** RELATED \u2014 [#628](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/628) (delete 564) would move this to `tagged-number-range`, which has the same defect.\n\n`int-range = [min: int / negative-inf, max: int / positive-inf]` and `tagged-number-range = #6.565([number / null, number / null])` both permit `[10, 5]`, an empty range that can never match. Neither the CDDL nor the prose forbids it or defines the matching outcome. `[null, null]` \u2014 a range that matches everything \u2014 is likewise permitted with no comment.\n\n**Fix:** Add a normative statement that `min` MUST NOT exceed `max` when both are present, and say what a processor does when it encounters an inverted range.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:28:45Z",
-      "updatedAt": "2026-10-21T16:57:37Z",
-      "closedAt": null,
+      "updatedAt": "2026-10-22T15:47:37Z",
+      "closedAt": "2026-10-22T15:47:37Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -97912,13 +97912,13 @@
       ],
       "body": "Fix #667.",
       "createdAt": "2026-09-15T17:31:23Z",
-      "updatedAt": "2026-10-07T15:17:35Z",
+      "updatedAt": "2026-10-22T16:44:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "7e5c1579ec200c92a47af185f2f7e86613d64f15",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-667",
-      "headRefOid": "ec0fe1e2cdb908f42d2ef054349ddbded701208c",
+      "headRefOid": "a5f0987e2880beb8d638605ccef2468677c66f22",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -97976,14 +97976,14 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABP_HBtA",
           "commit": {
-            "abbreviatedOid": "ec0fe1e"
+            "abbreviatedOid": "a5f0987"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM! New issue to be created before Merge!",
           "createdAt": "2026-09-30T14:40:18Z",
-          "updatedAt": "2026-09-30T14:40:18Z",
+          "updatedAt": "2026-10-22T16:44:27Z",
           "comments": []
         }
       ]
@@ -98441,13 +98441,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-09-29T09:33:20Z",
-      "updatedAt": "2026-10-14T14:14:04Z",
+      "updatedAt": "2026-10-22T13:54:26Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e1fc29a06d0b2c01ba24656c13ccaec58b4a8a4c",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-new-pr",
-      "headRefOid": "bac4dbc68815b243d14519104c61d1ba66cfd22b",
+      "headRefOid": "c9d07e9cab772e2c2576788c945fcff3d41eefd5",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98459,6 +98459,13 @@
           "body": "request @nedmsmith. @thomas-fossati @henkbirkholz and @steven-bellock to review this please....",
           "createdAt": "2026-10-12T16:48:18Z",
           "updatedAt": "2026-10-12T16:48:18Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> My overall \"what is the requirement?\" still stands. In particular, since this is not an anodine change, I'd like to see a stronger rationale for the added complexity and associated pitfalls.\r\n> \r\n> Anyway, I am providing some comments inline.\r\n> \r\n> Note: most of the comments are purely mechanical and could have been avoided if we stick to the editorial conventions -- NSNL in particular seems to be a big hitter here :\r\n\r\n\r\n\r\n> I have incorporated suggested review comments from Steven.\r\n> \r\n> Please check, if any more comments or else please approve....\r\n\r\n@thomas-fossati Thank you for your review.\r\n\r\nI had a nice section explaining the requirement/use cases for this, but @steven-bellock wanted to remove it from the PR.\r\n\r\nI am happy to bring that back in, if majority agrees...?\r\n\r\nFor NSNL, I will edit the PR and resolve all the comments today...",
+          "createdAt": "2026-10-22T13:54:25Z",
+          "updatedAt": "2026-10-22T13:54:25Z"
         }
       ],
       "reviews": [
@@ -98544,6 +98551,214 @@
           "createdAt": "2026-10-14T14:14:04Z",
           "updatedAt": "2026-10-14T14:14:04Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABTpq3nQ",
+          "commit": {
+            "abbreviatedOid": "8a81c22"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "I have incorporated suggested review comments from Steven.\n\nPlease check, if any more comments or else please approve....",
+          "createdAt": "2026-10-22T11:55:04Z",
+          "updatedAt": "2026-10-22T11:56:17Z",
+          "comments": [
+            {
+              "originalPosition": 162,
+              "body": "Yes Verifier Appraisal Policy handles everything.",
+              "createdAt": "2026-10-22T11:55:04Z",
+              "updatedAt": "2026-10-22T11:56:17Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABTqRMUw",
+          "commit": {
+            "abbreviatedOid": "c9d07e9"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "My overall \"what is the requirement?\" still stands.\nIn particular, since this is not an anodine change, I'd like to see a stronger rationale for the added complexity and associated pitfalls.\n\nAnyway, I am providing some comments inline.\n\nNote: most of the comments are purely mechanical and could have been avoided if we stick to the editorial conventions -- NSNL in particular seems to be a big hitter here :-)",
+          "createdAt": "2026-10-22T12:47:03Z",
+          "updatedAt": "2026-10-22T13:49:25Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "spurious NL\n\n```suggestion\n```",
+              "createdAt": "2026-10-22T12:47:04Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 6,
+              "body": "NSNL\n\n```suggestion\nEncryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a COSE_Sign structure.\n```",
+              "createdAt": "2026-10-22T12:47:19Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 11,
+              "body": "```suggestion\nThe CoRIM MUST be signed by the CoRIM creator.\nOther authorities MAY sign the CoRIM. (See {{sec-mult-sign}} for details on multi-signature CoRIM.)\n``````",
+              "createdAt": "2026-10-22T12:55:23Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 14,
+              "body": "```suggestion\n### Signing with Single Signature\n```",
+              "createdAt": "2026-10-22T12:56:07Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 34,
+              "body": "streamline\n\n```suggestion\nThis section describes the header parameters that need to be set when:\n\n1. A single signer needs to produce a signature using COSE_Sign1, or\n2. Multiple signatures need to be produced using COSE_Sign.\n```",
+              "createdAt": "2026-10-22T12:59:46Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 70,
+              "body": "spurious NL\n\n```suggestion\n```",
+              "createdAt": "2026-10-22T13:00:33Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 87,
+              "body": "spurious NL\n\n```suggestion\n```",
+              "createdAt": "2026-10-22T13:02:26Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 92,
+              "body": "ditto\n```suggestion\n```",
+              "createdAt": "2026-10-22T13:02:48Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 82,
+              "body": "dedent\n\n```suggestion\n  Contains the information pertaining to the signature algorithm and signer details of the authority producing the signature.\n  Refer to {{sec-multi-sign-headers}} for details.\n```",
+              "createdAt": "2026-10-22T13:03:21Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 85,
+              "body": "```suggestion\n* `unprotected`: The top level unprotected header parameter.\n  Refer to {{sec-multi-sign-headers}} for details.\n```",
+              "createdAt": "2026-10-22T13:03:42Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "```suggestion\n* `payload`: When the payload is signed directly, this element contains either a CBOR-encoded tagged CoRIM, or nil if it is detached.\n```",
+              "createdAt": "2026-10-22T13:05:55Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 91,
+              "body": "```suggestion\n* `signature`: This element contains an array of signature structures, as defined in {{sec-multiple-sigs}}.\n```",
+              "createdAt": "2026-10-22T13:07:13Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 98,
+              "body": "NSNL\n\n```suggestion\nThe signature field of a COSE_Sign object contains an array of signature structures carrying header parameters along with signature bytes.\nThese header parameters contain information relating to the content, as well as details about the signer performing the signature.\n```",
+              "createdAt": "2026-10-22T13:10:11Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 107,
+              "body": "```suggestion\n* `protected`: A CBOR-encoded header which is protected by the COSE signature.\n```",
+              "createdAt": "2026-10-22T13:11:33Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 109,
+              "body": "```suggestion\n* `unprotected`: A COSE header that is not protected by the COSE signature.\n```",
+              "createdAt": "2026-10-22T13:11:45Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 113,
+              "body": "```suggestion\nRefer to section {{sec-multi-sign-headers}} when setting the above parameters\n```",
+              "createdAt": "2026-10-22T13:12:00Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 118,
+              "body": "```suggestion\nThis section provides the order in which the protected and unprotected header parameters should be set, along with an array of signature structures in a COSE_Sign object.\n```",
+              "createdAt": "2026-10-22T13:13:32Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 120,
+              "body": "```suggestion\n* Single Signer, multiple signing algorithms:\n```",
+              "createdAt": "2026-10-22T13:13:44Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 125,
+              "body": "spurious NL\n```suggestion\n```",
+              "createdAt": "2026-10-22T13:13:56Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 122,
+              "body": "NSNL\n```suggestion\n1. The top-level `protected` and `unprotected` header parameters, as specified in {{sec-mult-sign}}, are populated first.\nThese parameters identify the first signature algorithm and the authority responsible for signing the CoRIM.\nThe corresponding signature bytes are carried in the signature element of the first entry in the signatures array.\n```\n\nUnsure: what \"first signature algorithm\" is supposed to mean?  I mean, why would order matter in this case?",
+              "createdAt": "2026-10-22T13:15:20Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 124,
+              "body": "NSNL\n\n```suggestion\n2. For each subsequent entry in the signatures array, the associated protected and unprotected header parameters identify the signing algorithm used to generate the corresponding signature.\nThe signature bytes are carried in the signature element of that entry.\nWhen all signatures are generated by the same signing authority, the CoRIM signer MAY omit redundant signer identification information from subsequent entries.\n```",
+              "createdAt": "2026-10-22T13:16:38Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 129,
+              "body": "```suggestion\n1. The top-level `protected` and `unprotected` header parameters, as specified in {{sec-mult-sign}}, are populated first, using the header parameter definitions provided in {{sec-header}}.\nThese parameters identify the first signing algorithm and the authority responsible for signing the CoRIM.\nThe corresponding signature bytes are carried in the signature element of the first entry in the `signature-structure` array.\n```\n\nIs this the \"CoRIM creator\" role?  If so, it's worth being explicit.",
+              "createdAt": "2026-10-22T13:18:48Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 131,
+              "body": "```suggestion\n2. Each subsequent entry in the `signature-structure` array contains the signature algorithm, signer identification information, and corresponding signature bytes associated with a distinct signing authority.\nEach authority independently signs the same unsigned CoRIM payload, using the applicable header parameters defined in {{sec-header}}.\n```\n\nBesides: \"Each authority ... signs ... _using the applicable header parameters_\" is imprecise.",
+              "createdAt": "2026-10-22T13:21:14Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 150,
+              "body": "$ rm clunky\n\n```suggestion\nFor each of these signers, it is expected that the corresponding trust anchors will be provisioned in the Verifier.\n```",
+              "createdAt": "2026-10-22T13:23:32Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 151,
+              "body": "spurious NL (we want the two sentences in the same para\n\n```suggestion\n```",
+              "createdAt": "2026-10-22T13:24:11Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 7,
+              "body": "I think making one-signature COSE_Sign invalid is needlessly restrictive.\n\nStrictly speaking a scenario where the main authority signs first and further corroborating atuorities may be added later in the process has no valid starting point.\n\nWhich, btw, makes me wonder why we need Sign1 in the first place.",
+              "createdAt": "2026-10-22T13:32:59Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 3,
+              "body": "L733 seems to contradict this.",
+              "createdAt": "2026-10-22T13:39:16Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 148,
+              "body": "which signature MUST be always verified?  I think it should be the one of the CoRIM creator, no?",
+              "createdAt": "2026-10-22T13:40:29Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            },
+            {
+              "originalPosition": 5,
+              "body": "missing NL (this concatenates badly when included in the auto-generated CDDL)",
+              "createdAt": "2026-10-22T13:42:15Z",
+              "updatedAt": "2026-10-22T13:49:25Z"
+            }
+          ]
         }
       ]
     },
@@ -98825,7 +99040,7 @@
       "id": "PR_kwDOH6-tI88AAAABIgDCjQ",
       "title": "Add explicit code point for min-svn",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/728",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "fchinchilla",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -98834,14 +99049,14 @@
       "labels": [],
       "body": "I can currently specify an svn or a min-svn in a single measurement-values-map, but cannot specify both. This change allows for both.",
       "createdAt": "2026-10-14T22:28:36Z",
-      "updatedAt": "2026-10-21T21:30:23Z",
+      "updatedAt": "2026-10-22T19:24:03Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fchinchilla-min-svn",
       "headRefOid": "18c5497d6131e83a89e91c34e4272072cfdb1fb3",
-      "closedAt": null,
+      "closedAt": "2026-10-22T19:24:03Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -98894,6 +99109,13 @@
           "body": "The suggested solution in today's meeting was to use a number-matcher to a tagged-number-range. The definition is available in the 2026-10-14 update to https://ietf-rats-wg.github.io/draft-ietf-rats-corim/draft-ietf-rats-corim.html\r\n\r\nWe plan on using it as follows:\r\n\r\n`/ measurement-map / {`\r\n`            / mval / 1 : / measurement-values-map / {`\r\n`                        / svn / 1 : 255, / current svn /`\r\n`                        / number-matcher / 17 : 565([100, 255])  / Inclusive range of min-svn to max-svn  /`\r\n`            }`\r\n`}`\r\n\r\nI'll close this PR after I get a chance to modify some of our diags and validate them.",
           "createdAt": "2026-10-21T21:30:23Z",
           "updatedAt": "2026-10-21T21:30:23Z"
+        },
+        {
+          "author": "fchinchilla",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing this PR. We will use \r\n\r\n / number-matcher / 17 : 565([100, 255])  / Inclusive range of min-svn to max-svn  /\r\n \r\n Approach instead. ",
+          "createdAt": "2026-10-22T19:24:03Z",
+          "updatedAt": "2026-10-22T19:24:03Z"
         }
       ],
       "reviews": []
@@ -98912,13 +99134,13 @@
       ],
       "body": "Fix #670.\n\nDeletes \"the comparison SHOULD NOT be stateful\" from Profile-directed Comparison, as decided on the 21-Oct-2026 weekly call.\n",
       "createdAt": "2026-10-21T17:53:57Z",
-      "updatedAt": "2026-10-21T19:08:14Z",
+      "updatedAt": "2026-10-22T16:44:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-670",
-      "headRefOid": "70dcf197ae8153e66ea88435f9fc9c8610f55e02",
+      "headRefOid": "5ac082100e7adae386bb2be6b733e183d42f79ab",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98940,13 +99162,13 @@
       ],
       "body": "Fix #668.\n\nReplaces the \"no semantic overlap with CoRIM tags\" requirement, which no validator can decide, with option A from the 21-Oct-2026 weekly call: the CWT Claims map carries metadata about the CoRIM and its signer only, and a Verifier MUST NOT derive Claims about an Attester from it.\n",
       "createdAt": "2026-10-21T17:54:16Z",
-      "updatedAt": "2026-10-21T19:08:17Z",
+      "updatedAt": "2026-10-22T16:44:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-668",
-      "headRefOid": "f002b933b9bf7974e6feddb7d57304499c997154",
+      "headRefOid": "f2988cc7cc2c1f199060ab928ce634d0df911787",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98968,13 +99190,13 @@
       ],
       "body": "Fix #672.\n\nImplements option B (lenient) from the 21-Oct-2026 weekly call. When `CWT-Claims` and `corim-meta` are both present, `nbf`/`not-before` and `exp`/`not-after` are compared only when both sides of a pair are present, and must then represent the same time. A time present on only one side isn't a mismatch.\n\n\"Represent the same time\" is used because the two sides have different encodings: NumericDate in CWT, `time` (tag 1) in `validity-map`.\n\nPR #718 changes the heading levels around this text, so whichever lands second needs a small rebase.\n",
       "createdAt": "2026-10-21T17:54:36Z",
-      "updatedAt": "2026-10-21T19:08:20Z",
+      "updatedAt": "2026-10-22T16:44:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-672",
-      "headRefOid": "99ac42b4bc37427a387d7cf1eebb9882b39e9e95",
+      "headRefOid": "bc2cfc7415f00093574af355ffa6a1737c2f595c",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98996,13 +99218,13 @@
       ],
       "body": "Fix #654.\n\nImplements option A from the 21-Oct-2026 weekly call:\n\n- Every `href` in the array identifies the same resource (keeps the existing \"alternative URIs\" wording).\n- Every `thumbprint` digest is over that one resource, each with a different hash algorithm.\n- A Verifier that fetches the resource checks it using the digest comparison rules in Comparison for digests entries, with the digests computed over the fetched resource in place of the ACS-ECT digests. That reuses the existing rules: common algorithms must all match, there must be at least one common algorithm, and an algorithm can't appear twice. If the check fails, the resource isn't used.\n",
       "createdAt": "2026-10-21T17:54:59Z",
-      "updatedAt": "2026-10-21T19:08:23Z",
+      "updatedAt": "2026-10-22T16:44:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-654",
-      "headRefOid": "a892967fe4f2bdd312caba5e039eb2b2e8c45ea9",
+      "headRefOid": "a9a90850e037d0a8931dedf74e2021f4cb15d1b3",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -99024,13 +99246,13 @@
       ],
       "body": "Fix #642.\nFix #669.\n\nImplements option A from the 21-Oct-2026 weekly call. Series entries are evaluated in array order and the first match wins, which is what the processing pseudocode already does. The author is responsible for the order.\n\n- Deletes the undefined \"most precise match is evaluated first\" requirement (#669).\n- Deletes the claim that evaluation order doesn't change the meaning of the triple (#642).\n- Adds an example of author ordering: narrower conditions before broader ones that include them.\n\nBoth issues are fixed in one PR because they concern the same three sentences.\n",
       "createdAt": "2026-10-21T17:55:18Z",
-      "updatedAt": "2026-10-21T19:08:26Z",
+      "updatedAt": "2026-10-22T16:44:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-642",
-      "headRefOid": "600338dfda51fbd90ebee354d3221edac8d536e0",
+      "headRefOid": "8eac87a0fc58e8dcdf69f38c4ce0b6184db9eb3a",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -99052,13 +99274,13 @@
       ],
       "body": "Fix #640.\n\nImplements option B from the 21-Oct-2026 weekly call. The CDDL keeps `content-type` and `payload_preimage_content_type` fixed to `\"application/rim+cbor\"`.\n\n- Deletes the sentence in CoRIM collections that suggested adding a `cmwc_t` parameter to that header, which the CDDL rejects. (`cmwc_t` is also defined only for the `application/cmw+*` media types.)\n- States that the value carries no media type parameters, and that the registered `profile` parameter isn't used in the COSE header because `corim-map` carries the profile.\n\nNo CDDL change.\n",
       "createdAt": "2026-10-21T17:55:43Z",
-      "updatedAt": "2026-10-21T19:08:29Z",
+      "updatedAt": "2026-10-22T16:44:29Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-640",
-      "headRefOid": "0e46a7762b5ac8d67ee0ea106f68a028bbddff82",
+      "headRefOid": "7dff9314e9db9a29a2769d36ed61877e1d5b667d",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -99068,14 +99290,14 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABThJO2w",
           "commit": {
-            "abbreviatedOid": "0e46a77"
+            "abbreviatedOid": "7dff931"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-21T19:03:34Z",
-          "updatedAt": "2026-10-21T19:03:34Z",
+          "updatedAt": "2026-10-22T16:44:28Z",
           "comments": []
         }
       ]
@@ -99094,13 +99316,13 @@
       ],
       "body": "Fix #658.\n\nImplements option A from the 21-Oct-2026 weekly call, plus the mechanical fixes.\n\n**Type identifier**\n- The Collection CMW type becomes `tag:ietf.org,2026:corim`, which is a valid RFC 4151 tag URI. `tag:{{&SELF}}:corim` was rendered literally and wasn't valid.\n- The local reference form becomes `tag:ietf.org,2026:corim:local,`_tag-id-tstr_ for the same reason.\n- This still needs confirming with the CMW authors, since the CMW draft points to this section.\n\n**CDDL** (`cddl/cmw-corim-collection.cddl`)\n- `tagged-corim-map` (undefined) \u2192 `tagged-unsigned-corim-map`.\n- `TBD1` \u2192 the named rule `rim-cbor-content-format`, set to the placeholder 65000 (CoAP Content-Format experimental range), with an RFC Editor note to substitute the assigned ID. The IANA table still says TBD1.\n\n**Build**\n- New `cmwc` check target with the CoRIM fragments, so `make -C cddl check` and the draft build (and so CI) now compile the collection CDDL and validate its example.\n\n**Example** (`cddl/examples/cmw-corim-collection.diag`). It had never been validated, and several parts didn't match the CDDL:\n- `ref-claims` was a map, not a list of `measurement-map`.\n- The profile-specific key `-404` in `measurement-values-map` became `raw-value` with `tagged-bytes`.\n- The CoSWID key `4294967295` with a map value isn't allowed by RFC 9393's `any-attribute`, so it was removed.\n- `profile` and `href` values were plain text instead of `uri` (tag 32). The profile tag URIs also used `/` where RFC 4151 needs `:`.\n- The `coswid-triples` entry was removed. `coswid-triple-record` uses `coswid.tag-id`, which RFC 9393 defines as the map key `0`, not the tag-id type, so no real tag ID validates against it. That bug is separate from this PR.\n\nCI now builds and validates the collection CDDL and example, and passes.\n",
       "createdAt": "2026-10-21T18:04:04Z",
-      "updatedAt": "2026-10-21T19:10:12Z",
+      "updatedAt": "2026-10-22T16:44:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-658",
-      "headRefOid": "6b18f05dcd8d2026794470b4469ce626c4fa8830",
+      "headRefOid": "daee851490147c6f56c9ff134008b48a6263d5f7",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -99110,14 +99332,14 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABThOCZQ",
           "commit": {
-            "abbreviatedOid": "6b18f05"
+            "abbreviatedOid": "daee851"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-21T19:10:12Z",
-          "updatedAt": "2026-10-21T19:10:12Z",
+          "updatedAt": "2026-10-22T16:44:27Z",
           "comments": []
         }
       ]
@@ -99127,7 +99349,7 @@
       "id": "PR_kwDOH6-tI88AAAABJ2inZw",
       "title": "Make inverted and doubly-unbounded ranges malformed",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/736",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -99136,17 +99358,19 @@
       ],
       "body": "Fix #664.\n\nImplements option A from the 21-Oct-2026 weekly call.\n\n- `int-range`: at least one of `min` and `max` MUST be non-`null`, and `min` MUST be \u2264 `max` when both are integers.\n- `tagged-number-range`: `min` MUST be \u2264 `max` when both are non-`null`. PR #727 already forbids `[null, null]` here.\n- A range that breaks these rules is malformed, and its tag is discarded under the existing Phase 1 rule.\n\nThis closes the live bug where an entry range `[10, 5]` was subsumed by a condition range `[6, 9]`.\n\nThe rules sit in the Int Range and Type Matchers sections, not in the comparison sections, so they don't textually overlap PR #727.\n\n**Examples:** the generated `intrep-rel-*` examples had five `564([null, null])` values and two inverted ranges (`[1878, -370]`, `[3404, -88]`). They're now `[0, null]` and swapped to `[-370, 1878]` and `[-88, 3404]`. These are value-only edits, so the examples still match the CDDL. I couldn't run the CDDL checks locally.\n",
       "createdAt": "2026-10-21T18:05:54Z",
-      "updatedAt": "2026-10-21T19:08:36Z",
+      "updatedAt": "2026-10-22T15:47:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-664",
       "headRefOid": "68ddcf3c943153e53661fddbdf7233fa70b67fd8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2026-10-22T15:47:35Z",
+      "mergedAt": "2026-10-22T15:47:35Z",
+      "mergedBy": "steven-bellock",
+      "mergeCommit": {
+        "oid": "bf53243a104488f67bb7ef7b302440b59cd477bb"
+      },
       "comments": [],
       "reviews": [
         {
@@ -99160,6 +99384,19 @@
           "body": "",
           "createdAt": "2026-10-21T19:05:35Z",
           "updatedAt": "2026-10-21T19:05:35Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABTpoUhw",
+          "commit": {
+            "abbreviatedOid": "68ddcf3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2026-10-22T11:51:27Z",
+          "updatedAt": "2026-10-22T11:51:27Z",
           "comments": []
         }
       ]
@@ -99178,13 +99415,13 @@
       ],
       "body": "Fix #648.\n\nImplements the 21-Oct-2026 weekly call decisions.\n\n**Codepoints 6\u201311 (option A):** an attribute defined by this specification that has no comparison subsection of its own is compared by binary comparison of the deterministic encodings. The text names the codepoints this covers: `mac-addr`, `ip-addr`, `serial-number`, `ueid`, `uuid` and `name`. The \"no algorithm \u2192 no match\" rule now applies only to attributes the processor doesn't recognize, and the sentence claiming the subsections cover every attribute is corrected. The conversion to deterministic encoding is a MUST, in line with PR #711.\n\n**`flags` (option A):** new Comparison for flags entries subsection. Each flag in the condition must be present in the entry with the same value. Flags the condition leaves out are ignored, and a flag missing from the entry isn't treated as `false`. The `flags` description in the measurement-values-map list now points to it.\n\n**Codepoint 5:** the raw-value comparison now says that codepoint 5 is used only as part of the codepoint 4 comparison, isn't compared on its own, and so doesn't need to be present in the ACS-ECT. Without this, Attribute Path Containment would require path 5 in the entry, and a condition carrying the deprecated mask could never match.\n\nNot addressed here: #564 (whether `name` is metadata). If it is, `name` would be dropped from the binary-comparison list.\n",
       "createdAt": "2026-10-21T18:06:53Z",
-      "updatedAt": "2026-10-21T19:09:08Z",
+      "updatedAt": "2026-10-22T16:44:28Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-648",
-      "headRefOid": "884f2d77b7374255422e0091a37e30ab028d5839",
+      "headRefOid": "9ff6485647ca4a702b13bda44c20001cbb879209",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -99194,17 +99431,43 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABThNReA",
           "commit": {
-            "abbreviatedOid": "884f2d7"
+            "abbreviatedOid": "9ff6485"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-21T19:09:07Z",
-          "updatedAt": "2026-10-21T19:09:07Z",
+          "updatedAt": "2026-10-22T16:44:27Z",
           "comments": []
         }
       ]
+    },
+    {
+      "number": 738,
+      "id": "PR_kwDOH6-tI88AAAABKKuJxA",
+      "title": "Fixing some of the examples",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/738",
+      "state": "OPEN",
+      "author": "fchinchilla",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Adding or removing commas from some of the examples.",
+      "createdAt": "2026-10-23T03:18:58Z",
+      "updatedAt": "2026-10-23T03:18:58Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "fchinchilla-min-svn",
+      "headRefOid": "f8758483fbf124736f9524de1cc0c18f61e3ffb1",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
