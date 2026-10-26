@@ -540,7 +540,8 @@ The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` 
 ~~~
 
 Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption {{-cose}}. A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
+Encryption {{-cose}}.
+A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
 COSE_Sign structure.
 
 The COSE_Sign structure may be used when:
@@ -554,8 +555,7 @@ Other authorities MAY sign the CoRIM. (See {{sec-mult-sign}} for details on mult
 ### Signing with Single signature
 
 COSE_Sign1 is used when a single signer need to produce a signature over an unsigned CoRIM (`tagged-unsigned-corim-map`).
-When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
+When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header parameters that MUST be used in the protected header alongside additional information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -564,12 +564,12 @@ information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) o
 The following describes each child element of this type.
 
 * `protected`: A CBOR Encoded protected header which is protected by the COSE
-  signature. Contains information as given by Protected Header Map below.
+signature. Contains information as given by Protected Header Map below.
 
 * `unprotected`: A COSE header that is not protected by COSE signature.
 
 * `payload`: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
-  When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
+When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
 * `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
 
@@ -700,8 +700,7 @@ When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM
 
 #### Signature Parameters of Multi Sign CoRIM {#sec-multiple-sigs}
 
-The signature parameter of a COSE_Sign object contains an array of signature structures that has
-Header parameters along with signature bytes.
+The signature parameter of a COSE_Sign object contains an array of signature structures that has Header parameters along with signature bytes.
 These header parameters contain information relating to the content, as well as details about the signer performing the signature.
 
 ~~~ cddl
