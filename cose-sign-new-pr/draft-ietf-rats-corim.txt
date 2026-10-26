@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 25 April 2027                                            NVIDIA
+Expires: 29 April 2027                                            NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         22 October 2026
+                                                         26 October 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 April 2027.
+   This Internet-Draft will expire on 29 April 2027.
 
 Copyright Notice
 
@@ -88,7 +88,7 @@ Table of Contents
        4.1.4.  Profile Types
        4.1.5.  Entities
      4.2.  Signed CoRIM
-       4.2.1.  Signing with single signature
+       4.2.1.  Signing with Single signature
        4.2.2.  Header Parameters
        4.2.3.  Signing with Multiple Signatures
      4.3.  Signer authority of securely conveyed unsigned CoRIM
@@ -735,13 +735,21 @@ Table of Contents
    and Encryption [STD96].  A CoRIM tag MUST be wrapped either in a
    COSE_Sign1 structure or a COSE_Sign structure.
 
-   See Section 4.2.3 for details on multi-signature CoRIM.
+   The COSE_Sign structure may be used when:
 
-   The CoRIM MUST be signed by the CoRIM creator.
+   1.  Multiple authorities need to sign the same unsigned CoRIM
+       payload; or
 
-4.2.1.  Signing with single signature
+   2.  A single authority needs to sign the same unsigned CoRIM payload
+       using different signing algorithms.
 
-   COSE_Sign1 is used when a single signer needs to produce a signature
+   The CoRIM MUST be signed by the CoRIM creator.  Other authorities MAY
+   sign the CoRIM.  (See Section 4.2.3 for details on multi-signature
+   CoRIM.)
+
+4.2.1.  Signing with Single signature
+
+   COSE_Sign1 is used when a single signer need to produce a signature
    over an unsigned CoRIM (tagged-unsigned-corim-map).  When using
    COSE_Sign1 the following CDDL specification defines a restrictive
    subset of COSE header parameters that MUST be used in the protected
@@ -779,15 +787,14 @@ Table of Contents
 4.2.2.  Header Parameters
 
    This section describes the header parameters, that need to be set
-   when:
+   when
 
-   a.  A single signer needs to produce a signature using (COSE_Sign1)
-   object.
-
-   OR
-
-   b.  When multiple signatures need to be produced using (COSE_Sign)
-   object.  See Section 4.2.3 for further details.
+   a.  A single signer need to produce a signature using (COSE_Sign1)
+   object.  OR b.  When multiple signers, each with different authority,
+   need to sign the same unsigned CoRIM, using COSE_Sign object.  In
+   this case each array entry of signature_structure has the header
+   parameters that carry the details of the signature algorithm and
+   signer information as detailed in Section 4.2.3
 
 4.2.2.1.  Protected Header Map
 
@@ -958,19 +965,21 @@ Table of Contents
    *  unprotected: The top level unprotected header parameter.  Refer to
       Section 4.2.3.2 for details.
 
-   *  payload: When the payload is signed directly, either a CBOR-
-      encoded tagged CoRIM, or nil if it is detached.  When the payload
-      is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
+   *  payload: When the payload is signed directly, this element
+      contains either a CBOR-encoded tagged CoRIM, or nil if it is
+      detached.  When the payload is signed indirectly, the digest of a
+      CBOR-encoded tagged CoRIM.
 
-   *  signature: This field contains an array of signature structure, as
-      defined in Section 4.2.3.1.
+   *  signature: This element contains an array of signature structures,
+      as defined in Section 4.2.3.1.
 
 4.2.3.1.  Signature Parameters of Multi Sign CoRIM
 
    The signature parameter of a COSE_Sign object contains an array of
-   signature structure that has Header parameters along with signature
-   bytes.  The Header parameters contain information relating to the
-   content and the details about the signer performing the signature.
+   signature structures that has Header parameters along with signature
+   bytes.  These header parameters contain information relating to the
+   content, as well as details about the signer performing the
+   signature.
 
    signature-structure = [
      protected: bstr .cbor protected-corim-header-map
@@ -983,28 +992,28 @@ Table of Contents
    *  protected: A CBOR Encoded protected header which is protected by
       the COSE signature.
 
-   *  unprotected: A COSE header that is not protected by COSE
-      signature.
+   *  unprotected: A COSE header that is not protected by the COSE
+      signatur.
 
    *  signature: A COSE signature block, as defined in Section 4 of
       [STD96].
 
-   Refer section Section 4.2.3.2 when setting the above parameters
+   Refer to section Section 4.2.3.2 when setting the above parameters
 
 4.2.3.2.  Use of Header Parameters and Signatures in COSE_Sign
 
-   This section provides the necessary order of setting the Protected
-   and Unprotected Header Parameters, alongwith array of signature
-   structure in a COSE_Sign object.
+   This section provides the order in which the protected and
+   unprotected header parameters should be set, along with an array of
+   signature structures in a COSE_Sign object.
 
-   *  Single Signer, multiple signing algorithms
+   *  Single Signer, multiple signing algorithms:
 
    1.  The top-level protected and unprotected header parameters, as
        specified in Section 4.2.3, are populated first.  These
-       parameters identify the first signature algorithm and the
-       authority responsible for signing the CoRIM.  The corresponding
-       signature bytes are carried in the signature element of the first
-       entry in the signatures array.
+       parameters identify the signature algorithm and the authority
+       responsible for signing the CoRIM.  The corresponding signature
+       bytes are carried in the signature element of the first entry in
+       the signatures array.
 
    2.  For each subsequent entry in the signatures array, the associated
        protected and unprotected header parameters identify the signing
@@ -1019,16 +1028,17 @@ Table of Contents
    1.  The top-level protected and unprotected header parameters, as
        specified in Section 4.2.3, are populated first, using the header
        parameter definitions provided in Section 4.2.2.  These
-       parameters identify the first signing algorithm and the authority
-       responsible for signing the CoRIM.  The corresponding signature
-       bytes are carried in the signature element of the first entry in
-       the signature-structure array.
+       parameters identify the signing algorithm and the authority of
+       the CoRIM creator i.e the entity responsible for signing the
+       CoRIM.  The corresponding signature bytes are carried in the
+       signature element of the first entry in the signature-structure
+       array.
 
    2.  Each subsequent entry in the signature-structure array contains
        the signature algorithm, signer identification information, and
        corresponding signature bytes associated with a distinct signing
        authority.  Each authority independently signs the same unsigned
-       CoRIM payload, using the applicable header parameters defined in
+       CoRIM payload, with header parameters as defined in
        Section 4.2.2.
 
 4.3.  Signer authority of securely conveyed unsigned CoRIM
@@ -3740,15 +3750,15 @@ Table of Contents
    MUST have a valid certification path to one of the Verifier's trust
    anchors.
 
-   If the CoRIM is signed by multiple authorities, at least one
-   signature MUST be verified before the CoRIM can be accepted for
-   further processing by the Verifier.  A Verifier Appraisal Policy for
-   Evidence may require more signatures to be verified before accepting
-   the CoRIM.  It is expected that for each of these signers, the
-   corresponding trust anchors are provisioned in the Verifier.
-
-   The way in which these trust anchors are provisioned in the Verifier
-   is beyond the scope of this specification.
+   If the CoRIM is signed by multiple authorities, at least the
+   signature from the CoRIM creator MUST be verified before the CoRIM
+   can be accepted for further processing by the Verifier.  A Verifier
+   Appraisal Policy for Evidence may require more signatures to be
+   verified before accepting the CoRIM.  For each of these signers, it
+   is expected that the corresponding trust anchors will be provisioned
+   in the Verifier.  The way in which these trust anchors are
+   provisioned in the Verifier is beyond the scope of this
+   specification.
 
 8.3.3.3.  Tags Extraction and Validation
 
