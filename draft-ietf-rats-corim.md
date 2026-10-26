@@ -692,7 +692,6 @@ Refer to {{sec-multi-sign-headers}} for details.
 * `unprotected`: The top level unprotected header parameter.
 Refer to {{sec-multi-sign-headers}} for details.
 
-
 * `payload`: When the payload is signed directly, this element contains either a CBOR-encoded tagged CoRIM, or nil if it is detached.
 When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
