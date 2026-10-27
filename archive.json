@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-25T04:16:04.088831+00:00",
+  "timestamp": "2026-10-27T04:38:50.074271+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -98441,13 +98441,13 @@
       "labels": [],
       "body": "",
       "createdAt": "2026-09-29T09:33:20Z",
-      "updatedAt": "2026-10-22T13:54:26Z",
+      "updatedAt": "2026-10-26T15:33:24Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "e1fc29a06d0b2c01ba24656c13ccaec58b4a8a4c",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-new-pr",
-      "headRefOid": "c9d07e9cab772e2c2576788c945fcff3d41eefd5",
+      "headRefOid": "094e8364b8edced99ab7cb44879e0c91ba78cb27",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98466,6 +98466,20 @@
           "body": "> My overall \"what is the requirement?\" still stands. In particular, since this is not an anodine change, I'd like to see a stronger rationale for the added complexity and associated pitfalls.\r\n> \r\n> Anyway, I am providing some comments inline.\r\n> \r\n> Note: most of the comments are purely mechanical and could have been avoided if we stick to the editorial conventions -- NSNL in particular seems to be a big hitter here :\r\n\r\n\r\n\r\n> I have incorporated suggested review comments from Steven.\r\n> \r\n> Please check, if any more comments or else please approve....\r\n\r\n@thomas-fossati Thank you for your review.\r\n\r\nI had a nice section explaining the requirement/use cases for this, but @steven-bellock wanted to remove it from the PR.\r\n\r\nI am happy to bring that back in, if majority agrees...?\r\n\r\nFor NSNL, I will edit the PR and resolve all the comments today...",
           "createdAt": "2026-10-22T13:54:25Z",
           "updatedAt": "2026-10-22T13:54:25Z"
+        },
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": ">but @steven-bellock wanted to remove it from the PR.\r\n\r\nSimilar to [C89](https://www.open-std.org/Jtc1/sc22/WG14/www/C89Rationale.pdf), [AES](https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf), and [DNS](https://www.rfc-editor.org/info/rfc1034/), I strongly believe that rationale and design decisions should be in their own document and should not clutter a technical specification, especially one as complex as CoRIM.",
+          "createdAt": "2026-10-26T15:26:36Z",
+          "updatedAt": "2026-10-26T15:26:36Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> > but @steven-bellock wanted to remove it from the PR.\r\n> \r\n> Similar to [C89](https://www.open-std.org/Jtc1/sc22/WG14/www/C89Rationale.pdf), [AES](https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf), and [DNS](https://www.rfc-editor.org/info/rfc1034/), I strongly believe that rationale and design decisions should be in their own document and should not clutter a technical specification, especially one as complex as CoRIM.\r\n\r\nFair, enough, I avoided specific use cases (industry wide) and made a generic reference at the start.\r\n\r\nHope this satisfies your criterion as well, Thomas point!",
+          "createdAt": "2026-10-26T15:33:14Z",
+          "updatedAt": "2026-10-26T15:33:24Z"
         }
       ],
       "reviews": [
@@ -98736,9 +98750,9 @@
             },
             {
               "originalPosition": 7,
-              "body": "I think making one-signature COSE_Sign invalid is needlessly restrictive.\n\nStrictly speaking a scenario where the main authority signs first and further corroborating atuorities may be added later in the process has no valid starting point.\n\nWhich, btw, makes me wonder why we need Sign1 in the first place.",
+              "body": "I think making one-signature COSE_Sign invalid is needlessly restrictive.\r\n\r\nStrictly speaking a scenario where the main authority signs first and further corroborating authorities may be added later in the process has no valid starting point.\r\n\r\nWhich, btw, makes me wonder why we need Sign1 in the first place.",
               "createdAt": "2026-10-22T13:32:59Z",
-              "updatedAt": "2026-10-22T13:49:25Z"
+              "updatedAt": "2026-10-26T15:16:53Z"
             },
             {
               "originalPosition": 3,
@@ -99049,7 +99063,7 @@
       "labels": [],
       "body": "I can currently specify an svn or a min-svn in a single measurement-values-map, but cannot specify both. This change allows for both.",
       "createdAt": "2026-10-14T22:28:36Z",
-      "updatedAt": "2026-10-22T19:24:03Z",
+      "updatedAt": "2026-10-25T15:04:23Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
@@ -99116,6 +99130,13 @@
           "body": "Closing this PR. We will use \r\n\r\n / number-matcher / 17 : 565([100, 255])  / Inclusive range of min-svn to max-svn  /\r\n \r\n Approach instead. ",
           "createdAt": "2026-10-22T19:24:03Z",
           "updatedAt": "2026-10-22T19:24:03Z"
+        },
+        {
+          "author": "fdamato",
+          "authorAssociation": "NONE",
+          "body": "I agree this information is relevant for attestation, but I don't believe it belongs in a Reference Measurement.\r\n\r\nI think it is important to distinguish two appraisal steps:\r\n\r\n**Appraisal Policy for the Verifier** is about corroborating Evidence against acceptable states supplied by an authoritative Reference Value Provider. The Reference Measurement therefore describes the acceptable state against which Evidence is evaluated.\r\n\r\n**Appraisal Policy for the Relying Party** can be more bespoke. Once Evidence has been corroborated, the RP can apply its own policy using additional attributes reported by the Attester, including attributes that do not necessarily have a corresponding Reference Measurement.\r\n\r\nSVN history/policy is a good example. An RP may care about the current SVN, but it may also want to know the lowest SVN executed since boot, and therefore which vulnerabilities the device may have been exposed to during that journey. It may also use reported anti-rollback policy to reason about the device's security posture after attestation.\r\n\r\nSo I see these SVN attributes as valuable Evidence for RP appraisal, rather than values that need to become part of the Reference Measurement used for corroboration.",
+          "createdAt": "2026-10-25T14:50:19Z",
+          "updatedAt": "2026-10-25T14:50:19Z"
         }
       ],
       "reviews": []
