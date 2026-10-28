@@ -543,7 +543,6 @@ Signing a CoRIM follows the procedures defined in CBOR Object Signing and
 Encryption {{-cose}}.
 A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
 COSE_Sign structure.
-
 The COSE_Sign structure may be used when:
 
 1. Multiple authorities need to sign the same unsigned CoRIM payload; or
