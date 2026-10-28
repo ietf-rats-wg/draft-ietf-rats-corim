@@ -3365,8 +3365,6 @@ If the C-ECT value is a `tagged-bytes-set` (CBOR tag 566), the comparison MUST r
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
 The profile MUST specify how to compare the CBOR tagged value against the ACS.
 
-Note that the processor may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
-
 ### Handoff
 
 Once all the relations in the staging area have been processed, the computed ACS is ready to be handed over to the Verifier for further processing in subsequent phases.
