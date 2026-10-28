@@ -605,7 +605,8 @@ Additional data can be included in the COSE header map as per ({{Section 3 of -c
 
 The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
-To avoid any possible ambiguity with the contents of the CoRIM tags, the CWT Claims map MUST NOT contain claims that have semantic overlap with the information contained in CoRIM tags.
+The CWT Claims map carries metadata about the CoRIM and its signer only.
+It does not carry Claims about an Attester.
 
 The following describes each child item of this group.
 
@@ -2552,6 +2553,8 @@ The Verifier is expected to have a trust anchor store.
 The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the `x5chain` in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
+
+The Verifier MUST NOT derive Claims about an Attester from the CWT Claims map ({{cwt-claims}}) of a signed CoRIM.
 
 #### Tags Extraction and Validation
 
