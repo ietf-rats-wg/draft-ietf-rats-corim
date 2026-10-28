@@ -589,6 +589,9 @@ Or, when the payload is signed indirectly using a Hash Envelope ({{-cose-hash-en
 
 * `payload_location` (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.
 
+The value of `content-type` or `payload_preimage_content_type` is exactly `application/rim+cbor`, without media type parameters.
+In particular, the `profile` parameter is not used in the COSE header, because the profile is carried in the `profile` field of the `corim-map` ({{sec-corim-map}}).
+
 At least one of:
 
 * `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
@@ -677,7 +680,6 @@ The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
 These metadata containers ensure that each CoRIM in the collection has an identified signer.
-The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.
 
 If using other signing envelope formats, ({{sec-conveyed-signer}}) the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
@@ -1383,6 +1385,9 @@ An int range is represented with either major type 0 or major type 1 ints.
 
 The signed integer range representation is an inclusive range.
 A `min` or `max` of `null` means that the range is effectively unbounded in that direction.
+At least one of `min` and `max` MUST be non-`null`; to match any value, the entry is omitted.
+If both `min` and `max` are integers, `min` MUST be less than or equal to `max`.
+An `int-range` that violates either requirement is malformed, and the tag that contains it MUST be discarded (see {{sec-phase-1}}).
 
 #### Type Matchers {#sec-comid-matchers}
 
@@ -1392,6 +1397,9 @@ For the numeric, text and byte-string entries, matching semantics are configurab
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
 * CBOR tag 566 (`tagged-*-set`, numeric, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
 * CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+If both `min` and `max` of a `tagged-number-range` are non-`null`, `min` MUST be less than or equal to `max`.
+A `tagged-number-range` that violates this requirement is malformed, and the tag that contains it MUST be discarded (see {{sec-phase-1}}).
 
 The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
 
@@ -3384,8 +3392,6 @@ If the C-ECT value is a `tagged-bytes-set` (CBOR tag 566), the comparison MUST r
 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
 The profile MUST specify how to compare the CBOR tagged value against the ACS.
-
-Note that the processor may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
 ### Handoff
 
