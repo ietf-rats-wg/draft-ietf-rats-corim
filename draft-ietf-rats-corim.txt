@@ -829,6 +829,12 @@ Table of Contents
       retrieval of the original resource (preimage) identified by the
       payload.
 
+   The value of content-type or payload_preimage_content_type is exactly
+   application/rim+cbor, without media type parameters.  In particular,
+   the profile parameter is not used in the COSE header, because the
+   profile is carried in the profile field of the corim-map
+   (Section 4.1).
+
    At least one of:
 
    *  CWT-Claims (index 15): A map that contains metadata associated
@@ -951,11 +957,7 @@ Table of Contents
    a signed CoRIM.  The signing operation MUST include either a CWT-
    Claims or a corim-meta and MAY contain both, in the COSE_Sign1
    protected-header parameter.  These metadata containers ensure that
-   each CoRIM in the collection has an identified signer.  The COSE
-   protected header can include a Collection CMW type name by using the
-   cmwc_t content type parameter for the &(content-type: 3) COSE header,
-   or &(payload_preimage_content_type: 259) in the case of hash
-   envelopes.
+   each CoRIM in the collection has an identified signer.
 
    If using other signing envelope formats, (Section 4.3) the CoRIM
    signing authority MUST be specified.  For example, this can be
