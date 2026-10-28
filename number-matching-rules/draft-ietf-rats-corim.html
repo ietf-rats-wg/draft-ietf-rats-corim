@@ -29,11 +29,11 @@ This document specifies the information elements for representing Endorsements a
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.12.2
+    platformdirs 4.13.4
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.9.1
+    wcwidth 0.9.2
 -->
 <link href="draft-ietf-rats-corim.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1053,7 +1053,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Birkholz, et al.</td>
-<td class="center">Expires 17 April 2027</td>
+<td class="center">Expires 1 May 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1066,12 @@ svg {
 <dd class="internet-draft">draft-ietf-rats-corim-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-10-14" class="published">14 October 2026</time>
+<time datetime="2026-10-28" class="published">28 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-04-17">17 April 2027</time></dd>
+<dd class="expires"><time datetime="2027-05-01">1 May 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1133,7 +1133,7 @@ This document specifies the information elements for representing Endorsements a
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 17 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 1 May 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2188,19 +2188,21 @@ or in a <code>corim-meta</code> map as a legacy alternative, described in <a hre
               <p id="section-4.2.1-8.3.1"><code>payload_location</code> (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.<a href="#section-4.2.1-8.3.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-4.2.1-9">At least one of:<a href="#section-4.2.1-9" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-9">The value of <code>content-type</code> or <code>payload_preimage_content_type</code> is exactly <code>application/rim+cbor</code>, without media type parameters.
+In particular, the <code>profile</code> parameter is not used in the COSE header, because the profile is carried in the <code>profile</code> field of the <code>corim-map</code> (<a href="#sec-corim-map" class="auto internal xref">Section 4.1</a>).<a href="#section-4.2.1-9" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-10">At least one of:<a href="#section-4.2.1-10" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-4.2.1-10.1">
-              <p id="section-4.2.1-10.1.1"><code>CWT-Claims</code> (index 15): A map that contains metadata associated with a signed CoRIM.
-Described in <span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>.<a href="#section-4.2.1-10.1.1" class="pilcrow">¶</a></p>
+<li class="normal" id="section-4.2.1-11.1">
+              <p id="section-4.2.1-11.1.1"><code>CWT-Claims</code> (index 15): A map that contains metadata associated with a signed CoRIM.
+Described in <span>[<a href="#RFC9597" class="cite xref">RFC9597</a>]</span>.<a href="#section-4.2.1-11.1.1" class="pilcrow">¶</a></p>
 </li>
-            <li class="normal" id="section-4.2.1-10.2">
-              <p id="section-4.2.1-10.2.1"><code>corim-meta</code> (index 8): A map that contains metadata associated with a signed CoRIM.
-Described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.3</a>.<a href="#section-4.2.1-10.2.1" class="pilcrow">¶</a></p>
+            <li class="normal" id="section-4.2.1-11.2">
+              <p id="section-4.2.1-11.2.1"><code>corim-meta</code> (index 8): A map that contains metadata associated with a signed CoRIM.
+Described in <a href="#sec-corim-meta" class="auto internal xref">Section 4.2.3</a>.<a href="#section-4.2.1-11.2.1" class="pilcrow">¶</a></p>
 </li>
           </ul>
-<p id="section-4.2.1-11">Documents MAY include both <code>CWT-Claims</code> and <code>corim-meta</code>, in which case the signer MUST ensure that their contents are semantically identical: the <code>CWT-Claims</code> issuer (<code>iss</code>) MUST have the same value as <code>signer-name</code> in <code>corim-meta</code>, and the <code>nbf</code> and <code>exp</code> values in the <code>CWT-Claims</code> MUST match the <code>signature-validity</code> in <code>corim-meta</code>.<a href="#section-4.2.1-11" class="pilcrow">¶</a></p>
-<p id="section-4.2.1-12">Additional data can be included in the COSE header map as per (<span><a href="https://rfc-editor.org/rfc/rfc9052#section-3" class="relref">Section 3</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>).<a href="#section-4.2.1-12" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-12">Documents MAY include both <code>CWT-Claims</code> and <code>corim-meta</code>, in which case the signer MUST ensure that their contents are semantically identical: the <code>CWT-Claims</code> issuer (<code>iss</code>) MUST have the same value as <code>signer-name</code> in <code>corim-meta</code>, and the <code>nbf</code> and <code>exp</code> values in the <code>CWT-Claims</code> MUST match the <code>signature-validity</code> in <code>corim-meta</code>.<a href="#section-4.2.1-12" class="pilcrow">¶</a></p>
+<p id="section-4.2.1-13">Additional data can be included in the COSE header map as per (<span><a href="https://rfc-editor.org/rfc/rfc9052#section-3" class="relref">Section 3</a> of [<a href="#STD96" class="cite xref">STD96</a>]</span>).<a href="#section-4.2.1-13" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="cwt-claims">
@@ -2326,8 +2328,7 @@ The Collection CMW type is similar to a profile in its way of restricting the sh
 The Collection CMW type for a CoRIM collection SHALL be <code>tag:{{&amp;SELF}}:corim</code>.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.3.1-2">A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a <code>CWT-Claims</code> or a <code>corim-meta</code> and MAY contain both, in the COSE_Sign1 <code>protected-header</code> parameter.
-These metadata containers ensure that each CoRIM in the collection has an identified signer.
-The COSE protected header can include a Collection CMW type name by using the <code>cmwc_t</code> content type parameter for the <code>&amp;(content-type: 3)</code> COSE header, or <code>&amp;(payload_preimage_content_type: 259)</code> in the case of hash envelopes.<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
+These metadata containers ensure that each CoRIM in the collection has an identified signer.<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
 <p id="section-4.3.1-3">If using other signing envelope formats, (<a href="#sec-conveyed-signer" class="auto internal xref">Section 4.3</a>) the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the <code>manifest-signer</code> role to every CoRIM, or by using a protected header analogous to <code>corim-meta</code>.<a href="#section-4.3.1-3" class="pilcrow">¶</a></p>
 <div class="lang-cddl sourcecode" id="section-4.3.1-4">
 <pre>
@@ -3426,7 +3427,10 @@ negative-inf = null
 </pre><a href="#section-5.1.4.8-2" class="pilcrow">¶</a>
 </div>
 <p id="section-5.1.4.8-3">The signed integer range representation is an inclusive range.
-A <code>min</code> or <code>max</code> of <code>null</code> means that the range is effectively unbounded in that direction.<a href="#section-5.1.4.8-3" class="pilcrow">¶</a></p>
+A <code>min</code> or <code>max</code> of <code>null</code> means that the range is effectively unbounded in that direction.
+At least one of <code>min</code> and <code>max</code> MUST be non-<code>null</code>; to match any value, the entry is omitted.
+If both <code>min</code> and <code>max</code> are integers, <code>min</code> MUST be less than or equal to <code>max</code>.
+An <code>int-range</code> that violates either requirement is malformed, and the tag that contains it MUST be discarded (see <a href="#sec-phase-1" class="auto internal xref">Section 8.3.3</a>).<a href="#section-5.1.4.8-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="sec-comid-matchers">
@@ -3447,13 +3451,15 @@ For the numeric, text and byte-string entries, matching semantics are configurab
                 <p id="section-5.1.4.9-2.3.1">CBOR tag 565 (<code>tagged-number-range</code>, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; <code>null</code> means unbounded.<a href="#section-5.1.4.9-2.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
-<p id="section-5.1.4.9-3">The boolean entry (index 16) supports only exact match; see <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a> for why this is the case.<a href="#section-5.1.4.9-3" class="pilcrow">¶</a></p>
-<p id="section-5.1.4.9-4">The range and set forms are meaningful only as a condition, when the <code>measurement-values-map</code> entry appears in a C-ECT.
+<p id="section-5.1.4.9-3">If both <code>min</code> and <code>max</code> of a <code>tagged-number-range</code> are non-<code>null</code>, <code>min</code> MUST be less than or equal to <code>max</code>.
+A <code>tagged-number-range</code> that violates this requirement is malformed, and the tag that contains it MUST be discarded (see <a href="#sec-phase-1" class="auto internal xref">Section 8.3.3</a>).<a href="#section-5.1.4.9-3" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-4">The boolean entry (index 16) supports only exact match; see <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a> for why this is the case.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-5">The range and set forms are meaningful only as a condition, when the <code>measurement-values-map</code> entry appears in a C-ECT.
 <code>measurement-values-map</code> is also used, unmodified, for ACS-ECTs (the values asserted by Evidence, Reference Values and Endorsements); the CDDL does not by itself distinguish the two uses.
 An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form.
 The range and set forms MUST NOT be used outside a condition.
-The comparison rules in <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a>, <a href="#sec-match-number" class="auto internal xref">Section 8.3.4.4.5.10</a>, <a href="#sec-match-text" class="auto internal xref">Section 8.3.4.4.5.11</a> and <a href="#sec-match-bytes" class="auto internal xref">Section 8.3.4.4.5.12</a> are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.<a href="#section-5.1.4.9-4" class="pilcrow">¶</a></p>
-<div class="lang-cddl sourcecode" id="section-5.1.4.9-5">
+The comparison rules in <a href="#sec-match-bool" class="auto internal xref">Section 8.3.4.4.5.9</a>, <a href="#sec-match-number" class="auto internal xref">Section 8.3.4.4.5.10</a>, <a href="#sec-match-text" class="auto internal xref">Section 8.3.4.4.5.11</a> and <a href="#sec-match-bytes" class="auto internal xref">Section 8.3.4.4.5.12</a> are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.<a href="#section-5.1.4.9-5" class="pilcrow">¶</a></p>
+<div class="lang-cddl sourcecode" id="section-5.1.4.9-6">
 <pre>
 ; Set match: target value must equal one of the listed alternatives (two or more)
 tagged-number-set = #6.566([2* number])
@@ -3469,9 +3475,9 @@ bool-matcher = bool
 number-matcher = number / tagged-number-range / tagged-number-set
 text-matcher = text / tagged-text-set
 bytes-matcher = bytes / tagged-bytes-set
-</pre><a href="#section-5.1.4.9-5" class="pilcrow">¶</a>
+</pre><a href="#section-5.1.4.9-6" class="pilcrow">¶</a>
 </div>
-<p id="section-5.1.4.9-6">Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.<a href="#section-5.1.4.9-6" class="pilcrow">¶</a></p>
+<p id="section-5.1.4.9-7">Because these entries carry no inherent meaning beyond their primitive type and matching criterion, a profile using them MUST define what measured attribute each entry represents, the unit or encoding of the value, and any constraints on acceptable values beyond what the matcher already expresses.<a href="#section-5.1.4.9-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -6482,7 +6488,6 @@ The ACS-ECT value at this codepoint is always a bare <code>bytes</code> (see <a 
               </h6>
 <p id="section-8.3.4.4.6-1">A profile MUST specify comparison algorithms for its additions to <code>$</code>-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
 The profile MUST specify how to compare the CBOR tagged value against the ACS.<a href="#section-8.3.4.4.6-1" class="pilcrow">¶</a></p>
-<p id="section-8.3.4.4.6-2">Note that the processor may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.<a href="#section-8.3.4.4.6-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
