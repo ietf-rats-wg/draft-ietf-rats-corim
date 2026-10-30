@@ -662,10 +662,13 @@ Table of Contents
    The following describes each child element of this type.
 
    *  href (index 0): a URI or array of alternative URIs identifying
-      locations where the additional resource can be fetched.
+      locations where the additional resource can be fetched.  Every URI
+      in the array identifies the same resource.
 
-   *  thumbprint (index 1): expected digest or an array of digests
-      referenced by href or an array of hrefs.  See Section 7.7.
+   *  thumbprint (index 1): expected digest or an array of digests of
+      the resource identified by href.  See Section 7.7.  Every digest
+      in the array is computed over the same resource, and each uses a
+      different hash algorithm.
 
 4.1.4.  Profile Types
 
@@ -3647,6 +3650,13 @@ Table of Contents
    associated with an authenticated and authorized source, or if they
    have been revoked by an authorized source.  Any CoRIM secured by a
    cryptographic mechanism that fails validation MUST be discarded.
+
+   If the Verifier fetches a resource identified by a corim-locator-map
+   (Section 4.1.3) that includes a thumbprint, it MUST check the fetched
+   resource against thumbprint following the rules in
+   Section 8.3.4.4.5.4, with the digests computed over the fetched
+   resource in place of the ACS-ECT digests.  If that check fails, the
+   Verifier MUST NOT use the fetched resource.
 
    Other selection criteria MAY be applied.  For example, if the
    Evidence format is known in advance, CoRIMs using a profile that is
