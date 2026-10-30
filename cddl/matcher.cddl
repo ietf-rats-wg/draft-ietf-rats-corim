@@ -1,14 +1,17 @@
 ; Set match: target value must equal one of the listed alternatives (two or more)
-tagged-number-set = #6.566([2* number])
+tagged-integer-set = #6.566([2* int])
+tagged-float-set = #6.566([2* float])
 tagged-text-set = #6.566([2* text])
 tagged-bytes-set = #6.566([2* bytes])
 
 ; Range match: target value must lie within the inclusive [min, max] interval
 ; null means unbounded.  Defined for numeric types only.
-tagged-number-range = #6.565([number / null, number / null])
+tagged-integer-range = #6.565([int / null, int / null])
+tagged-float-range = #6.565([float / null, float / null])
 
 ; Composed matchers: the bare type means exact match
 bool-matcher = bool
-number-matcher = number / tagged-number-range / tagged-number-set
+integer-matcher = int / tagged-integer-range / tagged-integer-set
+float-matcher = float / tagged-float-range / tagged-float-set
 text-matcher = text / tagged-text-set
 bytes-matcher = bytes / tagged-bytes-set
