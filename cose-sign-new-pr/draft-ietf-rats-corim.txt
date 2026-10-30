@@ -5,14 +5,14 @@
 Remote ATtestation ProcedureS                                H. Birkholz
 Internet-Draft                                            Fraunhofer SIT
 Intended status: Standards Track                              T. Fossati
-Expires: 1 May 2027                                               NVIDIA
+Expires: 3 May 2027                                               NVIDIA
                                                             Y. Deshpande
                                                                      arm
                                                                 N. Smith
                                                              Independent
                                                                   W. Pan
                                                      Huawei Technologies
-                                                         28 October 2026
+                                                         30 October 2026
 
 
                   Concise Reference Integrity Manifest
@@ -55,7 +55,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 May 2027.
+   This Internet-Draft will expire on 3 May 2027.
 
 Copyright Notice
 
@@ -856,6 +856,12 @@ Table of Contents
       retrieval of the original resource (preimage) identified by the
       payload.
 
+   The value of content-type or payload_preimage_content_type is exactly
+   application/rim+cbor, without media type parameters.  In particular,
+   the profile parameter is not used in the COSE header, because the
+   profile is carried in the profile field of the corim-map
+   (Section 4.1).
+
    At least one of:
 
    *  CWT-Claims (index 15): A map that contains metadata associated
@@ -1076,11 +1082,7 @@ Table of Contents
    a signed CoRIM.  The signing operation MUST include either a CWT-
    Claims or a corim-meta and MAY contain both, in the COSE_Sign1
    protected-header parameter.  These metadata containers ensure that
-   each CoRIM in the collection has an identified signer.  The COSE
-   protected header can include a Collection CMW type name by using the
-   cmwc_t content type parameter for the &(content-type: 3) COSE header,
-   or &(payload_preimage_content_type: 259) in the case of hash
-   envelopes.
+   each CoRIM in the collection has an identified signer.
 
    If using other signing envelope formats, (Section 4.3) the CoRIM
    signing authority MUST be specified.  For example, this can be
@@ -2053,7 +2055,11 @@ Table of Contents
 
    The signed integer range representation is an inclusive range.  A min
    or max of null means that the range is effectively unbounded in that
-   direction.
+   direction.  At least one of min and max MUST be non-null; to match
+   any value, the entry is omitted.  If both min and max are integers,
+   min MUST be less than or equal to max.  An int-range that violates
+   either requirement is malformed, and the tag that contains it MUST be
+   discarded (see Section 8.3.3).
 
 5.1.4.9.  Type Matchers
 
@@ -2075,8 +2081,24 @@ Table of Contents
       match: the target value must lie within the inclusive [min, max]
       interval; null means unbounded.
 
+   If both min and max of a tagged-number-range are non-null, min MUST
+   be less than or equal to max.  A tagged-number-range that violates
+   this requirement is malformed, and the tag that contains it MUST be
+   discarded (see Section 8.3.3).
+
    The boolean entry (index 16) supports only exact match; see
    Section 8.3.4.4.5.9 for why this is the case.
+
+   The range and set forms are meaningful only as a condition, when the
+   measurement-values-map entry appears in a C-ECT. measurement-values-
+   map is also used, unmodified, for ACS-ECTs (the values asserted by
+   Evidence, Reference Values and Endorsements); the CDDL does not by
+   itself distinguish the two uses.  An ACS-ECT entry at codepoints
+   16-19 MUST use the bare, untagged form.  The range and set forms MUST
+   NOT be used outside a condition.  The comparison rules in
+   Section 8.3.4.4.5.9, Section 8.3.4.4.5.10, Section 8.3.4.4.5.11 and
+   Section 8.3.4.4.5.12 are accordingly defined only for C-ECT values of
+   these codepoints, compared against a bare ACS-ECT value.
 
    ; Set match: target value must equal one of the listed alternatives (two or more)
    tagged-number-set = #6.566([2* number])
@@ -3543,14 +3565,16 @@ Table of Contents
    keys = [ + key-item ]
 
    key-item = {
-     condition: Key-condition-ECT
+     ? condition: Key-condition-ECT
      addition: Key-addition-ECT
    }
 
                           Figure 27: Keys Relation
 
-
-   // [TODO] Specialize condition/addition ECTs.  Define constraints.
+   If key-item is used to transform Evidence, key-item.condition is
+   omitted since Evidence addition is unconditional.  Nevertheless, key-
+   item.addition is merely staged for addition pending successful key
+   verification checks.
 
 8.3.2.2.5.  Domain Memberships
 
@@ -4008,11 +4032,11 @@ Table of Contents
 8.3.3.7.4.  Keys
 
    Keys transformation involves mapping Attest Key and Device Identity
-   triples into a key relation (see Section 8.3.2.2.4).
+   triples into into a keys relation (see Section 8.3.2.2.4).
 
    An attest-key-triple-record (Figure 6) or an identity-triple-record
    (Figure 5) is transformed into a key-item (Figure 27) as described in
-   Figure 42.
+   Figure 42 pseudocode.
 
    FUNC transform(
        T: attest-key-triple-record / identity-triple-record,
@@ -4048,9 +4072,13 @@ Table of Contents
        RETURN item
    }
 
-                    Figure 42: Key Triple Transformation
+                   Figure 42: Key Triples Transformation
 
-   Note that keys are added under the authority of the Verifier.
+   Note that keys are added under the authority of the Verifier because
+   the key verification check is performed by the Verifier.
+
+   After the keys relations are staged, processing commences as
+   described in Section 8.3.4.3.3.
 
 8.3.3.7.5.  Domain Membership Transformation
 
@@ -4300,28 +4328,26 @@ Table of Contents
 8.3.4.3.3.  Processing keys Relations
 
    Keys relations identify cryptographic keys that require additional
-   key verification steps.
+   key verification steps before being appended to the ACS.  Processing
+   follows the algorithm as defined in Section 8.3.4.  The keys list is
+   iterated for each key-item where the acs::MATCH() function uses
+   condition, if specified, to search the ACS for preexisting keys or to
+   locate claims, where key verification is applied.  Match conditions
+   may return a variety of results including Evidence-addition-ECT,
+   Reference-Value-addition-ECT, Endorsement-addition-ECT, and Key-
+   addition-ECT ECTs.  If Evidence-addition-ECT, Reference-Value-
+   addition-ECT, or Endorsement-addition-ECT are matched, the element-
+   list.element-map.measurement-values-map.cryptokeys list is appended
+   to key-item.addition.key-list.  If Key-addition-ECT ECTs are matched,
+   its key-list is appended to key-item.addition.key-list.
 
-   Keys are matched with ACS entries by iterating through the keys list.
-   For each keys entry, the condition ECT is compared with an ACS ECT
-   with cmtype 1 or 2 (i.e., endorsements or evidence).  If they match,
-   perform the following steps for each key in the condition ECT key-
-   list:
-
-   1.  Verify the certificate signatures for each certificate in the
-       certification path.
-
-   2.  Verify the revocation status for each certificate in the
-       certification path.
-
-   3.  Verify the key usage restrictions that are appropriate for key-
-       type.
-
-   A key that successfully passes the above checks is said to be
-   verified.
-
-   Add all the verified keys to the addition ECT's key-list and add the
-   addition ECT to the ACS.
+   Key verification steps, such as Section 6 of [RFC5280], are applied
+   to each key in key-item.addition.key-list.  A key that is
+   successfully verified is retained in key-item.addition.key-list; any
+   other key is discarded.  The pre-condition of acs::APPEND for keys
+   relations is that key-item.addition.key-list contains at least one
+   verified key.  The post-condition of acs::APPEND for keys relations
+   is null.
 
 8.3.4.3.4.  Processing dm Relations
 
@@ -4805,7 +4831,36 @@ Table of Contents
 8.3.4.4.5.10.  Comparison for number entries
 
    The value stored under measurement-values-map codepoint 17 is of type
-   number-matcher.
+   number-matcher.  The ACS-ECT value at this codepoint is always a bare
+   number (see Section 5.1.4.9); the comparison rules below are defined
+   against the form of the C-ECT value.
+
+   The numeric type (int or float) of the ACS-ECT value is determined by
+   the Evidence transformation that produced it (see Section 8.3.3.7.1).
+   An Evidence transformation algorithm, or the CoRIM profile that
+   defines it, MUST specify the numeric type of each number value that
+   it produces.  The C-ECT author is responsible for using the numeric
+   type produced by the applicable transformation for the Evidence being
+   matched.  If the numeric type of the C-ECT value and that of the ACS-
+   ECT value are not the same, the comparison MUST fail.  In particular,
+   an int never matches a float, even when they denote the same value,
+   whichever of the two is the C-ECT value.
+
+   Comparison between values of the same numeric type is numeric, not
+   byte-wise: it does not depend on the width (e.g., half, single or
+   double precision) or on the preferred or non-preferred serialization
+   used to encode a value.  For float values:
+
+   *  +0.0 and -0.0 are equal.
+
+   *  +Infinity and -Infinity are equal only to themselves, and order
+      above and below all finite values, respectively.
+
+   NaN MUST NOT appear in a number-matcher, whether as a bare value, as
+   a range bound, or as a set element.  A number-matcher that contains a
+   NaN is malformed and MUST be rejected.  An Evidence transformation
+   MUST NOT produce a NaN as the ACS-ECT value; Evidence that would
+   result in one MUST be rejected.
 
    If the C-ECT value is a bare number, an equality comparison is
    performed with the ACS-ECT value.
@@ -4822,14 +4877,34 @@ Table of Contents
    *  The C-ECT max is null or the ACS-ECT value is less than or equal
       to max.
 
+   The min and max of a tagged-number-range MUST NOT be +Infinity or
+   -Infinity; null is the only way to express an unbounded range.  A
+   tagged-number-range that violates this requirement is malformed and
+   MUST be rejected.
+
+   At least one of min and max of a tagged-number-range MUST be non-
+   null.  A tagged-number-range whose min and max are both null is
+   malformed and MUST be rejected; to match any value, the entry is
+   omitted.
+
    If the C-ECT value is a tagged-number-set (CBOR tag 566), the
    comparison MUST return true if and only if the ACS-ECT value equals
    any element of the set.
 
+   The min and max values of a tagged-number-range (when neither is
+   null), and all the elements of a tagged-number-set, MUST be of
+   exactly the same numeric type.  Any tagged-number-range or a tagged-
+   number-set that violates this requirement is malformed and MUST be
+   rejected.  Additionally, as per the above rule, the comparison MUST
+   fail if the numeric type of the range or set differs from that of the
+   ACS-ECT value.
+
 8.3.4.4.5.11.  Comparison for text entries
 
    The value stored under measurement-values-map codepoint 18 is of type
-   text-matcher.
+   text-matcher.  The ACS-ECT value at this codepoint is always a bare
+   text (see Section 5.1.4.9); the comparison rules below are defined
+   against the form of the C-ECT value.
 
    If the C-ECT value is a bare text, an equality comparison is
    performed with the ACS-ECT value.
@@ -4841,7 +4916,9 @@ Table of Contents
 8.3.4.4.5.12.  Comparison for bytes entries
 
    The value stored under measurement-values-map codepoint 19 is of type
-   bytes-matcher.
+   bytes-matcher.  The ACS-ECT value at this codepoint is always a bare
+   bytes (see Section 5.1.4.9); the comparison rules below are defined
+   against the form of the C-ECT value.
 
    If the C-ECT value is a bare bytes, an equality comparison is
    performed with the ACS-ECT value.
@@ -4856,9 +4933,6 @@ Table of Contents
    $-prefixed CoRIM CDDL codepoints when this specification does not
    prescribe binary comparison.  The profile MUST specify how to compare
    the CBOR tagged value against the ACS.
-
-   Note that the processor may compare Reference Values in any order, so
-   the comparison SHOULD NOT be stateful.
 
 8.3.5.  Handoff
 
@@ -5523,6 +5597,8 @@ Table of Contents
    terminates, returning the computed ACS.
 
 9.  Implementation Status
+
+   This section is to be removed before publishing as an RFC.
 
    This section records the status of known implementations of the
    protocol defined by this specification at the time of posting of this
