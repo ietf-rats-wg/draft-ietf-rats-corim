@@ -46,11 +46,6 @@ contributor:
   - ins: C. Bormann
     name: Carsten Bormann
     org: Universität Bremen TZI
-    street: Postfach 330440
-    city: Bremen
-    code: D-28359
-    country: Germany
-    phone: +49-421-218-63921
     email: cabo@tzi.org
     contribution: >
       Carsten Bormann contributed to the CDDL specifications and the IANA considerations.
@@ -66,6 +61,12 @@ contributor:
     email: dionnaglaze@google.com
     contribution: >
       Dionna contributed many clarifying questions and disambiguations to the semantics of attestation appraisal as well as consistent contribution to weekly reviews of others' edits.
+  - ins: S. Bellock
+    name: Steven Bellock
+    org: NVIDIA
+    email: sbellock@nvidia.com
+    contribution: >
+      Steven contributed a thorough review of the specification, with many fixes and clarifications to the CDDL, IANA considerations, Reference Verifier pseudocode and normative text.
 
 normative:
   RFC9562: uuid
@@ -4109,7 +4110,6 @@ The authors would like to thank the following people for their review and commen
 {{{Greg Kostal}}},
 {{{Carl Wallace}}},
 {{{Hannes Tschofenig}}},
-{{{Steven Bellock}}},
 {{{Jag Raman}}},
 {{{Giri Mandyam}}},
 {{{Jeremy O'Donoghue}}},
