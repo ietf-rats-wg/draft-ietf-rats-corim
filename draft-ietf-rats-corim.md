@@ -3269,9 +3269,14 @@ These are designated by a CBOR tag that allows clear type disambiguation.
 Negative codepoints represent profile-defined data representations.
 The processor MUST use the attribute name, the profile associated with the condition ECT, and, if present, the CBOR tag value to select the comparison algorithm.
 
-If the processor is unable to determine the applicable comparison algorithm for an attribute, it MUST behave as though the C-ECT does not match the ACS-ECT.
+An attribute defined by this specification that has no comparison subsection of its own is compared by binary comparison.
+Before performing the binary comparison, the processor MUST convert the C-ECT value and the ACS-ECT value into a form that meets the CBOR core deterministic encoding requirements described in {{Section 4.2 of -cbor}}.
+The comparison returns true if and only if the two encodings are binary identical.
+This applies to `mac-addr` (codepoint 6), `ip-addr` (codepoint 7), `serial-number` (codepoint 8), `ueid` (codepoint 9), `uuid` (codepoint 10) and `name` (codepoint 11).
 
-The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.
+If the processor does not recognize an attribute, or is otherwise unable to determine the applicable comparison algorithm for it, it MUST behave as though the C-ECT does not match the ACS-ECT.
+
+The following subsections define the comparison algorithms for the other `measurement-values-map` attributes defined by this specification.
 
 ###### Comparison for version entries
 
@@ -3360,6 +3365,16 @@ The comparison MUST return false if there are no hash algorithms in common betwe
 The comparison MUST return false if the value associated with any common hash algorithm identifier in the C-ECT differs from the value for the same algorithm identifier in the ACS-ECT.
 If all the values associated with the common hash algorithm identifiers match, the comparison returns true.
 
+###### Comparison for flags entries {#sec-cmp-flags}
+
+The value stored under `measurement-values-map` codepoint 3 is of type `flags-map`.
+
+Each flag is compared separately.
+For each flag present in the C-ECT `flags-map`, the comparison MUST return false if that flag is absent from the ACS-ECT `flags-map` or has a different value.
+Flags present in the ACS-ECT `flags-map` but absent from the C-ECT `flags-map` are ignored.
+A flag that is absent from the ACS-ECT `flags-map` is not treated as `false`.
+If every flag in the C-ECT `flags-map` matches, the comparison returns true.
+
 ###### Comparison for raw-value entries
 
 A `raw-value` entry contains binary data.
@@ -3372,6 +3387,7 @@ If the C-ECT `measurement-values-map` codepoint 4 is of type `tagged-bytes`, and
 The standard comparison function defined in this document removes the CBOR tag before performing the comparison.
 
 For backwards compatibility, if the C-ECT `measurement-values-map` codepoint 4 is of type `tagged-bytes`, and there is a mask stored under codepoint 5, the processor treats it as a `tagged-masked-raw-value` with the `value` field holding the same contents and a `mask` holding the contents of codepoint 5.
+Codepoint 5 is used only as part of the codepoint 4 comparison and is not compared on its own, so it does not need to be present in the ACS-ECT.
 
 The comparison MUST return false if the lengths of the ACS-ECT entry value and the C-ECT value are different.
 
