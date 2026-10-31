@@ -480,8 +480,10 @@ Verifiers are not required to follow these URLs or use the information retrieved
 The following describes each child element of this type.
 
 * `href` (index 0): a URI or array of alternative URIs identifying locations where the additional resource can be fetched.
+  Every URI in the array identifies the same resource.
 
-* `thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s. See {{sec-common-hash-entry}}.
+* `thumbprint` (index 1): expected digest or an array of digests of the resource identified by `href`. See {{sec-common-hash-entry}}.
+  Every digest in the array is computed over the same resource, and each uses a different hash algorithm.
 
 ### Profile Types {#sec-corim-profile-types}
 
@@ -540,12 +542,21 @@ The `corim-entity-map` MUST NOT contain two entities with the `manifest-signer` 
 ~~~
 
 Signing a CoRIM follows the procedures defined in CBOR Object Signing and
-Encryption {{-cose}}. A CoRIM tag MUST be wrapped in a COSE_Sign1 structure.
-The CoRIM MUST be signed by the CoRIM creator.
+Encryption {{-cose}}.
+A CoRIM tag MUST be wrapped either in a COSE_Sign1 structure or a
+COSE_Sign structure.
+The COSE_Sign structure may be used when:
 
-The following CDDL specification defines a restrictive subset of COSE header
-parameters that MUST be used in the protected header alongside additional
-information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
+1. Multiple authorities need to sign the same unsigned CoRIM payload; or
+2. A single authority needs to sign the same unsigned CoRIM payload using different signing algorithms.
+
+The CoRIM MUST be signed by the CoRIM creator.
+Other authorities MAY sign the CoRIM. (See {{sec-mult-sign}} for details on multi-signature CoRIM.)
+
+### Signing with Single signature
+
+COSE_Sign1 is used when a single signer need to produce a signature over an unsigned CoRIM (`tagged-unsigned-corim-map`).
+When using COSE_Sign1 the following CDDL specification defines a restrictive subset of COSE header parameters that MUST be used in the protected header alongside additional information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) or alternatively in a `CWT-Claims` ({{-CWT_CLAIMS_COSE}}).
 
 ~~~ cddl
 {::include cddl/cose-sign1-corim.cddl}
@@ -554,16 +565,25 @@ information about the CoRIM encoded in a `corim-meta-map` ({{sec-corim-meta}}) o
 The following describes each child element of this type.
 
 * `protected`: A CBOR Encoded protected header which is protected by the COSE
-  signature. Contains information as given by Protected Header Map below.
+signature. Contains information as given by Protected Header Map below.
 
 * `unprotected`: A COSE header that is not protected by COSE signature.
 
 * `payload`: When the payload is signed directly, either a CBOR-encoded tagged CoRIM, or nil if it is detached.
-  When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
+When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
 
 * `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
 
-### Protected Header Map
+### Header Parameters  {#sec-header}
+
+This section describes the header parameters, that need to be set when
+
+a. A single signer need to produce a signature using (COSE_Sign1) object.
+OR
+b. When multiple signers, each with different authority, need to sign the same unsigned CoRIM, using COSE_Sign object.
+In this case each array entry of `signature_structure` has the header parameters that carry the details of the signature algorithm and signer information as detailed in {{sec-mult-sign}}
+
+#### Protected Header Map
 
 ~~~ cddl
 {::include cddl/protected-corim-header-map.cddl}
@@ -589,6 +609,9 @@ Or, when the payload is signed indirectly using a Hash Envelope ({{-cose-hash-en
 
 * `payload_location` (index 260): An optional identifier enabling retrieval of the original resource (preimage) identified by the payload.
 
+The value of `content-type` or `payload_preimage_content_type` is exactly `application/rim+cbor`, without media type parameters.
+In particular, the `profile` parameter is not used in the COSE header, because the profile is carried in the `profile` field of the `corim-map` ({{sec-corim-map}}).
+
 At least one of:
 
 * `CWT-Claims` (index 15): A map that contains metadata associated with a signed CoRIM.
@@ -601,7 +624,7 @@ Documents MAY include both `CWT-Claims` and `corim-meta`, in which case the sign
 
 Additional data can be included in the COSE header map as per ({{Section 3 of -cose}}).
 
-### CWT Claims {#cwt-claims}
+#### CWT Claims {#cwt-claims}
 
 The CWT Claims ({{-CWT_CLAIMS_COSE}}) map identifies the entity that created and signed the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
@@ -619,7 +642,7 @@ Additional data can be included in the CWT Claims, as per {{-CWT}}, such as:
 
 * `nbf` (index 5): Not before time, formerly `signature-validity` in {{sec-common-validity}}.
 
-### Meta Map {#sec-corim-meta}
+#### Meta Map {#sec-corim-meta}
 
 The CoRIM meta map identifies the entity or entities that create and sign the CoRIM.
 This ensures the consumer is able to identify credentials used to authenticate its signer.
@@ -651,11 +674,74 @@ Described in {{sec-common-validity}}.
 * `$$corim-signer-map-extension`: Extension point for future expansion of the
 Signer map.
 
-### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
+#### Unprotected CoRIM Header Map {#sec-corim-unprotected-header}
 
 ~~~ cddl
 {::include cddl/unprotected-corim-header-map.cddl}
 ~~~
+
+### Signing with Multiple Signatures {#sec-mult-sign}
+When using COSE_Sign the following CDDL specification defines the overall structure.
+
+~~~ cddl
+{::include cddl/cose-sign-corim.cddl}
+~~~
+
+The following describes each child element of this type.
+
+* `protected`: The top level protected header parameter.
+Contains the information pertaining to the signature algorithm and signer details of the authority producing the signature.
+Refer to {{sec-multi-sign-headers}} for details.
+
+* `unprotected`: The top level unprotected header parameter.
+Refer to {{sec-multi-sign-headers}} for details.
+
+* `payload`: When the payload is signed directly, this element contains either a CBOR-encoded tagged CoRIM, or nil if it is detached.
+When the payload is signed indirectly, the digest of a CBOR-encoded tagged CoRIM.
+
+* `signature`: This element contains an array of signature structures, as defined in {{sec-multiple-sigs}}.
+
+#### Signature Parameters of Multi Sign CoRIM {#sec-multiple-sigs}
+
+The signature parameter of a COSE_Sign object contains an array of signature structures that has Header parameters along with signature bytes.
+These header parameters contain information relating to the content, as well as details about the signer performing the signature.
+
+~~~ cddl
+{::include cddl/signature-structure.cddl}
+~~~
+
+The following describes each element of signature_structure.
+
+* `protected`: A CBOR Encoded protected header which is protected by the COSE signature.
+
+* `unprotected`: A COSE header that is not protected by the COSE signatur.
+
+* `signature`: A COSE signature block, as defined in {{Section 4 of -cose}}.
+
+Refer to section {{sec-multi-sign-headers}} when setting the above parameters
+
+#### Use of Header Parameters and Signatures in COSE_Sign {#sec-multi-sign-headers}
+
+This section provides the order in which the protected and unprotected header parameters should be set, along with an array of signature structures in a COSE_Sign object.
+
+* Single Signer, multiple signing algorithms:
+
+1. The top-level `protected` and `unprotected` header parameters, as specified in {{sec-mult-sign}}, are populated first.
+These parameters identify the signature algorithm and the authority responsible for signing the CoRIM.
+The corresponding signature bytes are carried in the signature element of the first entry in the signatures array.
+
+2. For each subsequent entry in the signatures array, the associated protected and unprotected header parameters identify the signing algorithm used to generate the corresponding signature.
+The signature bytes are carried in the signature element of that entry.
+
+* Multiple Signers
+
+1. The top-level `protected` and `unprotected` header parameters, as specified in {{sec-mult-sign}}, are populated first, using the header parameter definitions provided in {{sec-header}}.
+These parameters identify the signing algorithm and the authority of the CoRIM creator i.e the entity responsible for signing the CoRIM.
+The corresponding signature bytes are carried in the signature element of the first entry in the `signature-structure` array.
+
+2. Each subsequent entry in the `signature-structure` array contains the signature algorithm, signer identification information, and corresponding signature bytes associated with a distinct signing authority.
+Each authority independently signs the same unsigned CoRIM payload, with header parameters as defined in {{sec-header}}.
+
 
 ## Signer authority of securely conveyed unsigned CoRIM {#sec-conveyed-signer}
 
@@ -677,7 +763,6 @@ The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
 These metadata containers ensure that each CoRIM in the collection has an identified signer.
-The COSE protected header can include a Collection CMW type name by using the `cmwc_t` content type parameter for the `&(content-type: 3)` COSE header, or `&(payload_preimage_content_type: 259)` in the case of hash envelopes.
 
 If using other signing envelope formats, ({{sec-conveyed-signer}}) the CoRIM signing authority MUST be specified. For example, this can be accomplished by adding the `manifest-signer` role to every CoRIM, or by using a protected header analogous to `corim-meta`.
 
@@ -1140,9 +1225,9 @@ The following describes each member of the `measurement-values-map`.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bool}}.
 
-* `number` (index 17): A numeric value with configurable matching semantics, including range and set matching.
+* `integer` (index 17): An integer value with configurable matching semantics, including range and set matching.
   Described in {{sec-comid-matchers}}.
-  Comparison rules are defined in {{sec-match-number}}.
+  Comparison rules are defined in {{sec-match-integer}}.
 
 * `text` (index 18): A text string with configurable matching semantics.
   Described in {{sec-comid-matchers}}.
@@ -1151,6 +1236,10 @@ The following describes each member of the `measurement-values-map`.
 * `bytes` (index 19): A byte string with configurable matching semantics.
   Described in {{sec-comid-matchers}}.
   Comparison rules are defined in {{sec-match-bytes}}.
+
+* `float` (index 20): A floating-point value with configurable matching semantics, including range and set matching.
+  Described in {{sec-comid-matchers}}.
+  Comparison rules are defined in {{sec-match-float}}.
 
 ##### Version {#sec-comid-version}
 
@@ -1383,23 +1472,33 @@ An int range is represented with either major type 0 or major type 1 ints.
 
 The signed integer range representation is an inclusive range.
 A `min` or `max` of `null` means that the range is effectively unbounded in that direction.
+At least one of `min` and `max` MUST be non-`null`; to match any value, the entry is omitted.
+If both `min` and `max` are integers, `min` MUST be less than or equal to `max`.
+An `int-range` that violates either requirement is malformed, and the tag that contains it MUST be discarded (see {{sec-phase-1}}).
 
 #### Type Matchers {#sec-comid-matchers}
 
-The `measurement-values-map` entries at indices 16-19 support generic boolean, numeric, text, and byte-string measurements.
-For the numeric, text and byte-string entries, matching semantics are configurable: rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
+The `measurement-values-map` entries at indices 16-20 support generic boolean, integer, text, byte-string, and floating-point measurements.
+For the integer, float, text and byte-string entries, matching semantics are configurable: rather than adding a separate codepoint for each desired matching criterion, these entries use CBOR-tagged wrappers to encode the matching logic alongside the value:
 
 * Bare (untagged) value means exact match: the target value must equal the entry's value.
-* CBOR tag 566 (`tagged-*-set`, numeric, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
-* CBOR tag 565 (`tagged-number-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+* CBOR tag 566 (`tagged-*-set`, integer, float, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two alternatives MUST be provided.
+* CBOR tag 565 (`tagged-integer-range` and `tagged-float-range`, numeric types only) means range match: the target value must lie within the inclusive [min, max] interval; `null` means unbounded.
+
+If both `min` and `max` of a `tagged-integer-range` or `tagged-float-range` are non-`null`, `min` MUST be less than or equal to `max`.
+A `tagged-integer-range` or `tagged-float-range` that violates this requirement is malformed, and the tag that contains it MUST be discarded (see {{sec-phase-1}}).
 
 The boolean entry (index 16) supports only exact match; see {{sec-match-bool}} for why this is the case.
 
+The numeric type of a value is determined by the codepoint at which it appears: `integer` (index 17) holds `int` values and `float` (index 20) holds `float` values.
+Values at different codepoints are never compared with each other, so an `integer` condition never matches a `float` ACS-ECT value, and vice versa, even when they denote the same number.
+An Evidence transformation algorithm, or the CoRIM profile that defines it, MUST specify the codepoint to which each numeric value it produces is assigned.
+
 The range and set forms are meaningful only as a condition, when the `measurement-values-map` entry appears in a C-ECT.
 `measurement-values-map` is also used, unmodified, for ACS-ECTs (the values asserted by Evidence, Reference Values and Endorsements); the CDDL does not by itself distinguish the two uses.
-An ACS-ECT entry at codepoints 16-19 MUST use the bare, untagged form.
+An ACS-ECT entry at codepoints 16-20 MUST use the bare, untagged form.
 The range and set forms MUST NOT be used outside a condition.
-The comparison rules in {{sec-match-bool}}, {{sec-match-number}}, {{sec-match-text}} and {{sec-match-bytes}} are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.
+The comparison rules in {{sec-match-bool}}, {{sec-match-integer}}, {{sec-match-text}}, {{sec-match-bytes}} and {{sec-match-float}} are accordingly defined only for C-ECT values of these codepoints, compared against a bare ACS-ECT value.
 
 ~~~ cddl
 {::include cddl/matcher.cddl}
@@ -2534,6 +2633,9 @@ All available CoRIM tags are collected.
 CoRIM tags MUST be discarded if they have expired, or if they are not associated with an authenticated and authorized source, or if they have been revoked by an authorized source.
 Any CoRIM secured by a cryptographic mechanism that fails validation MUST be discarded.
 
+If the Verifier fetches a resource identified by a `corim-locator-map` ({{sec-corim-locator-map}}) that includes a `thumbprint`, it MUST check the fetched resource against `thumbprint` following the rules in {{sec-cmp-digests}}, with the digests computed over the fetched resource in place of the ACS-ECT digests.
+If that check fails, the Verifier MUST NOT use the fetched resource.
+
 Other selection criteria MAY be applied.
 For example, if the Evidence format is known in advance, CoRIMs using a profile that is not understood by a Verifier can be readily discarded.
 
@@ -2541,11 +2643,16 @@ Further selection criteria may be applied to the CoRIM contents at later stages.
 
 #### CoRIM Trust Anchors
 
-If CoRIM tags are signed, the signatures MUST be validated using the appropriate trust anchors available to the Verifier.
+If CoRIM tags are signed, the signatures MUST be verified using the appropriate trust anchors available to the Verifier.
 The Verifier is expected to have a trust anchor store.
 The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 If the CoRIM is signed, it should include at least one certificate (e.g., as part of the `x5chain` in the COSE header) that corresponds to the key pair used for signing.
 This certificate MUST have a valid certification path to one of the Verifier's trust anchors.
+
+If the CoRIM is signed by multiple authorities, at least the signature from the CoRIM creator MUST be verified before the CoRIM can be accepted for further processing by the Verifier.
+A Verifier Appraisal Policy for Evidence may require more signatures to be verified before accepting the CoRIM.
+For each of these signers, it is expected that the corresponding trust anchors will be provisioned in the Verifier.
+The way in which these trust anchors are provisioned in the Verifier is beyond the scope of this specification.
 
 #### Tags Extraction and Validation
 
@@ -3321,20 +3428,53 @@ An equality comparison is performed between the C-ECT value and the ACS-ECT valu
 Set match (CBOR tag 566) is not defined for `bool` since `bool` has only two possible values.
 A set of two or more elements represents the full domain, which can be already expressed by omitting the entry.
 
-###### Comparison for number entries {#sec-match-number}
+###### Comparison for integer entries {#sec-match-integer}
 
-The value stored under `measurement-values-map` codepoint 17 is of type `number-matcher`.
-The ACS-ECT value at this codepoint is always a bare `number` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
+The value stored under `measurement-values-map` codepoint 17 is of type `integer-matcher`.
+The ACS-ECT value at this codepoint is always a bare `int` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
 
-If the C-ECT value is a bare `number`, an equality comparison is performed with the ACS-ECT value.
+If the C-ECT value is a bare `int`, an equality comparison is performed with the ACS-ECT value.
 
-If the C-ECT value is a `tagged-number-range` (CBOR tag 565), `null` in the first element represents negative infinity (no lower bound) and `null` in the second element represents positive infinity (no upper bound).
+If the C-ECT value is a `tagged-integer-range` (CBOR tag 565), `null` in the first element represents negative infinity (no lower bound) and `null` in the second element represents positive infinity (no upper bound).
 The comparison MUST return true if and only if both of the following conditions are met:
 
 *  The C-ECT `min` is `null` or the ACS-ECT value is greater than or equal to `min`.
 *  The C-ECT `max` is `null` or the ACS-ECT value is less than or equal to `max`.
 
-If the C-ECT value is a `tagged-number-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+At least one of `min` and `max` of a `tagged-integer-range` MUST be non-`null`.
+A `tagged-integer-range` whose `min` and `max` are both `null` is malformed and MUST be rejected; to match any value, the entry is omitted.
+
+If the C-ECT value is a `tagged-integer-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
+
+###### Comparison for float entries {#sec-match-float}
+
+The value stored under `measurement-values-map` codepoint 20 is of type `float-matcher`.
+The ACS-ECT value at this codepoint is always a bare `float` (see {{sec-comid-matchers}}); the comparison rules below are defined against the form of the C-ECT value.
+
+Comparison is numeric, not byte-wise: it does not depend on the width (e.g., half, single or double precision) or on the preferred or non-preferred serialization used to encode a value.
+
+*  `+0.0` and `-0.0` are equal.
+*  `+Infinity` and `-Infinity` are equal only to themselves, and order above and below all finite values, respectively.
+
+`NaN` MUST NOT appear in a `float-matcher`, whether as a bare value, as a range bound, or as a set element.
+A `float-matcher` that contains a `NaN` is malformed and MUST be rejected.
+An Evidence transformation MUST NOT produce a `NaN` as the ACS-ECT value; Evidence that would result in one MUST be rejected.
+
+If the C-ECT value is a bare `float`, an equality comparison is performed with the ACS-ECT value.
+
+If the C-ECT value is a `tagged-float-range` (CBOR tag 565), `null` in the first element represents negative infinity (no lower bound) and `null` in the second element represents positive infinity (no upper bound).
+The comparison MUST return true if and only if both of the following conditions are met:
+
+*  The C-ECT `min` is `null` or the ACS-ECT value is greater than or equal to `min`.
+*  The C-ECT `max` is `null` or the ACS-ECT value is less than or equal to `max`.
+
+The `min` and `max` of a `tagged-float-range` MUST NOT be `+Infinity` or `-Infinity`; `null` is the only way to express an unbounded range.
+A `tagged-float-range` that violates this requirement is malformed and MUST be rejected.
+
+At least one of `min` and `max` of a `tagged-float-range` MUST be non-`null`.
+A `tagged-float-range` whose `min` and `max` are both `null` is malformed and MUST be rejected; to match any value, the entry is omitted.
+
+If the C-ECT value is a `tagged-float-set` (CBOR tag 566), the comparison MUST return true if and only if the ACS-ECT value equals any element of the set.
 
 ###### Comparison for text entries {#sec-match-text}
 
@@ -3358,8 +3498,6 @@ If the C-ECT value is a `tagged-bytes-set` (CBOR tag 566), the comparison MUST r
 
 A profile MUST specify comparison algorithms for its additions to `$`-prefixed CoRIM CDDL codepoints when this specification does not prescribe binary comparison.
 The profile MUST specify how to compare the CBOR tagged value against the ACS.
-
-Note that the processor may compare Reference Values in any order, so the comparison SHOULD NOT be stateful.
 
 ### Handoff
 
@@ -3615,8 +3753,8 @@ IANA is requested to allocate the following tags in the "CBOR Tags" registry {{!
 |     562 | `bytes`             | tagged-pkix-asn1der-cert-type, see {{sec-crypto-keys}}        | {{&SELF}} |
 |     563 | `tagged-masked-raw-value` | tagged-masked-raw-value, see {{sec-comid-raw-value-types}} | {{&SELF}} |
 |     564 | `array`             | tagged-int-range, see {{sec-comid-int-range}}                   | {{&SELF}} |
-|     565 | `array`             | tagged-number-range, see {{sec-comid-matchers}}                 | {{&SELF}} |
-|     566 | `array`             | tagged-{number,text,bytes}-set, see {{sec-comid-matchers}} | {{&SELF}} |
+|     565 | `array`             | tagged-{integer,float}-range, see {{sec-comid-matchers}}        | {{&SELF}} |
+|     566 | `array`             | tagged-{integer,float,text,bytes}-set, see {{sec-comid-matchers}} | {{&SELF}} |
 | 567-599 | `any`               | Earmarked for CoRIM                                           | {{&SELF}} |
 
 Tags designated as "Earmarked for CoRIM" can be reassigned by IANA based on advice from the designated expert for the CBOR Tags registry.
@@ -3829,10 +3967,11 @@ Assignments consist of an integer index value, the item name, and a reference to
 | 14    | integrity-registers       | {{&SELF}}     |
 | 15    | int-range                 | {{&SELF}}     |
 | 16    | bool                      | {{&SELF}}     |
-| 17    | number                    | {{&SELF}}     |
+| 17    | integer                   | {{&SELF}}     |
 | 18    | text                      | {{&SELF}}     |
 | 19    | bytes                     | {{&SELF}}     |
-| 20-18446744073709551616 | Unassigned | |
+| 20    | float                     | {{&SELF}}     |
+| 21-18446744073709551616 | Unassigned | |
 {: #tbl-iana-comid-measurement-values-map-items title="Measurement Values Map Items Initial Registrations"}
 
 ## CoMID Flags Map Registry {#sec-iana-comid-flags-map}
