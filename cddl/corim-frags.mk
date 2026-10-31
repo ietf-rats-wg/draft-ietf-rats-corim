@@ -98,6 +98,13 @@ CORIM_FRAGS += $(COMID_FRAGS)
 
 CORIM_EXAMPLES := $(wildcard examples/corim-*.diag)
 
+CMWC_FRAGS := cmw-corim-collection.cddl
+CMWC_FRAGS += $(CORIM_FRAGS)
+
+CMWC_IMPORTS += $(CORIM_IMPORTS)
+
+CMWC_EXAMPLES := examples/cmw-corim-collection.diag
+
 INTREP_FRAGS += intrep-acs.cddl
 INTREP_FRAGS += intrep-ae.cddl
 INTREP_FRAGS += intrep-ar.cddl

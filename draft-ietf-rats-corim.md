@@ -758,7 +758,7 @@ It is out of scope of this document to specify a method of delegating the signer
 
 Several CoRIMs may share the same signer (e.g., as collection payload in a different signed message) and use locally-resolvable references to each other, for example using a RATS Conceptual Message Wrapper (CMW) {{-cmw}}.
 The Collection CMW type is similar to a profile in its way of restricting the shape of the CMW collection.
-The Collection CMW type for a CoRIM collection SHALL be `tag:{{&SELF}}:corim`.
+The Collection CMW type for a CoRIM collection SHALL be `tag:ietf.org,2026:corim`.
 
 A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a `CWT-Claims` or a `corim-meta` and MAY contain both, in the COSE_Sign1 `protected-header` parameter.
@@ -775,7 +775,7 @@ If there is a hierarchical structure to the CoRIM Collection CMW, the base entry
 It is RECOMMENDED to label a CoRIM with its tag-id in string format, where `uuid-type` string format is specified by {{-uuid}}.
 CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence `dependent-rims` with local resource indicators.
 It is RECOMMENDED that a CoRIM with a `uuid-type` tag-id be referenced with URI `urn:uuid:`_tag-id-uuid-string_.
-It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:{{&SELF}}:local,`_tag-id-tstr_.
+It is RECOMMENDED that a CoRIM with a `tstr` tag-id be referenced with `tag:ietf.org,2026:corim:local,`_tag-id-tstr_.
 It is RECOMMENDED for a `corim-locator-map` containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.
 
 The following example demonstrates these recommendations for bundling CoRIMs with a common signer but with different profiles.
