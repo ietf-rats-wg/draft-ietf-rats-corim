@@ -3272,7 +3272,7 @@ Each flag is compared separately.
 For each flag present in the C-ECT `flags-map`, the comparison MUST return false if that flag is absent from the ACS-ECT `flags-map` or has a different value.
 Flags present in the ACS-ECT `flags-map` but absent from the C-ECT `flags-map` are ignored.
 A flag that is absent from the ACS-ECT `flags-map` is not treated as `false`.
-If every flag in the C-ECT `flags-map` matches, the comparison returns true.
+If every flag in the C-ECT `flags-map` matches, the same flag in the ACS-ECT `flags-map`, the comparison returns true.
 
 ###### Comparison for raw-value entries
 
