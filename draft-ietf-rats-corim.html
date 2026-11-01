@@ -2464,7 +2464,7 @@ If it is impossible to assert the authority of the origin, the Verifier's apprai
           </h4>
 <p id="section-4.3.1-1">Several CoRIMs may share the same signer (e.g., as collection payload in a different signed message) and use locally-resolvable references to each other, for example using a RATS Conceptual Message Wrapper (CMW) <span>[<a href="#I-D.ietf-rats-msg-wrap" class="cite xref">I-D.ietf-rats-msg-wrap</a>]</span>.
 The Collection CMW type is similar to a profile in its way of restricting the shape of the CMW collection.
-The Collection CMW type for a CoRIM collection SHALL be <code>tag:{{&amp;SELF}}:corim</code>.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
+The Collection CMW type for a CoRIM collection SHALL be <code>tag:ietf.org,2026:corim</code>.<a href="#section-4.3.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.3.1-2">A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to a signed CoRIM.
 The signing operation MUST include either a <code>CWT-Claims</code> or a <code>corim-meta</code> and MAY contain both, in the COSE_Sign1 <code>protected-header</code> parameter.
 These metadata containers ensure that each CoRIM in the collection has an identified signer.<a href="#section-4.3.1-2" class="pilcrow">¶</a></p>
@@ -2472,10 +2472,14 @@ These metadata containers ensure that each CoRIM in the collection has an identi
 <div class="lang-cddl sourcecode" id="section-4.3.1-4">
 <pre>
 corim-cbor-collection = {
-  "__cmwc_t" =&gt; "tag:{{&amp;SELF}}:corim",
-  + cmw-label =&gt; [TBD1, bytes .cbor tagged-corim-map]
+  "__cmwc_t" =&gt; "tag:ietf.org,2026:corim",
+  + cmw-label =&gt; [rim-cbor-content-format, bytes .cbor tagged-unsigned-corim-map]
 }
 cmw-label = text / int
+
+; RFC Editor: replace 65000 with the CoAP Content-Format ID assigned to
+; application/rim+cbor (TBD1), here and in the example, and remove this note.
+rim-cbor-content-format = 65000
 </pre><a href="#section-4.3.1-4" class="pilcrow">¶</a>
 </div>
 <p id="section-4.3.1-5">The Collection CMW MAY use any label for its CoRIMs.
@@ -2483,7 +2487,7 @@ If there is a hierarchical structure to the CoRIM Collection CMW, the base entry
 It is RECOMMENDED to label a CoRIM with its tag-id in string format, where <code>uuid-type</code> string format is specified by <span>[<a href="#RFC9562" class="cite xref">RFC9562</a>]</span>.
 CoRIMs distributed in a CoRIM Collection CMW MAY declare their interdependence <code>dependent-rims</code> with local resource indicators.
 It is RECOMMENDED that a CoRIM with a <code>uuid-type</code> tag-id be referenced with URI <code>urn:uuid:</code><em>tag-id-uuid-string</em>.
-It is RECOMMENDED that a CoRIM with a <code>tstr</code> tag-id be referenced with <code>tag:{{&amp;SELF}}:local,</code><em>tag-id-tstr</em>.
+It is RECOMMENDED that a CoRIM with a <code>tstr</code> tag-id be referenced with <code>tag:ietf.org,2026:corim:local,</code><em>tag-id-tstr</em>.
 It is RECOMMENDED for a <code>corim-locator-map</code> containing local URIs to afterwards list a nonzero number of reachable URLs as remote references.<a href="#section-4.3.1-5" class="pilcrow">¶</a></p>
 <p id="section-4.3.1-6">The following example demonstrates these recommendations for bundling CoRIMs with a common signer but with different profiles.<a href="#section-4.3.1-6" class="pilcrow">¶</a></p>
 <div class="lang-cbor-diag sourcecode" id="section-4.3.1-7">
@@ -2491,9 +2495,10 @@ It is RECOMMENDED for a <code>corim-locator-map</code> containing local URIs to 
 =============== NOTE: '\' line wrapping per RFC 8792 ================
 
 / cbor-collection / {
-  "__cmwc_t": "tag:{{&amp;SELF}}:corim",
+  "__cmwc_t": "tag:ietf.org,2026:corim",
   "adee8cd4-4e47-461f-b341-2aba3ae4cbda":
-    / cbor-cmw / [TBD1, &lt;&lt; / tagged-corim-map / 501({
+    / cbor-cmw / [/ rim-cbor-content-format / 65000, &lt;&lt; / tagged-\
+                                           unsigned-corim-map / 501({
       / id / 0: h'adee8cd44e47461fb3412aba3ae4cbda',
       / tags / 1: [/ tagged-concise-mid-tag / 506(&lt;&lt;{
         / tag-identity / 1: {
@@ -2503,25 +2508,23 @@ It is RECOMMENDED for a <code>corim-locator-map</code> containing local URIs to 
           / reference-triples / 0: [[
             / ref-env / {/ class / 0: {/ class-id / 0: 560(h'c0de')}\
                                                                    },
-            / ref-claims / {
+            / ref-claims / [{
               / mval / 1: {
-                / profile-foo / -404:
-                  h'\
-                  6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc'
-              }}]],
-          / coswid-triples / 6: [[
-            {/ class / 0: {/ class-id / 0: 560(h'c0de')}},
-            [h'369a6688451240b9b74905b1dd5fae9f']]]}}&gt;&gt;)],
-      / profile / 3: "tag:example.com,2025/example-profile",
+                / raw-value / 4:
+                  560(h'\
+                 6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc')
+              }}]]]}}&gt;&gt;)],
+      / profile / 3: 32("tag:example.com,2025:example-profile"),
       / dependent-rims / 2: [{
         / href / 0: [
-          "urn:uuid:51a5f633-71c0-45f5-855e-43e8254c1806",
-          "https://example.com/369a6688451240b9b74905b1dd5fae9f.\
-                                                               corim"
+          32("urn:uuid:51a5f633-71c0-45f5-855e-43e8254c1806"),
+          32("https://example.com/369a6688451240b9b74905b1dd5fae9f.\
+                                                              corim")
         ]}]}) &gt;&gt;],
   "51a5f633-71c0-45f5-855e-43e8254c1806":
-    / cbor-cmw / [TBD1, &lt;&lt; / tagged-corim-map / 501({
-      / id: / 0: h'51a5f63371c045f5855e43e8254c1806',
+    / cbor-cmw / [/ rim-cbor-content-format / 65000, &lt;&lt; / tagged-\
+                                           unsigned-corim-map / 501({
+      / id / 0: h'51a5f63371c045f5855e43e8254c1806',
       / tags / 1: [/ tagged-concise-swid-tag / 505(&lt;&lt;{
           / tag-id / 0: h'369a6688451240b9b74905b1dd5fae9f',
           / tag-version / 12: 2,
@@ -2529,11 +2532,8 @@ It is RECOMMENDED for a <code>corim-locator-map</code> containing local URIs to 
           / entity / 2: {
             / entity-name / 31: "ACME Firmware",
             / role / 33: / software-creator / 2
-          },
-          / profile-bar / 4294967295: {
-           / profile-baz / 0: 5,
-           / profile-qux / 1: h'f76e41f3462a62e8'}}&gt;&gt;)],
-      / profile / 3: "tag:example.com,2025/software-profile"})&gt;&gt;]
+          }}&gt;&gt;)],
+      / profile / 3: 32("tag:example.com,2025:software-profile")})&gt;&gt;]
 }
 </pre><a href="#section-4.3.1-7" class="pilcrow">¶</a>
 </div>

@@ -1079,7 +1079,7 @@ Table of Contents
    (CMW) [I-D.ietf-rats-msg-wrap].  The Collection CMW type is similar
    to a profile in its way of restricting the shape of the CMW
    collection.  The Collection CMW type for a CoRIM collection SHALL be
-   tag:{{&SELF}}:corim.
+   tag:ietf.org,2026:corim.
 
    A COSE_Sign1-signed CoRIM Collection CMW has a similar requirement to
    a signed CoRIM.  The signing operation MUST include either a CWT-
@@ -1093,10 +1093,14 @@ Table of Contents
    using a protected header analogous to corim-meta.
 
    corim-cbor-collection = {
-     "__cmwc_t" => "tag:{{&SELF}}:corim",
-     + cmw-label => [TBD1, bytes .cbor tagged-corim-map]
+     "__cmwc_t" => "tag:ietf.org,2026:corim",
+     + cmw-label => [rim-cbor-content-format, bytes .cbor tagged-unsigned-corim-map]
    }
    cmw-label = text / int
+
+   ; RFC Editor: replace 65000 with the CoAP Content-Format ID assigned to
+   ; application/rim+cbor (TBD1), here and in the example, and remove this note.
+   rim-cbor-content-format = 65000
 
    The Collection CMW MAY use any label for its CoRIMs.  If there is a
    hierarchical structure to the CoRIM Collection CMW, the base entry
@@ -1107,10 +1111,10 @@ Table of Contents
    interdependence dependent-rims with local resource indicators.  It is
    RECOMMENDED that a CoRIM with a uuid-type tag-id be referenced with
    URI urn:uuid:_tag-id-uuid-string_. It is RECOMMENDED that a CoRIM
-   with a tstr tag-id be referenced with tag:{{&SELF}}:local,_tag-id-
-   tstr_. It is RECOMMENDED for a corim-locator-map containing local
-   URIs to afterwards list a nonzero number of reachable URLs as remote
-   references.
+   with a tstr tag-id be referenced with
+   tag:ietf.org,2026:corim:local,_tag-id-tstr_. It is RECOMMENDED for a
+   corim-locator-map containing local URIs to afterwards list a nonzero
+   number of reachable URLs as remote references.
 
    The following example demonstrates these recommendations for bundling
    CoRIMs with a common signer but with different profiles.
@@ -1118,9 +1122,10 @@ Table of Contents
    =============== NOTE: '\' line wrapping per RFC 8792 ================
 
    / cbor-collection / {
-     "__cmwc_t": "tag:{{&SELF}}:corim",
+     "__cmwc_t": "tag:ietf.org,2026:corim",
      "adee8cd4-4e47-461f-b341-2aba3ae4cbda":
-       / cbor-cmw / [TBD1, << / tagged-corim-map / 501({
+       / cbor-cmw / [/ rim-cbor-content-format / 65000, << / tagged-\
+                                              unsigned-corim-map / 501({
          / id / 0: h'adee8cd44e47461fb3412aba3ae4cbda',
          / tags / 1: [/ tagged-concise-mid-tag / 506(<<{
            / tag-identity / 1: {
@@ -1130,25 +1135,23 @@ Table of Contents
              / reference-triples / 0: [[
                / ref-env / {/ class / 0: {/ class-id / 0: 560(h'c0de')}\
                                                                       },
-               / ref-claims / {
+               / ref-claims / [{
                  / mval / 1: {
-                   / profile-foo / -404:
-                     h'\
-                     6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc'
-                 }}]],
-             / coswid-triples / 6: [[
-               {/ class / 0: {/ class-id / 0: 560(h'c0de')}},
-               [h'369a6688451240b9b74905b1dd5fae9f']]]}}>>)],
-         / profile / 3: "tag:example.com,2025/example-profile",
+                   / raw-value / 4:
+                     560(h'\
+                    6094685f8bb9b67daaf35707bd2c391f536a1df2ce5152c3cc')
+                 }}]]]}}>>)],
+         / profile / 3: 32("tag:example.com,2025:example-profile"),
          / dependent-rims / 2: [{
            / href / 0: [
-             "urn:uuid:51a5f633-71c0-45f5-855e-43e8254c1806",
-             "https://example.com/369a6688451240b9b74905b1dd5fae9f.\
-                                                                  corim"
+             32("urn:uuid:51a5f633-71c0-45f5-855e-43e8254c1806"),
+             32("https://example.com/369a6688451240b9b74905b1dd5fae9f.\
+                                                                 corim")
            ]}]}) >>],
      "51a5f633-71c0-45f5-855e-43e8254c1806":
-       / cbor-cmw / [TBD1, << / tagged-corim-map / 501({
-         / id: / 0: h'51a5f63371c045f5855e43e8254c1806',
+       / cbor-cmw / [/ rim-cbor-content-format / 65000, << / tagged-\
+                                              unsigned-corim-map / 501({
+         / id / 0: h'51a5f63371c045f5855e43e8254c1806',
          / tags / 1: [/ tagged-concise-swid-tag / 505(<<{
              / tag-id / 0: h'369a6688451240b9b74905b1dd5fae9f',
              / tag-version / 12: 2,
@@ -1156,11 +1159,8 @@ Table of Contents
              / entity / 2: {
                / entity-name / 31: "ACME Firmware",
                / role / 33: / software-creator / 2
-             },
-             / profile-bar / 4294967295: {
-              / profile-baz / 0: 5,
-              / profile-qux / 1: h'f76e41f3462a62e8'}}>>)],
-         / profile / 3: "tag:example.com,2025/software-profile"})>>]
+             }}>>)],
+         / profile / 3: 32("tag:example.com,2025:software-profile")})>>]
    }
 
 5.  Concise Module Identifier (CoMID)
