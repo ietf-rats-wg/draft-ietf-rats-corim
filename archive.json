@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-10-29T05:23:47.200446+00:00",
+  "timestamp": "2026-11-01T05:38:26.229087+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -14584,7 +14584,7 @@
       "id": "I_kwDOH6-tI88AAAABDjb3vw",
       "title": "CoRIM Needs to support Multiple Signatures, via COSE_Sign",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/583",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -14593,8 +14593,8 @@
       "labels": [],
       "body": "Need to support Multiple Signature types in CoRIM:\n\nFor a specific use case, coming from regulation (please see below) : CoRIM MUST support this.\n\nA manufacturer wishes to produce a CoRIM relating to some product or deliverable. Some customers can require single ML-DSA signature, some require hybrid ML-DSA with ECDSA, some have not yet enabled PQC crypto infrastructure and some Chinese customers require SM2-DSA. In some cases these cryptographic requirements might be regulatory.\n\nIn this case, the manufacturer either produces four internally identical but differently signed CoRIMs to comply with the present specification or it produces one multiply signed CoRIM where the same signing authority has simply used different cryptographic mechanisms to endorse. I do not think the countersignature case covers this ideally as a countersignature serves as a notarization by a different counterparty whereas in the use-case I describe - which I believe occurs inevitably in a diverse cryptographic environment - we have different mechanisms all representing endorsements by the same owner.\n\n\n",
       "createdAt": "2026-05-27T15:11:16Z",
-      "updatedAt": "2026-10-12T19:09:48Z",
-      "closedAt": null,
+      "updatedAt": "2026-10-30T18:15:31Z",
+      "closedAt": "2026-10-30T18:15:31Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -15981,7 +15981,7 @@
       "id": "I_kwDOH6-tI88AAAABQg2wMg",
       "title": "S-07 \u2014 `corim-locator-map` does not bind `thumbprint` cardinality to `href` cardinality",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/654",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -15991,8 +15991,8 @@
       ],
       "body": "- **Location:** [L473-477](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L473-L477), [`cddl/corim-locator-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-locator-map.cddl)\n- **Prior art:** RELATED \u2014 [#73](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/73) asks a different locator-map question (referencing a CoRIM by `corim-map.id`).\n\n```cddl\n&(href: 0) => uri / [ + uri ]\n? &(thumbprint: 1) => eatmc.digest / [ + eatmc.digest ]\n```\n\n[L477](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L477): *\"`thumbprint` (index 1): expected digest or an array of digests referenced by `href` or an array of `href`s.\"* Nothing constrains the two arrays to the same length or defines the pairing. `href: [a, b, c]` with `thumbprint: [d1, d2]` is valid CBOR with no defined meaning.\n\n**Fix:** Require `thumbprint` to be positionally aligned with `href` and of equal length, and say what a Verifier does when it is not.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:18:01Z",
-      "updatedAt": "2026-10-21T16:57:50Z",
-      "closedAt": null,
+      "updatedAt": "2026-10-30T16:01:54Z",
+      "closedAt": "2026-10-30T16:01:54Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -17253,6 +17253,30 @@
           "body": "@nedmsmith can you take this?",
           "createdAt": "2026-10-15T11:34:56Z",
           "updatedAt": "2026-10-15T11:34:56Z"
+        }
+      ]
+    },
+    {
+      "number": 742,
+      "id": "I_kwDOH6-tI88AAAABbJi65w",
+      "title": "Implications of Multiple authorities signing the CoRIM",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/742",
+      "state": "OPEN",
+      "author": "yogeshbdeshpande",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "1. Check Internal transformation\n2. How the comparison works with Multiple authorities\n",
+      "createdAt": "2026-10-30T09:54:50Z",
+      "updatedAt": "2026-10-30T11:10:58Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> 1. Check Internal transformation\n\nfrom a quick look these should be fine\n\n> 2. How the comparison works with Multiple authorities\n\nyes, in particular what is the impact on authorized-by \n",
+          "createdAt": "2026-10-30T11:10:58Z",
+          "updatedAt": "2026-10-30T11:10:58Z"
         }
       ]
     }
@@ -97912,7 +97936,7 @@
       ],
       "body": "Fix #667.",
       "createdAt": "2026-09-15T17:31:23Z",
-      "updatedAt": "2026-10-28T15:53:25Z",
+      "updatedAt": "2026-10-31T01:49:02Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
       "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
@@ -97930,6 +97954,13 @@
           "body": "The commit history needs to fixed. I will do that.",
           "createdAt": "2026-09-16T15:42:02Z",
           "updatedAt": "2026-09-16T15:42:12Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "During the call, we agreed that this should express the requirement for deterministic encoding without forcing CBOR as the intrep format.  (In theory, intrep could use ASN.1 DER and there would be no difference.)",
+          "createdAt": "2026-10-31T01:49:02Z",
+          "updatedAt": "2026-10-31T01:49:02Z"
         }
       ],
       "reviews": [
@@ -98434,24 +98465,26 @@
       "id": "PR_kwDOH6-tI88AAAABFqt01A",
       "title": "Introduce Multiple Signature support",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/718",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "yogeshbdeshpande",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-09-29T09:33:20Z",
-      "updatedAt": "2026-10-28T18:26:02Z",
+      "updatedAt": "2026-10-30T18:15:34Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "e1fc29a06d0b2c01ba24656c13ccaec58b4a8a4c",
+      "baseRefOid": "69123d30fcd2d5223970a174d53f456301cc39e6",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "cose-sign-new-pr",
-      "headRefOid": "33fb24c58ce2d6ffb535e9693a0491730c20d95b",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "fabcf884f951f84af70be02e1316d48079405652",
+      "closedAt": "2026-10-30T18:15:29Z",
+      "mergedAt": "2026-10-30T18:15:29Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "d043aaccdb100da327db509b55661e95ec030d7b"
+      },
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -98480,6 +98513,13 @@
           "body": "> > but @steven-bellock wanted to remove it from the PR.\r\n> \r\n> Similar to [C89](https://www.open-std.org/Jtc1/sc22/WG14/www/C89Rationale.pdf), [AES](https://cs.ru.nl/~joan/papers/JDA_VRI_Rijndael_2002.pdf), and [DNS](https://www.rfc-editor.org/info/rfc1034/), I strongly believe that rationale and design decisions should be in their own document and should not clutter a technical specification, especially one as complex as CoRIM.\r\n\r\nFair, enough, I avoided specific use cases (industry wide) and made a generic reference at the start.\r\n\r\nHope this satisfies your criterion as well, Thomas point!",
           "createdAt": "2026-10-26T15:33:14Z",
           "updatedAt": "2026-10-26T15:33:24Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Raised  issue https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/742 to discuss further",
+          "createdAt": "2026-10-30T09:55:47Z",
+          "updatedAt": "2026-10-30T09:55:47Z"
         }
       ],
       "reviews": [
@@ -98793,6 +98833,32 @@
               "updatedAt": "2026-10-27T14:43:17Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVHvx3g",
+          "commit": {
+            "abbreviatedOid": "fabcf88"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM - modulo #742 which can be dealt with separately.",
+          "createdAt": "2026-10-30T12:41:20Z",
+          "updatedAt": "2026-10-30T16:02:55Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVLlDEQ",
+          "commit": {
+            "abbreviatedOid": "fabcf88"
+          },
+          "author": "fchinchilla",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-30T17:51:30Z",
+          "updatedAt": "2026-10-30T17:51:30Z",
+          "comments": []
         }
       ]
     },
@@ -98808,13 +98874,13 @@
       "labels": [],
       "body": "Fixes #663.\n\n## Summary\n\n`tag-version-type = uint .default 0` puts [RFC 8610](https://www.rfc-editor.org/rfc/rfc8610#section-3.8.5) `.default` on a named type. That control is defined for a map member that may be absent, and this rule is not a map member. The only use is the optional member in `tag-identity-map`:\n\n```cddl\n? &(tag-version: 1) => tag-version-type\n```\n\nThis change deletes `.default` and leaves the type as `uint`.\n\nThe control is not moved onto that member. Section \"Tag Version\" says the member is optional and that producers typically start at 0. It does not say an omitted `tag-version` is equivalent to 0. Attaching `.default 0` at the use site would add that assumption, including for the rule that a revised tag's `tag-version` MUST be greater than the previous one.\n\nThe fragment is included from the Tag Version section and from both the CoMID and CoTL CDDL bundles, so this is the only edit.\n\n## Test plan\n\n- [x] Confirm `cddl/tag-version-type.cddl` is `tag-version-type = uint`\n- [x] Confirm `tag-identity-map` still has `? &(tag-version: 1) => tag-version-type`\n- [x] Confirm no other `.default` was added\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:03:25Z",
-      "updatedAt": "2026-10-14T15:10:33Z",
+      "updatedAt": "2026-10-31T01:45:45Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "59622953f734bbd7bb86108a3689c71c1db7cefc",
+      "baseRefOid": "d043aaccdb100da327db509b55661e95ec030d7b",
       "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
       "headRefName": "drop-tag-version-default",
-      "headRefOid": "8a74bf367994ce8a2e3a68ea5e9d30d970c4629f",
+      "headRefOid": "c7d6af37f19df8c359f2f82cba54dc633f0ad6b8",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -98866,27 +98932,27 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABSQHlfQ",
           "commit": {
-            "abbreviatedOid": "8a74bf3"
+            "abbreviatedOid": "c7d6af3"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-14T14:47:11Z",
-          "updatedAt": "2026-10-14T15:10:33Z",
+          "updatedAt": "2026-10-31T01:45:45Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABSQbP9A",
           "commit": {
-            "abbreviatedOid": "8a74bf3"
+            "abbreviatedOid": "c7d6af3"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-10-14T15:10:07Z",
-          "updatedAt": "2026-10-14T15:10:33Z",
+          "updatedAt": "2026-10-31T01:45:44Z",
           "comments": []
         }
       ]
@@ -99284,7 +99350,7 @@
       "id": "PR_kwDOH6-tI88AAAABJ2aR1Q",
       "title": "Define how locator thumbprints relate to hrefs",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/732",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -99293,17 +99359,19 @@
       ],
       "body": "Fix #654.\n\nImplements option A from the 21-Oct-2026 weekly call:\n\n- Every `href` in the array identifies the same resource (keeps the existing \"alternative URIs\" wording).\n- Every `thumbprint` digest is over that one resource, each with a different hash algorithm.\n- A Verifier that fetches the resource checks it using the digest comparison rules in Comparison for digests entries, with the digests computed over the fetched resource in place of the ACS-ECT digests. That reuses the existing rules: common algorithms must all match, there must be at least one common algorithm, and an algorithm can't appear twice. If the check fails, the resource isn't used.\n\nThe first two points are in the Locator Map section. The Verifier check is in Phase 1 (CoRIM Selection), because Sections 4 through 7 don't specify or reference the Reference Verifier.\n",
       "createdAt": "2026-10-21T17:54:59Z",
-      "updatedAt": "2026-10-28T15:53:27Z",
+      "updatedAt": "2026-10-30T16:01:53Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "658e780b7e40e413703c933daf0307f3b313b057",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-654",
-      "headRefOid": "b11c7eddb20cfe0607724b8575dd6d34db519890",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "c37a2c88c5cb71c8ba7e22e5adf57054b6882a4c",
+      "closedAt": "2026-10-30T16:01:53Z",
+      "mergedAt": "2026-10-30T16:01:53Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "69123d30fcd2d5223970a174d53f456301cc39e6"
+      },
       "comments": [],
       "reviews": [
         {
@@ -99325,6 +99393,19 @@
               "updatedAt": "2026-10-28T15:43:13Z"
             }
           ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVKQ72Q",
+          "commit": {
+            "abbreviatedOid": "c37a2c8"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-10-30T16:01:35Z",
+          "updatedAt": "2026-10-30T16:01:35Z",
+          "comments": []
         }
       ]
     },
@@ -99762,6 +99843,171 @@
           "body": "",
           "createdAt": "2026-10-28T17:32:28Z",
           "updatedAt": "2026-10-28T17:32:28Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 740,
+      "id": "PR_kwDOH6-tI88AAAABLn5R2Q",
+      "title": "split number into floats and integers",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/740",
+      "state": "MERGED",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed in the last f2f, split number (17) into integer (17) and float (20).",
+      "createdAt": "2026-10-29T20:23:17Z",
+      "updatedAt": "2026-10-30T12:36:23Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "92cdf94c0f4335d6df4433a07cb55d5aa1950dfa",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "split-numbers",
+      "headRefOid": "f1a6cdacc4f17ecfc74e1b9c96ed613a6d6b3537",
+      "closedAt": "2026-10-30T12:36:22Z",
+      "mergedAt": "2026-10-30T12:36:22Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "658e780b7e40e413703c933daf0307f3b313b057"
+      },
+      "comments": [
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> Two things to fix before merging:\r\n> \r\n> 1. `cddl/cbor-tags.txt` looks hand-edited and no longer matches what the Makefile generates (`grep -h '#6\\.5' *cddl | sort -u -t'=' -k2`). It has a dangling `tagged-integer-range = #6.565([` line and duplicate set rules without the space (`[2*bytes]`, `[2*float]`, `[2*int]`, `[2*text]`) that don't appear in any `.cddl` file. Regenerating it with `make -C cddl cbor-tags.txt` should fix it.\r\n\r\nThe current state is in fact the result of `make -C cddl cbor-tags.txt` :-(\r\n\r\nI'll try to fix the Makefile rule, or fix it manually if it's too convoluted :-)\r\n\r\n> 2. In the Measurement Values Map Items IANA table, the new `| 20 | float |` row overlaps the existing `| 20-18446744073709551616 | Unassigned |` row. The unassigned range should now start at 21.\r\n\r\n\ud83d\udc4d \r\n",
+          "createdAt": "2026-10-30T08:58:01Z",
+          "updatedAt": "2026-10-30T08:58:01Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I'll try to fix the Makefile rule, or fix it manually if it's too convoluted :-)\r\n\r\nit was not that convoluted, see d0616a3\r\n",
+          "createdAt": "2026-10-30T09:04:54Z",
+          "updatedAt": "2026-10-30T09:04:54Z"
+        },
+        {
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> 2. In the Measurement Values Map Items IANA table, the new `| 20 | float |` row overlaps the existing `| 20-18446744073709551616 | Unassigned |` row. The unassigned range should now start at 21.\r\n\r\ndone in f1a6cda",
+          "createdAt": "2026-10-30T09:06:47Z",
+          "updatedAt": "2026-10-30T09:06:47Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVARQFA",
+          "commit": {
+            "abbreviatedOid": "e0334b8"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Two things to fix before merging:\n\n1. `cddl/cbor-tags.txt` looks hand-edited and no longer matches what the Makefile generates (`grep -h '#6\\.5' *cddl | sort -u -t'=' -k2`). It has a dangling `tagged-integer-range = #6.565([` line and duplicate set rules without the space (`[2*bytes]`, `[2*float]`, `[2*int]`, `[2*text]`) that don't appear in any `.cddl` file. Regenerating it with `make -C cddl cbor-tags.txt` should fix it.\n\n2. In the Measurement Values Map Items IANA table, the new `| 20 | float |` row overlaps the existing `| 20-18446744073709551616 | Unassigned |` row. The unassigned range should now start at 21.\n",
+          "createdAt": "2026-10-29T20:30:10Z",
+          "updatedAt": "2026-10-29T20:30:10Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVHSV_w",
+          "commit": {
+            "abbreviatedOid": "f1a6cda"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-30T11:57:45Z",
+          "updatedAt": "2026-10-30T11:57:45Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "```suggestion\n* CBOR tag 566 (`tagged-*-set`, integer, float, text and byte-string types only) means set match: the target value must equal one of the values in the array; at least two entries MUST be provided.\n```",
+              "createdAt": "2026-10-30T11:57:45Z",
+              "updatedAt": "2026-10-30T11:57:45Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVHcqCg",
+          "commit": {
+            "abbreviatedOid": "f1a6cda"
+          },
+          "author": "thomas-fossati",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-10-30T12:13:11Z",
+          "updatedAt": "2026-10-30T12:13:11Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "In this context, I think \"alternative\" is better because two generic \"entries\" may carry the same value, which is not what we want.",
+              "createdAt": "2026-10-30T12:13:11Z",
+              "updatedAt": "2026-10-30T12:13:11Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVHsYGQ",
+          "commit": {
+            "abbreviatedOid": "f1a6cda"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM",
+          "createdAt": "2026-10-30T12:36:10Z",
+          "updatedAt": "2026-10-30T12:36:10Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 741,
+      "id": "PR_kwDOH6-tI88AAAABLn-ZFw",
+      "title": "contributors += steven b",
+      "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/741",
+      "state": "OPEN",
+      "author": "thomas-fossati",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2026-10-29T20:30:01Z",
+      "updatedAt": "2026-10-30T12:39:08Z",
+      "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "baseRefName": "main",
+      "baseRefOid": "658e780b7e40e413703c933daf0307f3b313b057",
+      "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
+      "headRefName": "sbellock+contrib",
+      "headRefOid": "18027925afbb53bb34b21ddf0c5631f362b4a843",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I like to think I'm providing \"final mile service\" to get our beloved CoRIM to the RFC Promised Land.",
+          "createdAt": "2026-10-29T20:49:38Z",
+          "updatedAt": "2026-10-29T20:49:38Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVAXfdQ",
+          "commit": {
+            "abbreviatedOid": "1802792"
+          },
+          "author": "steven-bellock",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2026-10-29T20:38:54Z",
+          "updatedAt": "2026-10-30T12:39:06Z",
           "comments": []
         }
       ]
