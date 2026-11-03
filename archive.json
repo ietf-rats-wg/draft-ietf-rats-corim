@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2026-11-01T05:38:26.229087+00:00",
+  "timestamp": "2026-11-03T06:16:01.836528+00:00",
   "repo": "ietf-rats-wg/draft-ietf-rats-corim",
   "labels": [
     {
@@ -15838,7 +15838,7 @@
       "id": "I_kwDOH6-tI88AAAABQgzqeg",
       "title": "S-01 \u2014 Seven `measurement-values-map` codepoints have no comparison algorithm, so can never match",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/648",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -15848,8 +15848,8 @@
       ],
       "body": "- **Location:** [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) and {{sec-match-one-codepoint}} subsections ([L3148-3331](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3148-L3331))\n- **Prior art:** PARTIAL \u2014 [#564](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/564) asks for a comparison section for `name`; [#506](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/506) asks for one for `flags-map`. Neither covers the other five codepoints, nor the consequence that the L3144 MUST turns the gap into a permanent non-match.\n\n[L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144): *\"If the processor is unable to determine the applicable comparison algorithm for an attribute, it **MUST behave as though the C-ECT does not match** the ACS-ECT.\"*\n\n[L3146](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3146) claims: *\"The following subsections define the comparison algorithms for the `measurement-values-map` attributes defined by this specification.\"* Comparison algorithms are actually defined only for codepoints 0 (version), 1 (svn), 2 (digests), 4 (raw-value), 13 (cryptokeys), 14 (integrity-registers), 15 (int-range), 16 (bool), 17 (number), 18 (text), 19 (bytes).\n\n**No algorithm is defined for:**\n\n| Codepoint | Name |\n| --- | --- |\n| 3 | `flags` |\n| 5 | `raw-value-mask-DEPRECATED` |\n| 6 | `mac-addr` |\n| 7 | `ip-addr` |\n| 8 | `serial-number` |\n| 9 | `ueid` |\n| 10 | `uuid` |\n| 11 | `name` |\n\nCombined with the [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) MUST, a conformant Verifier must treat any condition using `flags`, `mac-addr`, `ip-addr`, `serial-number`, `ueid`, `uuid` or `name` as a non-match \u2014 permanently. `flags` in particular is a headline feature with eleven documented booleans and its own IANA registry.\n\n**Fix:** Add comparison subsections for each of the seven codepoints (`flags` needs a per-boolean containment rule; the rest are plausibly plain equality on deterministic encodings), or state a default \"binary equality of the deterministic encoding\" fallback and scope [L3144](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L3144) to profile-defined codepoints only.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:12:26Z",
-      "updatedAt": "2026-10-21T16:57:36Z",
-      "closedAt": null,
+      "updatedAt": "2026-11-01T21:43:42Z",
+      "closedAt": "2026-11-01T21:43:42Z",
       "comments": [
         {
           "author": "yogeshbdeshpande",
@@ -16067,7 +16067,7 @@
       "id": "I_kwDOH6-tI88AAAABQg5pkg",
       "title": "D-02 \u2014 `cmw-corim-collection.cddl` is not valid CDDL and is never validated by the build",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/658",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -16077,8 +16077,8 @@
       ],
       "body": "- **Location:** [`cddl/cmw-corim-collection.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/cmw-corim-collection.cddl); rendered at [L676-678](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L676-L678)\n\n```cddl\ncorim-cbor-collection = {\n  \"__cmwc_t\" => \"tag:{{&SELF}}:corim\",\n  + cmw-label => [TBD1, bytes .cbor tagged-corim-map]\n}\ncmw-label = text / int\n```\n\nThree separate defects:\n\n1. `tagged-corim-map` is undefined \u2014 the rule is `tagged-unsigned-corim-map` ([`cddl/tagged-unsigned-corim-map.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/tagged-unsigned-corim-map.cddl)).\n2. `TBD1` is an IANA placeholder, not a CDDL value; the fragment cannot compile.\n3. `{{&SELF}}` is a kramdown-rfc entity embedded inside a CDDL string literal. Inside a `~~~ cddl` block it will not be expanded, so the published CDDL literally reads `\"tag:{{&SELF}}:corim\"`.\n\nThe file appears in **no** `*_FRAGS` list in [`cddl/corim-frags.mk`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/corim-frags.mk), so `cddlc` never sees it \u2014 which is why all three defects survive.\n\n**Fix:** Correct the rule name, replace `TBD1` with a named placeholder rule (e.g. `cmw-corim-content-format = TBD1` with an RFC-editor note) or a comment, resolve `{{&SELF}}` via an RFC-editor instruction, and add the file to `CORIM_FRAGS`.\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:23:19Z",
-      "updatedAt": "2026-10-21T16:57:45Z",
-      "closedAt": null,
+      "updatedAt": "2026-11-01T22:33:13Z",
+      "closedAt": "2026-11-01T22:33:13Z",
       "comments": [
         {
           "author": "steven-bellock",
@@ -16170,7 +16170,7 @@
       "id": "I_kwDOH6-tI88AAAABQg75dg",
       "title": "D-08 \u2014 `tag-version-type = uint .default 0` uses `.default` outside a map member",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/issues/663",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -16180,8 +16180,8 @@
       ],
       "body": "- **Location:** [`cddl/tag-version-type.cddl`](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/cddl/tag-version-type.cddl)\n\nRFC 8610 \u00a73.8.5 defines `.default` for use on a **map member** to indicate the value assumed when the member is absent. Applying it to a standalone type rule has no defined meaning; the default is silently lost when `tag-version-type` is referenced from `tag-identity-map` as `? &(tag-version: 1) => tag-version-type`.\n\n**Fix:** Move the default to the point of use: `? &(tag-version: 1) => uint .default 0`, or drop `.default` and state the default value in prose ([L809-810](https://github.com/ietf-rats-wg/draft-ietf-rats-corim/blob/d387838ebafd6506c689dd9a663f54c0a942c464/draft-ietf-rats-corim.md?plain=1#L809-L810) already does).\n\n---\n_This was flagged by Claude Code (claude-opus-5[1m]) during an automated review of the document._",
       "createdAt": "2026-09-09T18:27:16Z",
-      "updatedAt": "2026-10-07T15:06:06Z",
-      "closedAt": null,
+      "updatedAt": "2026-11-01T21:49:34Z",
+      "closedAt": "2026-11-01T21:49:34Z",
       "comments": []
     },
     {
@@ -97936,10 +97936,10 @@
       ],
       "body": "Fix #667.",
       "createdAt": "2026-09-15T17:31:23Z",
-      "updatedAt": "2026-10-31T01:49:02Z",
+      "updatedAt": "2026-11-01T22:39:32Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "0a8f0fe6fa43ab995b573f8de041bc2d36dde554",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-667",
       "headRefOid": "1441cf52dad7c8fcce3654c60b2e96722f9332e1",
@@ -97961,6 +97961,13 @@
           "body": "During the call, we agreed that this should express the requirement for deterministic encoding without forcing CBOR as the intrep format.  (In theory, intrep could use ASN.1 DER and there would be no difference.)",
           "createdAt": "2026-10-31T01:49:02Z",
           "updatedAt": "2026-10-31T01:49:02Z"
+        },
+        {
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We will wait for further changes on this PR, which removes the Force of CBOR Encoding..",
+          "createdAt": "2026-11-01T22:39:32Z",
+          "updatedAt": "2026-11-01T22:39:32Z"
         }
       ],
       "reviews": [
@@ -98015,6 +98022,19 @@
           "body": "LGTM! New issue to be created before Merge!",
           "createdAt": "2026-09-30T14:40:18Z",
           "updatedAt": "2026-10-28T15:53:24Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZGtUQ",
+          "commit": {
+            "abbreviatedOid": "1441cf5"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-11-01T22:31:01Z",
+          "updatedAt": "2026-11-01T22:31:01Z",
           "comments": []
         }
       ]
@@ -98867,24 +98887,26 @@
       "id": "PR_kwDOH6-tI88AAAABGI4iUQ",
       "title": "Drop misplaced .default from tag-version-type",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/720",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "Alex-Carter01",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Fixes #663.\n\n## Summary\n\n`tag-version-type = uint .default 0` puts [RFC 8610](https://www.rfc-editor.org/rfc/rfc8610#section-3.8.5) `.default` on a named type. That control is defined for a map member that may be absent, and this rule is not a map member. The only use is the optional member in `tag-identity-map`:\n\n```cddl\n? &(tag-version: 1) => tag-version-type\n```\n\nThis change deletes `.default` and leaves the type as `uint`.\n\nThe control is not moved onto that member. Section \"Tag Version\" says the member is optional and that producers typically start at 0. It does not say an omitted `tag-version` is equivalent to 0. Attaching `.default 0` at the use site would add that assumption, including for the rule that a revised tag's `tag-version` MUST be greater than the previous one.\n\nThe fragment is included from the Tag Version section and from both the CoMID and CoTL CDDL bundles, so this is the only edit.\n\n## Test plan\n\n- [x] Confirm `cddl/tag-version-type.cddl` is `tag-version-type = uint`\n- [x] Confirm `tag-identity-map` still has `? &(tag-version: 1) => tag-version-type`\n- [x] Confirm no other `.default` was added\n\nThis pull request is a draft for personal review before it is marked ready.\n\nMade with [Cursor](https://cursor.com)",
       "createdAt": "2026-10-01T17:03:25Z",
-      "updatedAt": "2026-10-31T01:45:45Z",
+      "updatedAt": "2026-11-01T21:49:33Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "d043aaccdb100da327db509b55661e95ec030d7b",
+      "baseRefOid": "0a1accbdb86684677b1d5b866753ed6bb4e66b7c",
       "headRepository": "Alex-Carter01/draft-ietf-rats-corim",
       "headRefName": "drop-tag-version-default",
-      "headRefOid": "c7d6af37f19df8c359f2f82cba54dc633f0ad6b8",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "d78d4bdb49d70c21fd844c751b79b38ff1d34077",
+      "closedAt": "2026-11-01T21:49:33Z",
+      "mergedAt": "2026-11-01T21:49:33Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "a0d2729ed10843bc61fccd7cb66545099163a8b0"
+      },
       "comments": [
         {
           "author": "Alex-Carter01",
@@ -98932,27 +98954,40 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABSQHlfQ",
           "commit": {
-            "abbreviatedOid": "c7d6af3"
+            "abbreviatedOid": "d78d4bd"
           },
           "author": "yogeshbdeshpande",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-14T14:47:11Z",
-          "updatedAt": "2026-10-31T01:45:45Z",
+          "updatedAt": "2026-11-01T21:45:54Z",
           "comments": []
         },
         {
           "id": "PRR_kwDOH6-tI88AAAABSQbP9A",
           "commit": {
-            "abbreviatedOid": "c7d6af3"
+            "abbreviatedOid": "d78d4bd"
           },
           "author": "nedmsmith",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "LGTM",
           "createdAt": "2026-10-14T15:10:07Z",
-          "updatedAt": "2026-10-31T01:45:44Z",
+          "updatedAt": "2026-11-01T21:45:53Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVY8q_g",
+          "commit": {
+            "abbreviatedOid": "d78d4bd"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-11-01T21:45:44Z",
+          "updatedAt": "2026-11-01T21:45:54Z",
           "comments": []
         }
       ]
@@ -99303,10 +99338,10 @@
       ],
       "body": "Fix #668.\n\nReplaces the \"no semantic overlap with CoRIM tags\" requirement, which no validator can decide, with option A from the 21-Oct-2026 weekly call: the CWT Claims map carries metadata about the CoRIM and its signer only, and a Verifier MUST NOT derive Claims about an Attester from it.\n\nThe data-model section says what the CWT Claims map carries. The Verifier rule is in Phase 1 (CoRIM Trust Anchors), because Sections 4 through 7 don't specify Reference Verifier behavior.\n",
       "createdAt": "2026-10-21T17:54:16Z",
-      "updatedAt": "2026-10-28T15:53:25Z",
+      "updatedAt": "2026-11-01T22:02:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "0a8f0fe6fa43ab995b573f8de041bc2d36dde554",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-668",
       "headRefOid": "105fabf7980217038242e8be883f95bfef6ba114",
@@ -99331,10 +99366,10 @@
       ],
       "body": "Fix #672.\n\nImplements option B (lenient) from the 21-Oct-2026 weekly call. When `CWT-Claims` and `corim-meta` are both present, `nbf`/`not-before` and `exp`/`not-after` are compared only when both sides of a pair are present, and must then represent the same time. A time present on only one side isn't a mismatch.\n\n\"Represent the same time\" is used because the two sides have different encodings: NumericDate in CWT, `time` (tag 1) in `validity-map`.\n\nPR #718 changes the heading levels around this text, so whichever lands second needs a small rebase.\n",
       "createdAt": "2026-10-21T17:54:36Z",
-      "updatedAt": "2026-10-28T15:53:24Z",
+      "updatedAt": "2026-11-01T22:02:01Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "0a8f0fe6fa43ab995b573f8de041bc2d36dde554",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-672",
       "headRefOid": "617c7eb065855d7a5e76f6b4879f6d9e0719300f",
@@ -99423,13 +99458,13 @@
       ],
       "body": "Fix #642.\nFix #669.\n\nImplements option A from the 21-Oct-2026 weekly call. Series entries are evaluated in array order and the first match wins, which is what the processing pseudocode already does. The author is responsible for the order.\n\n- Deletes the undefined \"most precise match is evaluated first\" requirement (#669).\n- Deletes the claim that evaluation order doesn't change the meaning of the triple (#642).\n- In the CoMID section, says only that the entries are ordered and the first matching entry applies, and adds an example of author ordering: narrower conditions before broader ones that include them.\n- States array-order evaluation in Processing `evs` Relations, because Sections 4 through 7 don't specify Reference Verifier behavior.\n\nBoth issues are fixed in one PR because they concern the same three sentences.\n",
       "createdAt": "2026-10-21T17:55:18Z",
-      "updatedAt": "2026-10-28T15:53:29Z",
+      "updatedAt": "2026-11-01T23:16:05Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "f96f0ce3bbd91f265ac88442affb0b56d66a72bf",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-642",
-      "headRefOid": "e00847375544ab3a18c689230e252944c99c201f",
+      "headRefOid": "49edf2eef35e8b78a7b635561bc3c3921b7de245",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
@@ -99448,6 +99483,119 @@
           "createdAt": "2026-10-28T15:38:46Z",
           "updatedAt": "2026-10-28T15:38:46Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZBO6A",
+          "commit": {
+            "abbreviatedOid": "e008473"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-01T22:04:56Z",
+          "updatedAt": "2026-11-01T22:04:56Z",
+          "comments": [
+            {
+              "originalPosition": 271,
+              "body": "I am not sure whether the intent on the right, i.e the new changes match exactly as what was intended on the original change.\n\nWill wait for @nedmsmith to review, so will not make this one gating to the CoRIM Release.",
+              "createdAt": "2026-11-01T22:04:56Z",
+              "updatedAt": "2026-11-01T22:04:56Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZBSFA",
+          "commit": {
+            "abbreviatedOid": "e008473"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see my comments",
+          "createdAt": "2026-11-01T22:05:11Z",
+          "updatedAt": "2026-11-01T22:05:11Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZLSnQ",
+          "commit": {
+            "abbreviatedOid": "e008473"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-01T22:52:06Z",
+          "updatedAt": "2026-11-01T22:52:06Z",
+          "comments": [
+            {
+              "originalPosition": 271,
+              "body": "well, the ordering criteria is gone: \"precision\" that would allow for most precise match earlier in sequence than later in sequence. The reason and meaning for introducing precise matching here eludes me, rn.",
+              "createdAt": "2026-11-01T22:52:06Z",
+              "updatedAt": "2026-11-01T22:52:06Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZMaZg",
+          "commit": {
+            "abbreviatedOid": "e008473"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "see my question",
+          "createdAt": "2026-11-01T22:56:11Z",
+          "updatedAt": "2026-11-01T22:56:28Z",
+          "comments": [
+            {
+              "originalPosition": 271,
+              "body": "@henkbirkholz are you ok, to approve this then?",
+              "createdAt": "2026-11-01T22:56:12Z",
+              "updatedAt": "2026-11-01T22:56:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZPOQA",
+          "commit": {
+            "abbreviatedOid": "49edf2e"
+          },
+          "author": "henkbirkholz",
+          "authorAssociation": "MEMBER",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-01T23:09:32Z",
+          "updatedAt": "2026-11-01T23:09:38Z",
+          "comments": [
+            {
+              "originalPosition": 271,
+              "body": "no, I don't know what's happening. Let's do another submission tomorrow.",
+              "createdAt": "2026-11-01T23:09:32Z",
+              "updatedAt": "2026-11-01T23:09:38Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZQjvg",
+          "commit": {
+            "abbreviatedOid": "e008473"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-01T23:16:04Z",
+          "updatedAt": "2026-11-01T23:16:05Z",
+          "comments": [
+            {
+              "originalPosition": 271,
+              "body": "> no, I don't know what's happening. Let's do another submission tomorrow.\r\n\r\nThis PR can wait till Ned is back.. \r\n\r\nRest all required PRs have now been merged and CoRIM 12 has been released",
+              "createdAt": "2026-11-01T23:16:05Z",
+              "updatedAt": "2026-11-01T23:16:05Z"
+            }
+          ]
         }
       ]
     },
@@ -99526,7 +99674,7 @@
       "id": "PR_kwDOH6-tI88AAAABJ2hLcw",
       "title": "Fix and build the CoRIM collection CDDL",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/735",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -99535,30 +99683,45 @@
       ],
       "body": "Fix #658.\n\nImplements option A from the 21-Oct-2026 weekly call, plus the mechanical fixes.\n\n**Type identifier**\n- The Collection CMW type becomes `tag:ietf.org,2026:corim`, which is a valid RFC 4151 tag URI. `tag:{{&SELF}}:corim` was rendered literally and wasn't valid.\n- The local reference form becomes `tag:ietf.org,2026:corim:local,`_tag-id-tstr_ for the same reason.\n- This still needs confirming with the CMW authors, since the CMW draft points to this section.\n\n**CDDL** (`cddl/cmw-corim-collection.cddl`)\n- `tagged-corim-map` (undefined) \u2192 `tagged-unsigned-corim-map`.\n- `TBD1` \u2192 the named rule `rim-cbor-content-format`, set to the placeholder 65000 (CoAP Content-Format experimental range), with an RFC Editor note to substitute the assigned ID. The IANA table still says TBD1.\n\n**Build**\n- New `cmwc` check target with the CoRIM fragments, so `make -C cddl check` and the draft build (and so CI) now compile the collection CDDL and validate its example.\n\n**Example** (`cddl/examples/cmw-corim-collection.diag`). It had never been validated, and several parts didn't match the CDDL:\n- `ref-claims` was a map, not a list of `measurement-map`.\n- The profile-specific key `-404` in `measurement-values-map` became `raw-value` with `tagged-bytes`.\n- The CoSWID key `4294967295` with a map value isn't allowed by RFC 9393's `any-attribute`, so it was removed.\n- `profile` and `href` values were plain text instead of `uri` (tag 32). The profile tag URIs also used `/` where RFC 4151 needs `:`.\n- The `coswid-triples` entry was removed. `coswid-triple-record` uses `coswid.tag-id`, which RFC 9393 defines as the map key `0`, not the tag-id type, so no real tag ID validates against it. That bug is separate from this PR.\n\nCI now builds and validates the collection CDDL and example, and passes.\n",
       "createdAt": "2026-10-21T18:04:04Z",
-      "updatedAt": "2026-10-28T15:53:25Z",
+      "updatedAt": "2026-11-01T22:33:12Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "0a8f0fe6fa43ab995b573f8de041bc2d36dde554",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-658",
-      "headRefOid": "42f206b4e3b3ca47bb8edd92f2c02e7d8660b495",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "a457e1f21dea490ae0b9db642e32e9be22402a9d",
+      "closedAt": "2026-11-01T22:33:12Z",
+      "mergedAt": "2026-11-01T22:33:12Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "f96f0ce3bbd91f265ac88442affb0b56d66a72bf"
+      },
       "comments": [],
       "reviews": [
         {
           "id": "PRR_kwDOH6-tI88AAAABThOCZQ",
           "commit": {
-            "abbreviatedOid": "42f206b"
+            "abbreviatedOid": "a457e1f"
           },
           "author": "thomas-fossati",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-21T19:10:12Z",
-          "updatedAt": "2026-10-28T15:53:24Z",
+          "updatedAt": "2026-11-01T22:07:18Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVZHDXA",
+          "commit": {
+            "abbreviatedOid": "a457e1f"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-11-01T22:32:40Z",
+          "updatedAt": "2026-11-01T22:32:40Z",
           "comments": []
         }
       ]
@@ -99625,7 +99788,7 @@
       "id": "PR_kwDOH6-tI88AAAABJ2jXvg",
       "title": "Define comparison for flags and the remaining codepoints",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/737",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "steven-bellock",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
@@ -99634,17 +99797,19 @@
       ],
       "body": "Fix #648.\n\nImplements the 21-Oct-2026 weekly call decisions.\n\n**Codepoints 6\u201311 (option A):** an attribute defined by this specification that has no comparison subsection of its own is compared by binary comparison of the deterministic encodings. The text names the codepoints this covers: `mac-addr`, `ip-addr`, `serial-number`, `ueid`, `uuid` and `name`. The \"no algorithm \u2192 no match\" rule now applies only to attributes the processor doesn't recognize, and the sentence claiming the subsections cover every attribute is corrected. The conversion to deterministic encoding is a MUST, in line with PR #711.\n\n**`flags` (option A):** new Comparison for flags entries subsection. Each flag in the condition must be present in the entry with the same value. Flags the condition leaves out are ignored, and a flag missing from the entry isn't treated as `false`. The `flags` description in the measurement-values-map list doesn't point to it, because Sections 4 through 7 don't reference the Reference Verifier.\n\n**Codepoint 5:** the raw-value comparison now says that codepoint 5 is used only as part of the codepoint 4 comparison, isn't compared on its own, and so doesn't need to be present in the ACS-ECT. Without this, Attribute Path Containment would require path 5 in the entry, and a condition carrying the deprecated mask could never match.\n\nNot addressed here: #564 (whether `name` is metadata). If it is, `name` would be dropped from the binary-comparison list.\n",
       "createdAt": "2026-10-21T18:06:53Z",
-      "updatedAt": "2026-10-28T15:53:32Z",
+      "updatedAt": "2026-11-01T21:43:41Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "f8b5ff8624f6d23451208c2268264054c0b68a69",
+      "baseRefOid": "9862e9f13186f402e482b2f3f3f308bc87442e74",
       "headRepository": "steven-bellock/draft-ietf-rats-corim",
       "headRefName": "fix-648",
-      "headRefOid": "1b5e07699e834f31f92a91e5ae9b550caf70e6ef",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "b9ff83111a3da3d94468cb9b51d2fbe781ed0da0",
+      "closedAt": "2026-11-01T21:43:41Z",
+      "mergedAt": "2026-11-01T21:43:41Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "0a1accbdb86684677b1d5b866753ed6bb4e66b7c"
+      },
       "comments": [],
       "reviews": [
         {
@@ -99659,6 +99824,26 @@
           "createdAt": "2026-10-21T19:09:07Z",
           "updatedAt": "2026-10-22T16:44:27Z",
           "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVY58UA",
+          "commit": {
+            "abbreviatedOid": "1b5e076"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2026-11-01T21:32:41Z",
+          "updatedAt": "2026-11-01T21:32:42Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "```suggestion\nIf every flag in the C-ECT `flags-map` matches, the same flag in the ACS-ECT `flags-map`, the comparison returns true.\n```",
+              "createdAt": "2026-11-01T21:32:42Z",
+              "updatedAt": "2026-11-01T21:32:42Z"
+            }
+          ]
         }
       ]
     },
@@ -99667,26 +99852,42 @@
       "id": "PR_kwDOH6-tI88AAAABKKuJxA",
       "title": "Fixing some of the examples",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/738",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "fchinchilla",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Adding or removing commas from some of the examples.",
       "createdAt": "2026-10-23T03:18:58Z",
-      "updatedAt": "2026-10-23T03:18:58Z",
+      "updatedAt": "2026-11-01T21:58:07Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "bf53243a104488f67bb7ef7b302440b59cd477bb",
+      "baseRefOid": "a0d2729ed10843bc61fccd7cb66545099163a8b0",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "fchinchilla-min-svn",
-      "headRefOid": "f8758483fbf124736f9524de1cc0c18f61e3ffb1",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "c27e838afc6b4939e74d492acb95c15ad0c66e78",
+      "closedAt": "2026-11-01T21:58:06Z",
+      "mergedAt": "2026-11-01T21:58:06Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "013323ca27525582de2a03ead18c7aa02bc61e20"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVY_gKQ",
+          "commit": {
+            "abbreviatedOid": "c27e838"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-11-01T21:56:16Z",
+          "updatedAt": "2026-11-01T21:56:16Z",
+          "comments": []
+        }
+      ]
     },
     {
       "number": 739,
@@ -99969,24 +100170,26 @@
       "id": "PR_kwDOH6-tI88AAAABLn-ZFw",
       "title": "contributors += steven b",
       "url": "https://github.com/ietf-rats-wg/draft-ietf-rats-corim/pull/741",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "thomas-fossati",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2026-10-29T20:30:01Z",
-      "updatedAt": "2026-10-30T12:39:08Z",
+      "updatedAt": "2026-11-01T21:33:27Z",
       "baseRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "baseRefName": "main",
-      "baseRefOid": "658e780b7e40e413703c933daf0307f3b313b057",
+      "baseRefOid": "d043aaccdb100da327db509b55661e95ec030d7b",
       "headRepository": "ietf-rats-wg/draft-ietf-rats-corim",
       "headRefName": "sbellock+contrib",
-      "headRefOid": "18027925afbb53bb34b21ddf0c5631f362b4a843",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "6fe96a309dcb85f27bb535c9f1a04407af2c89a8",
+      "closedAt": "2026-11-01T21:33:23Z",
+      "mergedAt": "2026-11-01T21:33:23Z",
+      "mergedBy": "yogeshbdeshpande",
+      "mergeCommit": {
+        "oid": "9862e9f13186f402e482b2f3f3f308bc87442e74"
+      },
       "comments": [
         {
           "author": "steven-bellock",
@@ -100000,14 +100203,27 @@
         {
           "id": "PRR_kwDOH6-tI88AAAABVAXfdQ",
           "commit": {
-            "abbreviatedOid": "1802792"
+            "abbreviatedOid": "6fe96a3"
           },
           "author": "steven-bellock",
           "authorAssociation": "COLLABORATOR",
           "state": "APPROVED",
           "body": "",
           "createdAt": "2026-10-29T20:38:54Z",
-          "updatedAt": "2026-10-30T12:39:06Z",
+          "updatedAt": "2026-11-01T21:25:52Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOH6-tI88AAAABVY4iuA",
+          "commit": {
+            "abbreviatedOid": "6fe96a3"
+          },
+          "author": "yogeshbdeshpande",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2026-11-01T21:25:43Z",
+          "updatedAt": "2026-11-01T21:25:53Z",
           "comments": []
         }
       ]
