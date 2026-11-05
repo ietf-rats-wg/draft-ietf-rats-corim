@@ -114,6 +114,9 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 3. Clarified envionment can also be a domain
 
 4. Expanded `MKey` scope to cover  SPDM Measurement index
+
+
+---
 ## CoMID misc Additions, IANA Updates, CDDL fixes
 
 * TODO
