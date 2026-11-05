@@ -64,6 +64,7 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 * Ranges are inclusive; `null` means unbounded
 * Malformed ranges are rejected, e.g.: `min` greater than `max`, both bounds `null`, etc.
+* float and int can't be compared
 * Float-specific rules:
   * comparison is numeric, independent of CBOR encoding width
   * `+0.0` and `-0.0` are equal
