@@ -81,7 +81,14 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 ## Multiple signatures
 
-* TODO
+* A CoRIM may now be a `COSE_Sign` (tag 98) as well as a `COSE_Sign1` (tag 18)
+* Use cases:
+  * one authority signing with several algorithms (e.g., adding PQ signatures alongside T)
+  * several authorities, each signing the same unsigned CoRIM
+* Top-level protected/unprotected header pair plus `signature: [+ signature-structure]`; one entry per signer
+  * A one-signature `COSE_Sign` is allowed (`[+ ...]`), so a CoRIM can start with one signer and be extended
+* Header parameter sections restructured: one for `COSE_Sign1`, one for `COSE_Sign`
+* Verification: if a CoRIM has multiple signers, at least the signature of the CoRIM creator MUST be verified before further processing; appraisal policy may require more
 
 ---
 
