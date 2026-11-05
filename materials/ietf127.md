@@ -18,7 +18,7 @@ theme: Next
 * Adding "basic types" and their matchers to the `measurement-values-map`
 * `keys` relation and authority
 * Multiple signatures via COSE_Sign
-* Reference Verifier pseudocode cheat-sheet
+* Reference Verifier improvements
 * CoMID additions, CDDL fixes and editorial/IANA clean-up
 * Terminology updates
 
@@ -79,7 +79,7 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 ---
 
-## Multiple signatures
+## Multiple Signatures
 
 * A CoRIM may now be a `COSE_Sign` (tag 98) as well as a `COSE_Sign1` (tag 18)
 * Use cases:
@@ -92,10 +92,14 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 ---
 
-## Reference Verifier Pseudocode Cheat Sheet
+## Reference Verifier Improvements
 
-* New section "Pseudocode Notation": comments, types, variables, functions, expressions, conditionals, iteration, primitive operations
-* Types are the CDDL types of the data mode
+* Pseudocode Cheat Sheet
+  * New section "Pseudocode Notation": comments, types, variables, functions, expressions, conditionals, iteration, primitive operations
+  * Types are the CDDL types of the data model
+
+* Appraisal and matching text improvements
+  * apply _"attribute path containment"_ and _"range satisfaction"_ defs to environment and element-claims matching
 
 ---
 
