@@ -171,6 +171,27 @@ Attribute Paths defined in A: `class`, `class/vendor`, `class/model`, `class/lay
 
 ---
 
+## Range Satisfaction: Example
+
+Entry (A), an ACS-ECT `measurement-values-map`:
+
+```
+{ svn: 7, integer: 15 }
+```
+
+| Condition (C) | Entry value | Bounds | Result |
+|---|---|---|---|
+| `{ svn: 553(5) }` (`tagged-min-svn`) | 7 | 7 ≥ 5 | **satisfied** |
+| `{ svn: 553(8) }` | 7 | 7 < 8 | not satisfied |
+| `{ integer: 565([10, 20]) }` | 15 | 10 ≤ 15 ≤ 20 | **satisfied** |
+| `{ integer: 565([10, 15]) }` | 15 | bounds are inclusive | **satisfied** |
+| `{ integer: 565([null, 9]) }` | 15 | `null` = unbounded below; 15 > 9 | not satisfied |
+| `{ integer: 565([16, null]) }` | 15 | `null` = unbounded above; 15 < 16 | not satisfied |
+
+Combined with containment: C is contained in A only if every path defined in C is defined in A **and** each value satisfies; therefore, a single unsatisfied row makes the whole condition fail.
+
+---
+
 ## Terminology Updates: Collision-Resistant Name
 
 > **Collision-Resistant Name**: As defined in Section 2 of RFC 7519:
@@ -187,4 +208,3 @@ Attribute Paths defined in A: `class`, `class/vendor`, `class/model`, `class/lay
 * multiple signing authorities and matching
 * group profile-related requirements into one place
 * TODO
-
