@@ -104,7 +104,16 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
   * apply _"attribute path containment"_ and _"range satisfaction"_ defs to environment and element-claims matching
 
 ---
+* General tidy up
+* 
 
+1. Added guidance on the comparison of flags in flags-map
+
+2. IANA Code Point range tidy up
+
+3. Clarified envionment can also be a domain
+
+4. Expanded `MKey` scope to cover  SPDM Measurement index
 ## CoMID misc Additions, IANA Updates, CDDL fixes
 
 * TODO
