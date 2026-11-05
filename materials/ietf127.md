@@ -75,7 +75,9 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 ## Keys Relation & Authority
 
-* TODO
+* Keys transformation and processing specified for Attest Key and Device Identity triples
+* Key verification is expressed as a pre-condition of `acs::APPEND`; the earlier `CHECK` operation is replaced by explicit pre- and post-conditions
+* `authorized-by` reworded TODO(ned)
 
 ---
 
