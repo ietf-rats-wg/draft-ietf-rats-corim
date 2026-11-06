@@ -116,11 +116,6 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 
 ---
-## CoMID misc Additions, IANA Updates, CDDL fixes
-
-* TODO
-
----
 
 ## Terminology Updates
 
