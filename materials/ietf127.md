@@ -211,6 +211,6 @@ Combined with containment: C is contained in A only if every path defined in C i
 ## What's Next
 
 * `int-range` deprecation
-* multiple signing authorities and matching
+* Matching with multiple signing authorities
 * group profile-related requirements into one place
 * TODO
