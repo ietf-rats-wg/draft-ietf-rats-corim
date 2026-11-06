@@ -213,4 +213,6 @@ Combined with containment: C is contained in A only if every path defined in C i
 * `int-range` deprecation
 * Matching with multiple signing authorities
 * group profile-related requirements into one place
+* Complete the AI review cycle
+
 * TODO
