@@ -166,7 +166,7 @@ Attribute Paths defined in A: `class`, `class/vendor`, `class/model`, `class/lay
 |---|---|---|---|
 | `{ class: { vendor: "ACME" } }` | `class`, `class/vendor` | yes | yes (values match) |
 | `{ class: { model: "Roadrunner" }, instance: 560(h'01020304') }` | `class/model`, `instance` | yes | yes (values match) |
-| `{ class: { vendor: "ACME", model: "Coyote" } }` | `class/model` | defined | not contained (value differs) |
+| `{ class: { vendor: "ACME", model: "Coyote" } }` | `class`, `class/model`, `class/vendor` | defined | not contained (value differs) |
 | `{ group: 560(h'AA') }` | `group` | undefined in A | not contained |
 
 ---
@@ -204,8 +204,7 @@ Combined with containment: C is contained in A only if every path defined in C i
 > **Collision-Resistant Name**: As defined in Section 2 of RFC 7519:
 > _"A name in a namespace that enables names to be allocated in a manner such that they are highly unlikely to collide with other names.
 > Examples of collision-resistant namespaces include: Domain Names, Object Identifiers (OIDs) [...], and Universally Unique IDentifiers (UUIDs)."_
->
-> CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.
+> `CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.`
 
 ---
 
