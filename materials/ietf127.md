@@ -114,6 +114,7 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 * Expanded `MKey` scope to cover  SPDM Measurement index
 
+* Fixes to CDDL inconsistencies and CBOR Diag corrections
 
 ---
 
