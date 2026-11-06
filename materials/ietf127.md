@@ -19,7 +19,7 @@ theme: Next
 * `keys` relation and authority
 * Multiple signatures via COSE_Sign
 * Reference Verifier improvements
-* CoMID additions, CDDL fixes and editorial/IANA clean-up
+* General tidy up
 * Terminology updates
 
 ---
