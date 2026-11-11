@@ -17,7 +17,7 @@ theme: Next
 
 * New features
   * Adding "basic types" and their matchers to the `measurement-values-map`
-  * Multiple signatures via COSE_Sign
+  * Multiple signatures via `COSE_Sign`
 
 * Improvements
   * `keys` relation and authority
@@ -29,7 +29,10 @@ theme: Next
 
 ## Stats
 
-TODO
+| | Total | `AI Authored` | Share |
+|---|---|---|---|
+| Issues raised | 83 | 66 | 80% |
+| Issues fixed | 44 | 13 | 30% |
 
 ---
 
@@ -54,7 +57,7 @@ Added entries for "basic" types with configurable matching to `measurement-value
   * tag 565: inclusive **range** (`null` means unbounded)
   * tag 566: **set** of two or more alternatives
 
-The codepoint (and environment/mkey) name the measurement and the CBOR tag says how to compare
+The codepoint + environment/mkey name the measurement and the CBOR tag says how to compare
 
 ---
 
@@ -94,31 +97,34 @@ The codepoint (and environment/mkey) name the measurement and the CBOR tag says 
 
 ## Terminology Updates: Attribute Path Containment
 
-> **Attribute Path**: A sequence of one or more attribute identifiers that denotes a value within a structured data object by successive selection from a root value.
-> An Attribute Path is **defined** in a given value if every prefix of the path exists in that value; otherwise, it is **undefined**.
+**Attribute Path**: A sequence of one or more attribute identifiers that denotes a value within a structured data object by successive selection from a root value.
+An Attribute Path is **defined** in a given value if every prefix of the path exists in that value; otherwise, it is **undefined**.
 
-> **Attribute Path Containment**: A comparison relation between two structured data objects, the **condition** (C) and the **entry** (A), in which C is **contained in** A when:
->
-> 1. for every Attribute Path defined in C, the same Attribute Path is defined in A; and
-> 2. for each such path, the value in A **satisfies** the value in C.
->
-> Attributes present in A but not in C are ignored.
-> Unless otherwise specified, **satisfies** means that the two values are equal.
+**Attribute Path Containment**: A comparison relation between two structured data objects, the **condition** (C) and the **entry** (A), in which C is **contained in** A when:
+
+1. for every Attribute Path defined in C, the same Attribute Path is defined in A; and
+2. for each such path, the value in A **satisfies** the value in C.
+
+Attributes present in A but not in C are ignored.
+Unless otherwise specified, **satisfies** means that the two values are equal.
 
 ---
 
 ## Terminology Updates: Range Satisfaction
 
-> **Range Satisfaction**: A value satisfaction relation in which an entry value is said to satisfy a condition value when the entry lies within the bounds expressed by the condition.
-> For example, an `int` entry satisfies an `integer-range` condition when the entry is within the condition's inclusive bounds, and an `svn` entry satisfies a `tagged-min-svn` condition when the entry is greater than or equal to the condition's minimum.
+**Range Satisfaction**: A value satisfaction relation in which an entry value is said to satisfy a condition value when the entry lies within the bounds expressed by the condition.
+
+For example, an `int` entry satisfies an `integer-range` condition when the entry is within the condition's inclusive bounds, and an `svn` entry satisfies a `tagged-min-svn` condition when the entry is greater than or equal to the condition's minimum.
 
 ---
 
 ## Terminology Updates: Collision-Resistant Name
 
-> **Collision-Resistant Name**: As defined in Section 2 of RFC 7519:
-> _"[...] Examples of collision-resistant namespaces include: Domain Names, Object Identifiers (OIDs) [...], and Universally Unique IDentifiers (UUIDs)."_
-> `CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.`
+**Collision-Resistant Name**: As defined in Section 2 of RFC 7519
+
+Examples of collision-resistant namespaces include: Domain Names, Object Identifiers (OIDs) [...], and Universally Unique IDentifiers (UUIDs).
+
+CoRIM identifiers that function as global keys, such as Tag IDs and Environment identifiers, are Collision-Resistant Names.
 
 ---
 
